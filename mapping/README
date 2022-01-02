@@ -1,0 +1,110 @@
+INTRO
+=====
+
+This repository contains a random collection of tools to build custom
+maps of ocean depth. The use case for these maps is route-planning
+and land avoidance for autonomous marine vessels (ie, 'unmanned surface
+vehicles', or USVs)
+
+The GEBCO 2020 grid is the first supported map, even though this map
+is _not_ suitable for navigation. It is useful for simulated navigation
+however.
+https://www.gebco.net/data_and_products/gridded_bathymetry_data/gebco_2020/
+
+US charts are available for download from NOAA (ngdc.noaa.gov). The repo
+has a script to automatically download these files but so far it has no 
+processing tools for them.
+
+Maps of the rest of the oceans will be available from other sources, as
+well as maps of coastlines. 
+
+
+GOAL
+====
+The goal is to generate raster plots of the entire ocean with high 
+spatial resolution for shallow and coastal areas and low resolution 
+where the water depth is deep. Target map resolution is 5-seconds, which
+is approx 500 feet or 150m. This is adequate for most navigation
+purposes except near-land operations (eg, entering port). Those use cases
+can be dealt with separately.
+
+Vector maps can be used as necessary to create these raster maps.
+
+
+Maps are based on several components
+   gebco/   about fetching and processing gebco data, which is used
+            as a base. the map itself shouldn't be used for navigation,
+            and navigation data is overayed on it (where available).
+            when nav data not available, it's possible to fall back to
+            gebco data, but a large margin of error should be used to
+            avoid grounding -- e.g., don't go into water that gebco
+            reports is shallower than 20m
+   noaa/    fetching and processing noaa navigation charts (US waters)
+   shoreline/  world shoreline data
+   wmm/     magnetic declination
+
+See 'create/' for making the maps. 
+The script 'build_map.sh' should be used as a wrapper for the create utils.
+ 
+
+Generating beacons
+==================
+
+Beacons are points on a map that are a measured distance from a destination,
+and beacons span the globe. This provides a way to navigate from any
+point on any ocean to another point (e.g., San Fran to Perth). Though 
+a map used by kharon may only be 60x60nm, numerous beacons will be in
+that map, and the path to the destination can be found by navigating toward
+the beacon(s) closest to the destination. As the kharon map is updated 
+frequently (e.g., after 2 miles of travel), new beacons will keep coming
+into view as the vessel travels, providing a path to the destination, 
+wherever that may be.
+
+Beacon generation is handled in pharos/. 
+To start, run 'default_beacons'. This will generate a global array of
+beacons that are roughly 15nm apart. This list needs to be edited near
+land as many beacons will be on land. Additionally, when in inshore 
+waters (e.g., Inside Passage) care must be taken to make sure each beacon
+is not more than ~15nm from other beacons, as measured by travel on water.
+
+Once the master beacon list is generated, a delta list is created to
+delete/modify values from the master list. Once an updated list is produced,
+the list must be converted to binary (i.e., 'beacon.bin'). The utils in
+pharos are used (TODO need documentation on how they work)
+
+
+Beacon design descrption
+========================
+
+extracted maps should be free from longitude distortion (ie, be approx
+   60x60nm, not 1x1 deg)
+
+beacons should be defined approx every 20nm. after definition, manual
+   alteration of positions should be made for near-coastal waters.
+   auto position placement is every 20nm along constant latitude lines.
+   latitude lines should be separated by approx 17.3nm.
+   do not create beacons in WMM caution or unreliable zone (e.g., <6k
+   lateral force)
+
+beacon evaluation is done automatically. for each beacon, build map
+   around it and store path distance to other beacons in map (eg, closest 5).
+   after all evaluated, delete beacons with no neighbors
+
+beacon storage:
+   <id> <lon> <lat> <# nbrs> ..... FINISH ME
+
+---------
+
+for route planning between points that doesn't fit on map:
+1  generate map around destination. store distance to dest w/ each beacon
+      in map
+2  build beacon routing map using tagged beacons from (1) as seed distances
+3  build inverse map around source (ie, source as dest). store transient
+   distance in beacons in source map
+4  build map around source using transiently tagged beacons as seeds, with
+   seed distance being dist to destination plus transient value
+
+5  note direction-to-travel vector in source map. regenerate map so that
+   map center is 10nm in front of source position based on vector. 
+   recalculate map after traveling more than 10 miles from start point.
+

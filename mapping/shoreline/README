@@ -1,0 +1,16 @@
+Shoreline data is from
+   http://www.soest.hawaii.edu/pwessel/gshhg/
+and can be downloaded at
+   https://www.ngdc.noaa.gov/mgg/shorelines/data/gshhg/latest/
+Licensing information is in the downloaded data
+
+The important part of this package is the shoreline data, which is stored
+in shapefiles. To read using python, this requires the package 'python-pyshp'
+
+The extract_shapes.py file extracts the shape information and puts it into
+an easily parsible txt file. Each line of the file contains the next point
+in a polygon, and polygons are separated by a line starting with '#'.
+
+TODO what's needed is a tool to read this text file and, for each line segment,
+draw the shoreline in the highest resolution map (eg, level-3)
+

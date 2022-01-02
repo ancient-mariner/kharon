@@ -1,0 +1,26 @@
+Include files for bob
+=====================
+
+kernel
+------
+computing backbone, providing infrastructure for producer/comsumer model
+and communication
+
+core_modules
+------------
+sensor modules and low-level sensor processing
+
+routing
+-------
+mapping and driving
+
+external
+--------
+header files that need to be shared with other apps, e.g., for data 
+exchange to embedded apps
+
+tracking
+--------
+tracking includes have been moved to a separate repository and can be
+found in tracking/include/ in that repo. if present in the build tree,
+tracking will be at $(HOME)/core/tracking/

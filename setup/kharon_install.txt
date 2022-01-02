@@ -1,0 +1,297 @@
+Initial setup -- RPI
+====================
+
+Prepare SD card
+---------------
+
+'dd' boot image onto SD card
+
+In boot partition, touch 'ssh'
+
+In rootfs partition
+As root or through sudo:
+   mkdir /opt/kharon
+   chown whoever /opt/kharon
+   chgrp whoever /opt/kharon
+   mkdir /data
+   chown whoever /data
+   chgrp whoever /data
+Linux file system protocol is for log data to go to /var/opt/logs but
+log data for kharon should be on it's own partition and/or drive, for
+cases where log data is voluminous (eg, when logging all captured frames)
+
+
+networking
+   setup eth0 -- network set up in /etc/dhcpcd.conf
+      interface eth0
+      static ip_address=192.168.1.111/24
+      static routers=192.168.1.1
+
+   add to /etc/hosts
+   192.168.1.111   mercury1
+   192.168.1.112   mercury2
+   192.168.1.113   mercury3
+   192.168.1.114   mercury4
+   192.168.1.140   gopher
+   192.168.1.141   hedgehog
+   192.168.1.142   eagle
+   192.168.1.150   shadow
+
+
+bash
+   in .bashrc, add:
+   export PATH=/opt/kharon/local/bin:/opt/kharon/local/binrpi:/opt/kharon/external/bin:$PATH
+
+   In .bash_aliases add:
+   alias jk='cd /opt/kharon/'
+
+
+On running device
+-----------------
+
+sudo raspi-config
+   1 Wireless LAN (rover5, metafoor)
+   3 Interface Options
+      [P1 Camera]
+      P5 I2C
+      P6 Serial port
+   6 Advanced
+      A1 Expand filesystem
+   (may need to set LAN country)
+
+ssh
+   Setup password-less login (don't do this if making base image)
+   do this once on master (e.g., shadow):
+      ssh-keygen -t rsa -b 1024
+   do this for each device
+      ssh-copy-id -i ~/.ssh/id_rsa.pub pi@<host>
+
+   to connect: ssh -i ~/.ssh/id_rsa.<hostname> pi@<hostname>
+   (set up alias -- it's easier)
+
+
+#######################################################
+
+
+#   mkdir /etc/opt/kharon
+#   chown whoever /etc/opt/kharon
+#   chgrp whoever /etc/opt/kharon
+
+
+Populate kharon directory via git clone or unzipping archive
+
+Make sure the following directories are created:   TODO
+
+
+Mount partition or drive on /data
+---------------------------------
+
+
+
+apt
+---
+NOTE: when migrating to new version, first update .deb files
+copy content from kharon/setup/apt/ or apt4/
+when PI running, 'sudo dpkg --install *deb'
+
+
+networking
+----------
+
+Add file /boot/ssh
+
+On pi (if wifi to be enabled)
+configure /etc/wpa_supplicant/wpa_supplicant.conf
+   country=GB
+   ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+   update_config=1
+   network={
+        ssid="rover5"
+        psk="metafoor"
+   }
+
+configure /etc/hosts
+   192.168.1.111   mercury1
+   192.168.1.112   mercury2
+   192.168.1.113   mercury3
+   192.168.1.114   mercury4
+   192.168.1.140   gopher
+   192.168.1.141   hedgehog
+   192.168.1.142   eagle
+   192.168.1.150   shadow
+
+   
+   Earlier/orig approach:
+   #allow-hotplug eth0
+   #iface eth0 inet static
+   #address 192.168.1.140
+   #netmask 255.255.255.0
+   #network 192.168.1.0
+   #broadcast 192.168.1.255
+
+set /etc/hostname
+
+For debugging: nmap -sn 192.168.1.1/24
+
+
+On running device
+=================
+
+Setup password-less login (don't do this if making base image)
+do this once on master (e.g., shadow):
+   ssh-keygen -t rsa -b 1024
+do this for each device
+   ssh-copy-id -i ~/.ssh/id_rsa.pub pi@<host>
+
+
+to connect: ssh -i ~/.ssh/id_rsa.<hostname> pi@<hostname>
+(set up alias -- it's easier)
+
+
+raspiconfig
+----------
+
+
+apt-get
+-------
+
+dpkg --install /opt/kharon/setup/apt4/*deb
+
+or, if that fails, download missing packages to /opt/kharon/apt (see README
+   there) and copy/install those on RPI
+
+
+for userland development
+------------------------
+wget https://github.com/raspberrypi/userland/archive/master.zip
+- or -
+git clone https://github.com/raspberrypi/userland.git
+
+in userland/CMakeLists.txt, add "-std=gnu11" to compiler flag list
+
+in userland/host_applications/linux/apps/raspicam/
+   ln -s /opt/kharon/remote/camera/camera_vy.c .
+   ln -s /opt/kharon/remote/camera/down.c .
+in CMakeLists.txt, add
+   link_directories("/opt/kharon/local/lib")
+   include_directories("/opt/kharon/local/include")
+   add_executable(camera_vy  ${COMMON_SOURCES} camera_vy.c)
+   target_link_libraries(camera_vy   ${MMAL_LIBS} vcos bcm_host pinet m)
+
+
+disable wifi
+------------
+edit /etc/modprobe.d/raspi-blacklist.conf
+
+#wifi
+blacklist brcmfmac
+blacklist brcmutil
+#bt
+blacklist btbcm
+blacklist hci_uart
+
+# add the following to /boot/config.txt
+# disable wifi and bt
+dtoverlay=pi3-disable-bt
+dtoverlay=pi3-disable-wifi
+
+
+supervisor processes
+------------------
+after pinet installed and built:
+(these commands are in supervisor_pi.sh)
+
+sudo ln -s /pinet/local/bin_rpi/kill_monitor.sh /etc/init.d/kill_monitor.sh
+sudo ln -s /etc/init.d/kill_monitor.sh /etc/rc0.d/K01kill_monitor.sh
+sudo ln -s /etc/init.d/kill_monitor.sh /etc/rc1.d/K01kill_monitor.sh
+sudo ln -s /etc/init.d/kill_monitor.sh /etc/rc2.d/S05kill_monitor.sh
+sudo ln -s /etc/init.d/kill_monitor.sh /etc/rc3.d/S05kill_monitor.sh
+sudo ln -s /etc/init.d/kill_monitor.sh /etc/rc4.d/S05kill_monitor.sh
+sudo ln -s /etc/init.d/kill_monitor.sh /etc/rc5.d/S05kill_monitor.sh
+sudo ln -s /etc/init.d/kill_monitor.sh /etc/rc6.d/K01kill_monitor.sh
+
+sudo ln -s /pinet/local/bin_rpi/pi_super.sh /etc/init.d/pi_super.sh
+sudo ln -s /etc/init.d/pi_super.sh /etc/rc0.d/K01pi_super.sh
+sudo ln -s /etc/init.d/pi_super.sh /etc/rc1.d/K01pi_super.sh
+sudo ln -s /etc/init.d/pi_super.sh /etc/rc2.d/S05pi_super.sh
+sudo ln -s /etc/init.d/pi_super.sh /etc/rc3.d/S05pi_super.sh
+sudo ln -s /etc/init.d/pi_super.sh /etc/rc4.d/S05pi_super.sh
+sudo ln -s /etc/init.d/pi_super.sh /etc/rc5.d/S05pi_super.sh
+sudo ln -s /etc/init.d/pi_super.sh /etc/rc6.d/K01pi_super.sh
+
+
+
+########################################################################
+# for device using cloned image
+
+remove .ssh entries (to set up password-less login)
+alter /etc/hostname
+alter /etc/dhcpcd.conf for correct IP
+
+
+setup password-less login
+-------------------------
+ssh-keygen -t rsa -b 1024
+ssh-copy-id -i ~/.ssh/id_rsa.<hostname>.pub pi@<host>
+
+to connect: ssh -i ~/.ssh/id_rsa.<hostname> pi@<hostname>
+(set up alias -- it's easier)
+
+
+
+########################################################################
+# residual instructions believed to not be important
+
+#increase i2c speed from 100K to 1.2M (faster still possible)
+# command line
+#modprobe -r i2c_bcm2708
+#modprobe i2c_bcm2708 baudrate=1200000
+
+
+# sample tail of /boot/config.txt
+# 3 of these entries were added manually (probably last 3) after enabling
+#  i2c through raspi-config
+dtparam=audio=on
+start_x=1
+gpu_mem=128
+dtparam=i2c_arm=on
+dtparam=i2c_vc=on
+
+dtparam=i2c=on
+
+dtparam=i2c1_baudrate=800000
+dtparam=i2c0_baudrate=800000
+
+
+
+
+installing source remotely
+--------------------------
+sync_time.py <host> [host2] ...
+./push_rpi_<build#>.py <host>
+
+note: this may faile when installing on a new node (due code bootstrapping)
+      may need to run it multiple times (or log into node)
+note2: ssh-keygen must be done first
+
+
+new IMU -- obsolete method -- please update
+===========================================
+
+calibration
+-----------
+run raw_ada*, piping output to text file. 
+   need one file recording static measurement (no movement), and another 
+   with rotation through all axes.
+run config/mag_calib.py and config/gyr_calib.py
+create directory for sensor and db init scripts, then update init.sh
+
+### NOT SURE IF THIS WORKS -- use /etc/network/interfaces approach
+#configure /etc/dhcpcd.conf. add:
+#---------------------------------
+#interface eth0
+#static ip_address=192.168.1.101
+#static routers = 192.168.1.1
+
+apt-get install <python-smbus> libpam-systemd
+

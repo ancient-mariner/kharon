@@ -1,0 +1,27 @@
+syntax on
+
+set showmatch
+set tabstop=3
+set shiftwidth=3
+set expandtab
+
+" show vertical line at 80 chars
+set cc=81
+
+set ignorecase
+set smartcase
+
+set nocompatible
+
+"filetype plugin indent on
+set autoindent
+set smartindent
+
+autocmd Filetype markdown setlocal ts=4 sw=4 expandtab
+
+autocmd Filetype c setlocal ts=3 sw=3 expandtab
+autocmd Filetype python setlocal ts=3 sw=3 expandtab
+autocmd Filetype lua setlocal ts=3 sw=3 expandtab
+
+autocmd Filetype sql setlocal ts=2 sw=2 expandtab
+

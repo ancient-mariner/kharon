@@ -1,0 +1,8 @@
+# format: <name> <longitude> <latitude>
+ptbob -123.07 48.950 100
+sucia -122.90278 48.7624 100
+chuck -122.49861 48.6875 100
+fairhaven -122.5144 48.730 100
+squal -122.51667 48.7417 100
+bham-center -122.5645 48.732 100
+bham-portage -122.5886 48.7035 100

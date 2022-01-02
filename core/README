@@ -1,0 +1,36 @@
+This is the kharon app, including multiprocessing kernel and modules.
+
+core_modules/
+Modules to computer attitude (eg, intertial sensors) as well as those 
+that directly use attitude.
+
+include/
+Header files for kernel and modules
+
+kernel/
+App core
+
+lib/
+Module libraries that are part of core (e.g., attitude)
+
+routing/
+Modules for route generation
+
+tracking/
+Modules for optical tracking
+
+util/
+Source for utilities, plus scripts, for analyzing log data
+
+------------------------------------------------
+
+Code in 'kernel', 'core_modules' and 'routing' should be cross-platform and
+able to be run on both primary and secondary computers (eg, main 
+processing computer and RPI). 
+
+'tracking' is computationally intensive and is expected to run only on
+a primary computer (e.g., intel i-7), and hopefully in future on a hybrid
+arrangement w/ either GPU or FPGA
+
+
+

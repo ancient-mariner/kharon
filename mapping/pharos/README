@@ -1,0 +1,75 @@
+pharos -> lighthouse, a type of beacon
+
+folder contains utilities for creating and configuring beacons
+
+For defining beacons
+   default_beacons      builds dumb text list of world beacons
+   positions.py         converts pixel offsets to lat,lon
+   adjust_beacons       applies delta to text list of beacons
+
+Converting to usable form
+   convert_to_bin.py    converts text beacon file to binary
+   beacon_path          measures distance between beacons
+
+Utility
+   list_beacons         lists beacons and neighbors, inc. path distance
+   view_beacon          produces map with beacon at center
+   merge_bins           merge 2 beacon.bin files, typically ones created
+                        by different beacon_path runs
+
+
+Usage
+=====
+
+1) Create default beacons
+2) Extract geographical region to be customized (typically near shore
+   area) into working file
+3) Build delta file to add/remove/alter default beacons. Use 'view_beacons'
+   and 'positions.py' as necessary to determine how to alter beacon 
+   positions
+4) Run 'adjust_beacons' then 'convert_to_bin.py' to verify changes. Loop 
+   between 3 and 4 until all beacons in working file have been adjusted
+5) Apply all delta files to global beacon list
+6) Run 'beacon_path' to measure and store distance between nearby beacons.
+   Note that beacon_path output does not overwrite beacons.bin -- this must
+   be copied over manually. Beacon_path can run over different lat bands.
+   If so, those can be merged with 'merge_bins'.
+
+
+App descriptions
+================
+
+view_beacon
+default_beacons.c
+builds 'dumb' list of beacons that have regular placement along 
+lines of latitude while applying filters depth (min depth in grid
+square must be negative) and magnetic inclination (inclination must
+be X degrees or more away from vertical)
+output is text file with beacon coords.
+this text file should be manually modified, as necessary, to eliminate
+poorly placed beacons and to create/move beacons in near-shore and
+inland waters
+
+convert_to_bin.py
+convert beacon text file to binary form, creating index file and
+binary coordinate file, storing beacon coords as single-precision
+floats (ie, fixed length to allow offset-based reading of file).
+this beacon.bin file is used to determine position of beacons in
+world and path maps
+beacons are stored in bands that are 1-deg tall. beacon positions
+can be disordered w/in the band
+
+beacon_path.c
+generates map around each beacon to measure distance to all other 
+nearby beacons. distance for closest X neighboring beacons (eg, 8) 
+is stored in beacon.dist file. beacons that have no neighbors are
+unreachable and <HOW TO PURGE??>
+
+adjust_beaocns.py
+
+list_beacons
+
+positions.py
+
+view_beacon
+

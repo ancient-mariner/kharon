@@ -1,0 +1,1 @@
+#define SENSOR_BUILD_VERSION "shadow_376.157sensor_2021-10-05"

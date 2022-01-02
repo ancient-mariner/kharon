@@ -1,0 +1,5 @@
+The kharon runtime (bob) is configured using lua scripts. Those scripts
+are often placed here. There is presently no documentation for constructing
+the scripts. The API for configuring bob is listed in 
+core/kernel/script_iface.c
+

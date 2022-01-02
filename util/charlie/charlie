@@ -1,0 +1,10 @@
+#!/bin/bash
+if [ $# -eq 1 ]; then
+   export CHARLIE_HOST=$1;
+elif [ $# -ne 0 ]; then
+   echo "Usage: $0 [host]";
+   exit 1
+else
+   export CHARLIE_HOST="localhost";
+fi
+./exec_charlie

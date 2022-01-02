@@ -1,0 +1,6 @@
+#if !defined(ENDPOINT_SERVICE_H)
+#define ENDPOINT_SERVICE_H
+
+#define  SERVICE_ALICE     1000
+
+#endif   // ENDPOINT_SERVICE_H

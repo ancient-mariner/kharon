@@ -1,0 +1,82 @@
+About
+=====
+
+Kharon is an application and set of utilities for providing self-steering
+capabilities to a marine vessel. Unlike a typical autopilot, kharon plots
+its own course from A to B in such a way as to avoid land and shallow water,
+and steers the vessel on that course.
+
+There is an optional extension that provides collision and obstacle 
+avoidance (closed source; licensing available), providing a complete autopilot
+system that plots its own route while avoiding land and obstacles.
+
+The designed use cases for this system are for manned and unmanned vessels.
+- On unmanned vessels, the system is designed to autonomously pilot vessels.
+The present implementation is to travel from A to B, but modifications can
+be made to patrol regions or follow other vessels.
+- On manned vessels, the system is meant to be a tireless "2nd Mate" that
+watches for dangerous conditions and will alert the crew. It can optionally
+take evasive action if the crew fails to acknowledge or respond.
+
+The system is operational for TESTING ONLY. I.e., the technology is not
+mature enough for it to be used for the stated use cases. When the
+technology is running, a human must be vigilant to verify that the vessel
+is being operated safely.
+
+The core application (i.e., this repository) is able to read from 
+inertial sensors, from GPS, and from cameras. Camera data is stiched
+together into a virtually stabilized panoramic image, with the estimated
+horizon a horizontal line through the image center. 
+
+The software is complex and requires considerable configuration and 
+calibration to run, not to mention a vessel to run it on and sensing
+hardware. 
+
+For licensing and hardware inquiries, contact keith (at) oceanautonomy.com
+or go to the github forum.
+
+
+
+Directory structure
+===================
+
+core/
+The kharon app resides here, including kernel and modules
+
+data/
+A template for data storage. It's expected that the data directory will
+be located on an independant partition, but that's not required. It will
+work just fine here as well. Data directory must be specified in the 
+kharon config script
+
+external/
+External source used by the core app. This includes of lua (required for
+scripting) and magpie (used for encrypting source archives)
+
+local/
+source, lib and bin folders for code that's shared across apps and utilities
+
+mapping/
+Utilities for generating a world map database and an API for accessing 
+that data from the kharon runtime. 
+
+remote/
+Apps and utilities that run on node devices (eg, RPIs and Arduino)
+
+setup/
+General information for installing, running and developing on kharon,
+and for misc documentation about tools and techniques (e.g., analyzing
+segfaults w/o core dumps)
+
+util/
+charlie and makefile environment files
+
+xrun/
+scripts for kharon runtime. typical usage: 'bob <script.lua>'
+
+yrun/
+location for data replay scripts. these call rpi_emulator and stream
+previously logged data to the kharon runtime, replaying data from
+a previous voyage
+
+

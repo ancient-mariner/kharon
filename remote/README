@@ -1,0 +1,2 @@
+For apps/tools that are only to be built on remote platforms (eg,
+RPI and arduino, not main CPU)

@@ -1,0 +1,47 @@
+World magnetic field estimates
+==============================
+
+Uses IGRF-13 to generate file with magnetic field values at each point
+of Lat/Lon. A subsequent script converts the output of that into
+a simple text format:
+   <lon>  <lat>  <dec>  <inc>  <X>  <Y>  <Z>
+
+with the first 4 entries in degrees, the last 3 in nanoTeslas.
+
+International Geomagnetic Reference Field -- generation 13
+
+
+Usage
+=====
+
+Generate data -- pyIGRF
+-----------------------
+
+get the IGRF python package
+   wget https://ngdc.noaa.gov/geomag/WMM/data/WMM2020/WMM2020COF.zip
+
+Unzip pyIGRF. When running it note that there may be a
+runtime error in io_options.py near line 428. comment out offending
+lines. if running python35, many of the print statements need to be
+modified to remove the preceding "f", as that's a python36 feature.
+
+In io_options.py, near line 430, add one or more spaces after both
+lat and lon output. Otherwise values run together and won't easily parse.
+
+python3 pyIGRF.py
+<enter output file name>
+<select 3: grid>
+<select 1: geodetic>
+-89 1 90
+-180 1 180
+0
+2021
+
+
+Convert data
+------------
+
+python convert.py <input data file> <output data>
+
+
+

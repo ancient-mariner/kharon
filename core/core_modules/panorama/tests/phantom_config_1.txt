@@ -1,0 +1,5 @@
+# init <range-m> <bearing-deg> <length-m>
+# set <t-sec> <heading-deg> <speed-mps>
+init 200 20 10
+set 0.0 220 10
+frame /pinet/pictures/second_sun_yuv_0.pnm

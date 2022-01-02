@@ -1,0 +1,86 @@
+
+use soft tabs, space = 3
+   2's too short, 4 to big
+   also, non-standard indentation level helps to quickly identify source
+    code that's [accidentally] brought in from outside source, and vice versa
+
+use K&R style for brackets and parentheses
+
+variable size should be explicitly specified (e.g., int32_t, int16_t) and
+   C sizes (e.g., long, short) should not be used. it's OK to use 'int'
+   for a local variable if there are performance benefits or for 
+   compatibility with libraries (eg, glibc using int and char), but 
+   specifying each variable size is strongly encouraged
+
+unit tests are in 'tests/' subdirectory for each module folder containing
+   source code. name for tests file source should correspond to source 
+   file in parent directory (ie, if source file is foo.c, unit tests for
+   that file should be in tests/foo.c). the test file should '#include' 
+   source file in parent directory (ie, tests/foo.c should 
+   #include "../foo.c"). unit tests exe's should start with 'test_' so 
+   'run_tests.sh' can automatically detect and run unit tests in the
+   directory
+
+loop indices should always be unsigned
+   signed indices that go negative can cause difficult to detect
+   memory corruption. when an unsigned int goes 'negative' it
+   should induce a segfault
+
+no blank lines w/in procedure. if visual space desired, use empty comment
+   this allows rapid navigation through file w/ keyboard shortcuts
+
+code within each directory, particularly for computing modules, is often
+   implemented using amalgamation approach, with one file serving as the
+   master (e.g., gps_receiver.c) and other source files in the directory
+   being #included. this allows functions and variables to be declared
+   static within the module, and thus be global w/in the module, but
+   they're not visibile/accessible from outside (poor-man's namespace
+   strategy)
+
+function prototypes should list each parameter on its own line, with
+   indicator of whether value is 'in', 'out' or both. function definitions
+   should show the same. 'in' values should be 'const' unless a comment
+   explains why that's not possible/practical. e.g.
+   static void foo(
+         /* in     */ const int32_t a,
+         /*    out */       int32_t *b,
+         /* in out */       int32_t *c
+         );
+ 
+functions should have a single exit point. exceptions are a return
+   at function entry if conditions for running the function aren't
+   met
+
+use of goto is permitted in order to exit nested loop or to jump
+   to end of procedure and either exit or execute cleanup code
+   before exit
+
+each source file sould have an accompanying header file with the same name
+
+structs and unions should be appropriately named and should not have
+   '_type' suffix. typedef of these structs and unions should end with
+   '_type'. do not use '_t' for type as this is reserved for posix. where
+   possible, structs and unions should use <name>_type in declarations
+
+static variables should end with an underscore (_) 
+   this helps visually identify the variable as having special scope
+
+computing modules (e.g., gps_receiver) are defined in a struct that
+   stores information for an instance of that object. this was originally
+   named with a suffix '_class' (e.g., 'struct imu_receiver_class' and
+   'typedef struct imu_receiver_class imu_receiver_class_type) 
+   and but for new development '_class' should be dropped
+
+in some/many cases, static variables should declared thread-local 
+   (eg, 'static __thread object_type *object_heap_'). however, if 
+   thread-local storage is required then that content should be stored
+   in the module 'class' structure whenever that is possible
+
+where possible, all files/folders in a directory should start with
+   different letters to enable fast navigation from the command line
+   when using tab completion (e.g., cd a<tab>c<tab>s<tab> to get to
+   a_directory/c_directory/s_directory). if overlap cannot be avoided
+   (eg, multiple dirs start with a single letter, like bin, binrpi, etc)
+   then names should be made to provide as few additional keys as possible
+
+

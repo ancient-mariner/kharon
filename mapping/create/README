@@ -1,0 +1,92 @@
+Create map files of surface.
+
+Coordinates are shifted so 0,0 is 90-degrees North at the date line
+(ie, north of Alaska). X values increase eastward and Y values increase
+southward. Ie, the map uses image-based coordinates (0,0 in top left)
+of the earth's surface, with Alaska being in the top-left.
+
+When a coordinate is a floating point value, x is on [0,360) and y is
+on [0,180]. 
+
+When a coordinate is integral, it represents the top-left corner of a
+1x1 degree square, so 0,90 is the 1x1 degree square to the right of the
+date line (left edge is date line) and below the equator (top edge is
+equator)
+
+
+Map layout
+==========
+
+Maps have 3 layers. 
+
+Layer 1
+-------
+File with information about each 1x1 degree (lat,lon) on earth's surface.
+File contains 8-byte chunks for each grid square. This consists of:
+   highest point (m)    int16
+   lowest point (m)     int16
+   flags                uint16
+   <reserved>           uint16
+
+The highest and lowest values are the max/min depth/altitude values 
+reported for that 1x1 grid square. Depth is negative, land is >0.
+When the highest value is above cutoff depth (eg, 50m) then a flag
+is set to indicate a more detailed map (eg, layer 2) is available for
+that grid square.
+
+Layer 2
+-------
+Depth map at fixed resolution (e.g., 15-sec x 15-sec squares). Square
+covers one degree of lat/lon, for example N48.000 to N48.999; W-130.000
+to W-129.000
+
+Layer 3
+-------
+Depth map at fixed resolution (e.g., 5-sec x 5-sec squares). Square
+covers one degree of lat/lon. Data from navigation charts, updated by
+shoreline data
+
+
+Data storage
+============
+
+Maps are stored in a single directory with the given format
+
+root_dir/
+         world.map1
+         15sec/         15-sec level-2 maps (~500m^2 grid squares; 240x240)
+         5sec/           5-sec level-2 maps (~150m^2 grid squares; 720x720)
+
+each *sec file has subdirs that separate maps by latitude, so 10K maps aren't
+in a single folder. each subdir stores maps over a 10 degree belt. names
+are '0', '10', '20', etc
+
+level-N files are names are based on lat-lon, specifically: 
+   xxx-yyy.mapN
+where xxx is degress horizontally (0-359) and yyy is vertical (0-179), with 
+where the date line hits the north pole being the origin values increasing
+eastward and southward
+'N' is 2 (gebco) or 3 (noaa)
+
+
+Usage
+=====
+
+Create level-1 map based on gebco (init_map1_gebco)
+Create level-2 maps based on gebco (load_gebco_map2)
+Create level-3 maps based on noaa (read_noaa)
+Update level-3 with shoreline data (horeline)
+NOTE: these should be called through the wrapping script build_map.sh
+
+To view maps:
+   see_level1 -- view level1 map
+   view_level2 -- view level2 map
+   observe_level3 -- view level3 map
+   build_composite generates a 1x1 degree map based on level-3, 2 then 1 data
+
+Odd file naming convention is so that most  files start with a different 
+character -- this makes it easier for managing files on command line.
+
+
+
+

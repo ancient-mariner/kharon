@@ -1,0 +1,27 @@
+The data directory is for storing output data, including logs and 
+image data. Because of the potentially large amount of data to be
+logged, 'data' should be on a separate partition and/or drive and
+mounted as '/data/'. The folder structure here should be recreated
+in /data.
+
+archive/
+Source code archives
+
+dev/
+Device data
+
+env/
+Environment folders
+
+logs/
+Direct output from the running app, with directories created every
+time the app starts. Directories names are timestamps.
+The directories here should be cleaned out periodically, when no longer
+needed, to help manage disk space.
+
+recordings/
+For storing log directories that have signficance or that are to be
+kept around for longer term. Examples of this are log directories that
+will be analyzed later or that are to be replayed, such as for testing.
+
+

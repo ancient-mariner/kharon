@@ -1,0 +1,8 @@
+default_beacons
+beacon_path
+list_beacons
+view_beacon
+eval_beacon
+merge_bins
+*.txt
+

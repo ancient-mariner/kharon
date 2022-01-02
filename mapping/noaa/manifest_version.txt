@@ -1,0 +1,6 @@
+NOS product manifest from https://data.ngdc.noaa.gov/platforms/ocean/nos/
+This contains a list of the available NOAA .xyz depth files.
+
+.xyz files are CSV files that have a mostly-uniform format
+
+Current version (Dec 2020) was downloaded 2020-11-02

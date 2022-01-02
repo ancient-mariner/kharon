@@ -1,0 +1,7 @@
+#!/bin/bash --init-file
+PS1='\[\e[1;31m\][\d \t] \[\e[1;32m\]charlie@$CHARLIE_HOST \[\033[00m\]\$ '
+PATH=/opt/kharon/util/charlie/bin:$PATH
+
+alias l='ls /opt/kharon/util/charlie/bin'
+alias b='pushd /opt/kharon/util/charlie/src; make refresh; popd'
+
