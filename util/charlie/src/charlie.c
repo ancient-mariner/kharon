@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -33,8 +49,8 @@ err:
 
 
 int send_postmaster_request(
-      /* in     */ const int sockfd, 
-      /* in     */ const struct pm_request *req, 
+      /* in     */ const int sockfd,
+      /* in     */ const struct pm_request *req,
       /* in     */ const void *data
       )
 {
@@ -57,7 +73,7 @@ int send_postmaster_request(
    if (send_block(sockfd, &val, sizeof(val)) < 0)
       goto err;
    if (req->header_bytes > 0) {
-      if (send_block(sockfd, data, req->header_bytes) != 
+      if (send_block(sockfd, data, req->header_bytes) !=
             (int32_t) req->header_bytes) {
          fprintf(stderr, "Problem sending request data (%d bytes)\n",
                req->header_bytes);
@@ -78,7 +94,7 @@ err:
 int read_postmaster_response(
       /* in     */ const int sockfd,
       /* in     */ const struct pm_request *req,
-      /*    out */       struct pm_response *resp, 
+      /*    out */       struct pm_response *resp,
       /*    out */       uint8_t ** data
       )
 {
@@ -117,7 +133,7 @@ int read_postmaster_response(
    if (resp->response_bytes > 0) {
       // allocate memory to fetch data
       *data = malloc(resp->response_bytes);
-      if (recv_block(sockfd, *data, resp->response_bytes) != 
+      if (recv_block(sockfd, *data, resp->response_bytes) !=
             (int32_t) resp->response_bytes) {
          fprintf(stderr, "Problem reading response data (%d bytes)\n",
                resp->response_bytes);
@@ -134,5 +150,5 @@ err:
 // communicate with postamster
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-// 
+//
 

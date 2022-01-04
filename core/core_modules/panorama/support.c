@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 static void clear_world_buffer(
       /* in out */       panorama_output_type *output
@@ -15,7 +31,7 @@ static void clear_world_buffer(
    //    as all pyrs can be stored there
    // format:
    //    11111111...112222...2333...34...4
-   uint32_t n_pix = (uint32_t) 
+   uint32_t n_pix = (uint32_t)
          (3 * WORLD_HEIGHT_PIX[0] * WORLD_WIDTH_PIX[0] / 2);
    for (uint32_t i=0; i<n_pix; i++) {
       elements[i] = empty;
@@ -96,7 +112,7 @@ static void mark_coverage(
       //    necessary
       if (idx < 0) {
          idx += 360;
-      } 
+      }
       output->coverage.radial[idx++] = 1;
       if (idx >= 360) {
          idx -= 360;
@@ -134,7 +150,7 @@ static void project_frame_to_panorama(
       center_x -= out_sz.width;
 //printf("World center %f,%f\n", (double) frame->world_center.longitude, (double) frame->world_center.latitude);
    double lat_deg = (double) frame->world_center.lat.sangle32 * BAM32_TO_DEG;
-   const int32_t center_y = (int32_t) (ppd * 
+   const int32_t center_y = (int32_t) (ppd *
          (WORLD_HEIGHT_ABOVE_HORIZ_DEGS + lat_deg));
 //   const int32_t center_y = out_sz.rows/2 +
 //         (int32_t) (ppd * frame->world_center.latitude);
@@ -169,7 +185,7 @@ static void project_frame_to_panorama(
          uint32_t in_idx = in_row_offset + in_c;
          pixel_cam_info_type src = pixels[in_idx];
          ///////////////////////////////////////////////////////////////
-         // 
+         //
          const uint32_t out_idx = out_row_offset + out_c;
          overlap_pixel_type *sink = &world[out_idx];
          // if pixel has content, push to panorama view. if radius is

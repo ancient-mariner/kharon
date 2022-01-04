@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pin_types.h"
 #include "pixel_types.h"
 #include <stdio.h>
@@ -32,7 +48,7 @@ represent a wall that has the world view displayed on it, with distances
 preserved (imagine the picture being that of a grid, or brick wall).
 To convert this to spherical perspective, the angle from each pixel (X and
 Y) must be calculated based on the pixel's location in the image.
-One way to do this is through trigonometry (see vy_receiver's 
+One way to do this is through trigonometry (see vy_receiver's
 exp_accumulator.h for derivation of this approach). Another is to define a
 sphere that intersects the "wall" at its nearest point, and take the XYZ of
 each pixel (Z is constant for entire wall) and then scale each XYZ vector
@@ -46,7 +62,7 @@ static const uint32_t BORDER_CHAN_IDX = NUM_IMAGE_CHANNELS;
 
 // ideally blurring would occur in analysis planes, where algorithm there
 //    could decide appropriate blurring level. however, analysis planes
-//    read from panorama, and at the pan level images are merged and 
+//    read from panorama, and at the pan level images are merged and
 //    broken apart into fg and bg sections, making a blurring task much more
 //    complex and inefficient. until pan rewritten to pass on image data
 //    more directly and efficiently, do blurring here
@@ -72,7 +88,7 @@ static void blur_output_r1(
             vy_blur_pixel_type *pix = &buf[ctr_idx];
             for (uint32_t i=0; i<NUM_IMAGE_CHANNELS; i++) {
                pix->channel[i] = (uint8_t) ((
-                     center.color.channel[i] + 
+                     center.color.channel[i] +
                      right0.color.channel[i]) >> 1);
             }
             pix->channel[BORDER_CHAN_IDX] = center.border | right0.border;
@@ -86,11 +102,11 @@ static void blur_output_r1(
                for (uint32_t i=0; i<NUM_IMAGE_CHANNELS; i++) {
                   pix->channel[i] = (uint8_t) ((
                         left0.color.channel[i] +
-                        2*center.color.channel[i] + 
+                        2*center.color.channel[i] +
                         right0.color.channel[i]) >> 2);
                }
                // border is all or none, so OR values
-               pix->channel[BORDER_CHAN_IDX] = 
+               pix->channel[BORDER_CHAN_IDX] =
                      left0.border | center.border | right0.border;
                ++ctr_idx;
                right0 = src[ctr_idx];
@@ -102,7 +118,7 @@ static void blur_output_r1(
             pix = &buf[ctr_idx];
             for (uint32_t i=0; i<NUM_IMAGE_CHANNELS; i++) {
                pix->channel[i] = (uint8_t) ((
-                     left0.color.channel[i] + 
+                     left0.color.channel[i] +
                      center.color.channel[i]) >> 1);
             }
             pix->channel[BORDER_CHAN_IDX] = left0.border | center.border;
@@ -122,7 +138,7 @@ static void blur_output_r1(
             pixel_cam_info_type *pix = &dest[ctr_idx];
             for (uint32_t i=0; i<NUM_IMAGE_CHANNELS; i++) {
                pix->color.channel[i] = (uint8_t) ((
-                     center.channel[i] + 
+                     center.channel[i] +
                      bot0.channel[i]) >> 1);
             }
             pix->border = center.channel[BORDER_CHAN_IDX] |
@@ -137,7 +153,7 @@ static void blur_output_r1(
                for (uint32_t i=0; i<NUM_IMAGE_CHANNELS; i++) {
                   dest->color.channel[i] = (uint8_t) ((
                         top0.channel[i] +
-                        2*center.channel[i] + 
+                        2*center.channel[i] +
                         bot0.channel[i]) >> 2);
                }
                pix->border = top0.channel[BORDER_CHAN_IDX] |
@@ -152,7 +168,7 @@ static void blur_output_r1(
             center = bot0;
             pix = &dest[ctr_idx];
             for (uint32_t i=0; i<NUM_IMAGE_CHANNELS; i++) {
-               pix->color.channel[i] = (uint8_t) 
+               pix->color.channel[i] = (uint8_t)
                      ((top0.channel[i] + center.channel[i]) >> 1);
             }
             pix->border = top0.channel[BORDER_CHAN_IDX] |
@@ -163,7 +179,7 @@ static void blur_output_r1(
 }
 
 
-// pushes content from (non-normalized) accumulators to pixel arrays 
+// pushes content from (non-normalized) accumulators to pixel arrays
 //    for v and y channels at all pyramid levels
 static void flatten_accumulators(
       /* in out */       optical_up_class_type *upright,
@@ -293,7 +309,7 @@ static void push_image_to_accumulator(
             mult_matrix_vector(cam2world, sphere_pos, &pix_proj);
             // push pixel to accumulator
             const vy_pixel_type vy_pix = vy_pixels[idx];
-            const vy_accumulator_pixel_type pix = 
+            const vy_accumulator_pixel_type pix =
                   { .v = vy_pix.v, .y = vy_pix.y };
 //if ((x > 200) && (y == 300)) {
 //   printf("  %d,%d has vy %d,%d, at %f,%f,%f\n", x, y, pix.v, pix.y,
@@ -302,7 +318,7 @@ static void push_image_to_accumulator(
 //         (double) pix_proj.v[2]);
 //}
             idx++;
-            push_pixel_to_accumulator(pix, border, &pix_proj, 
+            push_pixel_to_accumulator(pix, border, &pix_proj,
                   world_center_lon, world_center_lat,
                   pix_per_degree_x8, accum);
 //#warning "make sure pan adds center lat,lon back in (it should already do this)"
@@ -331,7 +347,7 @@ static void raw_image_to_accumulators(
    }
    // create matrix to project camera ray traces to location in world
    //    where they originated. this is a convoluted way of saying
-   //    map camera pixels to world locations 
+   //    map camera pixels to world locations
    matrix_type cam2world;
    // rotation of A then B is B*A
    mult_matrix(&ship2world->ship2world, &upright->cam2ship, &cam2world);
@@ -351,21 +367,21 @@ static void raw_image_to_accumulators(
    //    _before_ the projection of the entire image is rotated down
    //    to the equator. as lat,lon is a cylindrical coordinate system,
    //    taking lat,lon at correct spherical location allows preservation
-   //    of the spherical projection, while rotating it down to the 
+   //    of the spherical projection, while rotating it down to the
    //    equator allows the image to be pushed to the accumulator
    // when resulting image is applied to panoramic view, it must be
    //    rotated back up so its center is in the correct location
-   degree_type world_center_lat = { .degrees = 
+   degree_type world_center_lat = { .degrees =
          world_center->lat.sangle32 * BAM32_TO_DEG };
-   degree_type world_center_lon = { .degrees = 
+   degree_type world_center_lon = { .degrees =
          world_center->lon.angle32 * BAM32_TO_DEG };
-   push_image_to_accumulator(upright, src_img, vy, &cam2world, 
+   push_image_to_accumulator(upright, src_img, vy, &cam2world,
          world_center_lon, world_center_lat);
 }
 
 
 static uint8_t clamp255_(double x)
-{  
+{
    if (x <= 0.0)
       return 0;
    else if (x >= 255.0)
@@ -390,18 +406,18 @@ static int32_t save_pnm_file(
    // write pyramid images
    // main image on left, sub-images stacked on right
    // this complicates writing the file, but the right-hand images will
-   //    provide visual reference, at least to horizon in main image 
+   //    provide visual reference, at least to horizon in main image
    // offset to top-left of displayed pyramid layer
-   const uint32_t x_off[NUM_PYRAMID_LEVELS] = { 
+   const uint32_t x_off[NUM_PYRAMID_LEVELS] = {
       0, output->size[0].cols
    };
-   const uint32_t y_off[NUM_PYRAMID_LEVELS] = { 
+   const uint32_t y_off[NUM_PYRAMID_LEVELS] = {
       0, 0
    };
-//   const uint32_t x_off[NUM_PYRAMID_LEVELS] = { 
+//   const uint32_t x_off[NUM_PYRAMID_LEVELS] = {
 //      0, UPRIGHT_N_COLS_BASE, UPRIGHT_N_COLS_BASE
 //   };
-//   const uint32_t y_off[NUM_PYRAMID_LEVELS] = { 
+//   const uint32_t y_off[NUM_PYRAMID_LEVELS] = {
 //      0, 0, UPRIGHT_N_COLS_BASE/2
 //   };
    /////////////////////////////////////////////////////////////////////

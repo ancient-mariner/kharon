@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pin_types.h"
 #include <stdio.h>
 #include <string.h>
@@ -38,7 +54,7 @@ static uint32_t errs_ = 0;
 //    on procedure return, call clean_up_globals()
 
 
-// run lua scripts to create and customize producers and consumers, 
+// run lua scripts to create and customize producers and consumers,
 //   and link them together
 int32_t configure_environment(const char* config_file)
 {

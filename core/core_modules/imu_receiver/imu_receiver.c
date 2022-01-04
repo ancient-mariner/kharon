@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,7 +44,7 @@ static void imu_class_pre_run(
       /* in out */       struct datap_desc *dp
       )
 {
-   // allocate dp->void_queue, dp->ts 
+   // allocate dp->void_queue, dp->ts
    dp->ts = calloc(1, IMU_QUEUE_LEN * sizeof(*dp->ts));
    dp->element_size = sizeof(imu_output_type);;
    dp->queue_length = IMU_QUEUE_LEN;
@@ -67,7 +83,7 @@ static void imu_class_pre_run(
    //
    uint32_t port = (uint32_t) atoi(port_str);
    if (c_assert(port <= 0x00007fff)) {
-      log_err(imu->log, 
+      log_err(imu->log,
             "Configuration error: port size greater than int16 (%d)", port);
       goto err;
    }
@@ -92,14 +108,14 @@ err:
 ////////////////////////////////////////////////////////////////////////
 // publishes sensor data received from network (primarily IMU data)
 // gyro drift and magnetic correction assumed to be done at client
-// complementary filter for acc and mag NO LONGER done at client. 
+// complementary filter for acc and mag NO LONGER done at client.
 //    a new module (attitude) is required to pull together different sensor
 //    sources and integrate data from different modalities.
 //    up/north calculations done in this separate module
 static void imu_class_run(struct datap_desc *dp)
 {
    struct imu_class *imu = (struct imu_class*) dp->local;
-   log_info(imu->log, "Modality priorities (0-based): g:%d, a:%d m:%d", 
+   log_info(imu->log, "Modality priorities (0-based): g:%d, a:%d m:%d",
       imu->priority[IMU_GYR], imu->priority[IMU_ACC], imu->priority[IMU_MAG]);
    struct sensor_packet_header header;
    double timestamp;
@@ -130,7 +146,7 @@ static void imu_class_run(struct datap_desc *dp)
          // retrieve and handle metadata
          unpack_sensor_header(&header, &pkt_type, &timestamp);
          if (pkt_type != IMU_PACKET_TYPE) {
-            log_err(imu->log, "Packet type error. Expected 0x%08x, got 0x%08x", 
+            log_err(imu->log, "Packet type error. Expected 0x%08x, got 0x%08x",
                   IMU_PACKET_TYPE, pkt_type);
             hard_exit("imu_receiver::imu_class_run", 1);
          }
@@ -141,9 +157,9 @@ static void imu_class_run(struct datap_desc *dp)
          }
          ///////////////////////////////////////////////////////////////
          // fetch sensor data
-         if (recv_block(imu->connfd, serial, SP_SERIAL_LENGTH) != 
+         if (recv_block(imu->connfd, serial, SP_SERIAL_LENGTH) !=
                SP_SERIAL_LENGTH) {
-            log_err(imu->log, "\n%s read error. Breaking connection", 
+            log_err(imu->log, "\n%s read error. Breaking connection",
                   dp->td->obj_name);
             close(imu->connfd);
             imu->connfd = -1;
@@ -197,7 +213,7 @@ static void imu_abort(struct datap_desc *dp)
    log_info(imu->log, "%s aborting", dp->td->obj_name);
    if (imu->connfd >= 0) {
       if (shutdown(imu->connfd, SHUT_RDWR) != 0) {
-         log_err(imu->log, "Error shutting down connection (%s)", 
+         log_err(imu->log, "Error shutting down connection (%s)",
                strerror(errno));
       }
       imu->connfd = -1;
@@ -264,7 +280,7 @@ void * imu_class_init(void * imu_setup)
       imu->logfile = fopen(buf, "w");
       if (imu->logfile == NULL) {
          // non-fatal error. we just loose logging
-         log_err(imu->log, "Unable to create data logfile for %s (%s)", 
+         log_err(imu->log, "Unable to create data logfile for %s (%s)",
                dp->td->obj_name, buf);
       } else {
          log_info(imu->log, "%s logging data to %s", dp->td->obj_name, buf);
@@ -282,13 +298,13 @@ void * imu_class_init(void * imu_setup)
    imu->connfd = -1;
    // data frames are read all together, so no need for each imu producer to
    //    alert subscribers. the update signal (update_ctr -- see
-   //    datap.h) initialization should be staggered so that multiple 
+   //    datap.h) initialization should be staggered so that multiple
    //    alerts from different IMU receivers aren't sent to subscribers
    //    at the same time, but as receivers can fall out of sync, this
-   //    isn't directly possible. 
+   //    isn't directly possible.
    // TODO consider setting the update_interval to 1 so that an
-   //    alert is set every time data is said to be available, but add 
-   //    auxiliary logic to control when a signal is sent that data is 
+   //    alert is set every time data is said to be available, but add
+   //    auxiliary logic to control when a signal is sent that data is
    //    available
    dp->update_ctr = 0;
    dp->update_interval = 2;

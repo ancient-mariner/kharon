@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 static map_level1_type *level1_map_ = NULL;
 static map_level2_type **level2_maps_ = NULL;
 static map_level3_type **level3_maps_ = NULL;
@@ -94,10 +110,10 @@ static map_level2_square_type * get_square2(
          assert(load_map_level2(map_dir_, grid_pos, map2) != NULL);
          level2_maps_[world_idx] = map2;
       }
-   } 
-   // 
+   }
+   //
    if (map2 != NULL) {
-      uint32_t grid_idx = (uint32_t) (240.0 * sub_pos.sub_x) + 
+      uint32_t grid_idx = (uint32_t) (240.0 * sub_pos.sub_x) +
             (uint32_t) (240.0 * sub_pos.sub_y) * 240u;
       square2 = &map2->grid[grid_idx];
    }
@@ -136,7 +152,7 @@ static map_level3_type * load_or_create_level3(
 
 
 // returns level3_square for specified position
-// if map is in memory, that's used. if not, it's loaded from disk. if 
+// if map is in memory, that's used. if not, it's loaded from disk. if
 //    there's no file, an empty map is created
 static map_level3_square_type * get_square3(
       /* in     */ const map_grid_num_type grid_pos,
@@ -145,7 +161,7 @@ static map_level3_square_type * get_square3(
 {
    map_level3_type *map3 = load_or_create_level3(grid_pos);
    assert(map3 != NULL);
-   uint32_t grid_idx = (uint32_t) (720.0 * sub_pos.sub_x) + 
+   uint32_t grid_idx = (uint32_t) (720.0 * sub_pos.sub_x) +
          (uint32_t) (720.0 * sub_pos.sub_y) * 720u;
    map_level3_square_type *square3 = &map3->grid[grid_idx];
    return square3;

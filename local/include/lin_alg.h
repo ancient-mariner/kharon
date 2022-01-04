@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(LIN_ALG_H)
 #define LIN_ALG_H
 #include <stdint.h>
@@ -19,7 +35,7 @@
 // tangent approximations
 // basically, tan(theta) ~= theta for small theta
 // these are only to be used for small theta. when theta is 25 degrees,
-//    error is just under 7%, which is OK for most uses. error is 
+//    error is just under 7%, which is OK for most uses. error is
 //    smaller for <15 degrees, and much smaller for <10
 
 // takes int32_t (bam32.sangle32)
@@ -122,20 +138,20 @@ void mult_matrix_vector(
 // squares m and stores result in m2
 // m must be distinct from m2
 void square_matrix(
-      /* in     */ const matrix_type *m, 
+      /* in     */ const matrix_type *m,
       /*    out */ matrix_type *m2);
 
 // m1 * m2 => res
 // res must be distinct from m1,m2
 void mult_matrix(
-      /* in     */ const matrix_type *m1, 
-      /* in     */ const matrix_type *m2, 
+      /* in     */ const matrix_type *m1,
+      /* in     */ const matrix_type *m2,
       /*    out */ matrix_type *res);
 
 // performs a = a + s*b
 void add_weighted_vector(
-      /* in out */       vector_type *a, 
-      /* in     */ const vector_type *b, 
+      /* in out */       vector_type *a,
+      /* in     */ const vector_type *b,
       /* in     */ const double s
       );
 
@@ -147,30 +163,30 @@ void add_weighted_vector(
 //    vector, the minor row is the image of the secondary vector on
 //    the plane normal to the primary, and the remaining axis orthogonal
 //    to the other two
-// NOTE: behavior indeterminate if the dot product of the primary 
+// NOTE: behavior indeterminate if the dot product of the primary
 //    and secondary vectors is zero
 void build_orthogonal_matrix_xy(
-      /* in      */ const vector_type *primary, 
+      /* in      */ const vector_type *primary,
       /* in      */ const vector_type *secondary,
       /*     out */       matrix_type *mat);
 
 void build_orthogonal_matrix_yx(
-      /* in      */ const vector_type *primary, 
+      /* in      */ const vector_type *primary,
       /* in      */ const vector_type *secondary,
       /*     out */       matrix_type *mat);
 
 // Y is typically up and Z forward (north), so for many operations
 //    this will be the function to use
 void build_orthogonal_matrix_yz(
-      /* in      */ const vector_type *primary, 
+      /* in      */ const vector_type *primary,
       /* in      */ const vector_type *secondary,
       /*     out */       matrix_type *mat);
 
 
-// constructs matrix to remove tilt and roll 
+// constructs matrix to remove tilt and roll
 // matrix describes rotation from positive Y axis to 'up' vector
 void build_upright_matrix(
-      /* in      */ const vector_type *up, 
+      /* in      */ const vector_type *up,
       /*     out */       matrix_type *mat);
 
 
@@ -184,7 +200,7 @@ double unitify(
 
 // stores unit-length version of vec in unit
 void unit_vector(
-      /* in     */ const vector_type *vec, 
+      /* in     */ const vector_type *vec,
       /*    out */ vector_type *unit);
 
 
@@ -194,16 +210,16 @@ void unit_vector(
 // calculates rotation from a to b
 void measure_rotation(
       /* in     */ const vector_type *prev,
-      /* in     */ const vector_type *curr, 
-      /*    out */       vector_type *axis, 
+      /* in     */ const vector_type *curr,
+      /*    out */       vector_type *axis,
       /*    out */       degree_type *theta
       );
 
 // rotate vector_type vec about axis, by theta degrees, and store result in res
 void rotate_vector_about_axis(
-      /* in     */ const vector_type *axis, 
-      /* in     */ const vector_type *vec, 
-      /* in     */ const degree_type theta, 
+      /* in     */ const vector_type *axis,
+      /* in     */ const vector_type *vec,
+      /* in     */ const degree_type theta,
       /*    out */ vector_type *res);
 
 /////////////////////
@@ -216,7 +232,7 @@ degree_type get_pitch(
 // positive roll will lift leff (port) side and lower right
 // negative roll lifts right side
 // roll values valid on [-90,90] -- roll beyond that is invalid, and besides
-//    that there will be bigger problems to worry about if that happens 
+//    that there will be bigger problems to worry about if that happens
 //    than accurate tracking
 degree_type get_roll(
       /* in     */ const vector_type *acc
@@ -275,12 +291,12 @@ void reset_vector(
 
 // copy vector_type v to dup
 void copy_vector(
-      /* in     */ const vector_type *v, 
+      /* in     */ const vector_type *v,
       /*    out */ vector_type *dup);
 
 // copy vector_type v to dup and make dup unit length
 void copy_vector_unitify(
-      /* in     */ const vector_type *v, 
+      /* in     */ const vector_type *v,
       /*    out */ vector_type *dup);
 
 // returns length of vector_type v
@@ -294,38 +310,38 @@ void mult_vector_scalar(
 // project vector_type A onto B and returns length of resultant
 // a must be a unit vector. b is implicitly normalized before operation
 double dot_product(
-      /* in     */ const vector_type *a, 
+      /* in     */ const vector_type *a,
       /* in     */ const vector_type *b);
 
 // calculates dot product for unit vectors a and b
 double dot_product_unit(
-      /* in     */ const vector_type *a, 
+      /* in     */ const vector_type *a,
       /* in     */ const vector_type *b);
 
 // computes cross product of a and b and returns it in cross
 void cross_product(
-      /* in     */ const vector_type *a, 
-      /* in     */ const vector_type *b, 
+      /* in     */ const vector_type *a,
+      /* in     */ const vector_type *b,
       /*    out */       vector_type *cross);
 
 //// computes cross product of a and b and returns it in cross
 //// scales a and b to unit length for calculation
 //// product of |a|*|b| is returned, for detecting if either are zero length
 //double unit_cross_product(
-//      /* in     */ const vector_type *a, 
-//      /* in     */ const vector_type *b, 
+//      /* in     */ const vector_type *a,
+//      /* in     */ const vector_type *b,
 //      /*    out */       vector_type *cross);
 
 // apply rotation matrix_type r to v. mathematically, this is r * v'
 void rotate_vector(
-      /* in     */ const vector_type *vec, 
-      /* in     */ const matrix_type *rot, 
+      /* in     */ const vector_type *vec,
+      /* in     */ const matrix_type *rot,
       /*    out */ vector_type *res);
 
 // project vector_type onto the plane defined by normal
 // NOTE: it's safe if projection and vector point to the same structure
 void project_onto_plane(
-      /* in     */ const vector_type *normal, 
+      /* in     */ const vector_type *normal,
       /* in     */ const vector_type *vector,
       /*    out */ vector_type *projection);
 
@@ -334,7 +350,7 @@ void project_onto_plane(
 // NOTE: gyro vector must be storing angles in units of degrees
 //    (ie, degrees per sample)
 void gyro_vector_to_rotation_axis(
-      /* in     */ const vector_type *gyro, 
+      /* in     */ const vector_type *gyro,
       /*    out */ vector_type *axis,
       /*    out */       degree_type *theta);
 
@@ -343,14 +359,14 @@ void gyro_vector_to_rotation_axis(
 // NOTE: gyro vector must be storing angles in units of degrees
 //    (ie, degrees per sample)
 void rotation_axis_to_gyro_vector(
-      /* in     */ const vector_type *axis, 
+      /* in     */ const vector_type *axis,
       /* in     */ const degree_type theta,
       /*    out */ vector_type *gyro);
 
 // rotate vector_type vec about axis, by theta degrees, and store result in res
 void rotate_vector_about_axis_2(
-      /* in     */ const vector_type *axis, 
-      /* in     */ const vector_type *vec, 
+      /* in     */ const vector_type *axis,
+      /* in     */ const vector_type *vec,
       /* in     */ const double sn,
       /* in     */ const double cs,
       /*    out */ vector_type *res);
@@ -359,13 +375,13 @@ void rotate_vector_about_axis_2(
 // NOTE: gyro vector assumed to represent gyro reference frame (which is
 //    the reverse of world-centric reference frames, e.g., acc,mag)
 void rotate_vector_by_gyro(
-      /* in     */ const vector_type *gyro, 
+      /* in     */ const vector_type *gyro,
       /* in     */ const vector_type *vec,
       /*    out */ vector_type *res);
 
 // rotate vector_type vec about imu rotation gyro and store result in vec
 void rotate_vector_by_gyro_in_place(
-      /* in     */ const vector_type *gyro, 
+      /* in     */ const vector_type *gyro,
       /* in out */ vector_type *vec);
 
 ////////////////////////////////////////////////////////////////////////
@@ -373,38 +389,38 @@ void rotate_vector_by_gyro_in_place(
 //
 // prints contents of v to stdout, prepended by label, with no newline
 void print_vec_cont(
-      /* in     */ const vector_type *v, 
+      /* in     */ const vector_type *v,
       /* in     */ const char *label);
 
 // prints contents of v to stdout, preceded by label
 void print_vec(
-      /* in     */ const vector_type *v, 
+      /* in     */ const vector_type *v,
       /* in     */ const char* label);
 
 // prints contents of m to stdout, preceded by label
 void print_mat(
-      /* in     */ const matrix_type *m, 
+      /* in     */ const matrix_type *m,
       /* in     */ const char* label);
-      
+
 ////////////////////////////////////////////////////////////////////////
 
 
 // use series of very small rotations to approximate simultaneous
 //    rotation on all axes
-// this has been superceded by quaternion algorithm in 
+// this has been superceded by quaternion algorithm in
 //    rotate_vector_about_axis()
 void slow_rotate(
-      /* in     */ const vector_type *vec, 
-      /* in     */ const vector_type *dtheta, 
+      /* in     */ const vector_type *vec,
+      /* in     */ const vector_type *dtheta,
       /*    out */ vector_type *out);
 
-      /* in out */ 
+      /* in out */
 // like slow_rotate(), but processes two vectors at same time
 void slow_rotate2(
-      /* in     */ const double vec1[3], 
-      /* in     */ const double vec2[3], 
-      /* in     */ const double dtheta[3], 
-      /*    out */ double out1[3], 
+      /* in     */ const double vec1[3],
+      /* in     */ const double vec2[3],
+      /* in     */ const double dtheta[3],
+      /*    out */ double out1[3],
       /*    out */ double out2[3]);
 
 
@@ -423,7 +439,7 @@ void axis_angle_to_rotation_matrix(
 //    better for verifying bits in an i2c register, so here's a workaround
 //    to allow something close to 0b in standard c
 // usage: BIN(0100, 0001) as replacement to 0b01000001
-// derived from 
+// derived from
 //https://stackoverflow.com/questions/18244726/why-doesnt-c-have-binary-literals
 
 #define BX_0000 0

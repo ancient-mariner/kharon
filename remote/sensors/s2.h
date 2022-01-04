@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if! defined(S2_H)
 #define S2_H
 #include "pin_types.h"
@@ -23,17 +39,17 @@
 //          it should be, on all axes. for gyro, this is 'drift'.
 //          NOTE: offset is applied before scale
 //
-//    gain: multiplicative constant to get raw signal from sensor 
-//          into desired units of computation. this is a fixed 
+//    gain: multiplicative constant to get raw signal from sensor
+//          into desired units of computation. this is a fixed
 //          constant based on the settings/registers of the sensor.
 //          it is hard-coded in each sensor's driver
 //
-//    scale: multiplicative constant to adjust signal to correct 
+//    scale: multiplicative constant to adjust signal to correct
 //          unit based on characteristic of sensor (eg, scale=1.05
-//          if sensor reads 5% low on a given axis). this can 
+//          if sensor reads 5% low on a given axis). this can
 //          change with time and temperature
-//         
- 
+//
+
 // delay (in milliseconds) before sensors start streaming data
 // have all sensors share this delay so their output can be synchronized
 #define WARMUP_INTERVAL_BASE  600
@@ -41,7 +57,7 @@
 #define SAMPLING_RATE_BASE_US    12500
 
 ////////////////////////////////////////////////////////////////
-// gyro 
+// gyro
 
 
 struct sensor_gyro {
@@ -148,7 +164,7 @@ typedef struct sensor_gps sensor_gps_type;
 #define SENSOR_FLAG_ACC          0x00000002
 #define SENSOR_FLAG_MAG          0x00000004
 #define SENSOR_FLAG_TEMP         0x00000008
-#define SENSOR_FLAG_GPS          0x00000010 
+#define SENSOR_FLAG_GPS          0x00000010
 #define SENSOR_FLAG_BARO         0x00000020
 // sensor types can go up to 0x0000ffff
 #define SENSOR_FLAG_ANY_SENSOR   0x0000ffff
@@ -189,7 +205,7 @@ typedef struct sensor_gps sensor_gps_type;
 #define  HARDWARE_NAME_A3G4250D     "a3g4250d"  // gyr
 #define  HARDWARE_NAME_MAG3110      "mag3110"
 
-// 
+//
 extern const char *HARDWARE_LIST[];
 
 
@@ -213,7 +229,7 @@ typedef int32_t (*sensor_whoami_callback) (
 // sensor indicates when it's ready to be next awoken by setting
 //    the 'waketime' value, and it will be called sometime shortly
 //    after that time
-// there are 2 probable scenarios for setting waketime. one is 
+// there are 2 probable scenarios for setting waketime. one is
 //    incrementing the value by a set amount (eg, 50ms), the other
 //    is getting the present time and incrementing it (eg, by 1ms)
 // note: a error will be (should be) thrown if the requested wake time is
@@ -248,7 +264,7 @@ struct sensor_runtime {
    sensor_whoami_callback self_test;   // nullified after passing
    sensor_setup_callback setup;
    sensor_shutdown_callback shutdown;
-   // 
+   //
    uint32_t flags;   // control flags for managing hardware
    uint32_t state;   // flags for managing transitions
    ////////////////////////////////////////////
@@ -263,13 +279,13 @@ struct sensor_runtime {
    sensor_gps_type      gps;
    //
    // data to log in kernel. string cleared when data is sent
-   char log_data[SENSOR_PACKET_LOG_DATA];   
+   char log_data[SENSOR_PACKET_LOG_DATA];
    char name[SENSOR_NAME_LEN];   // unique name of sensor on the device
    char type_name[SENSOR_NAME_LEN];    // e.g., lsm9ds0
    char device_addr[SENSOR_NAME_LEN];  // eg, /dev/i2c-1
    //
    // path to config directory. eg, /pinet/dev/<node>/sensors/i2c/<name>/
-   char config_root[SENSOR_PATH_LEN];  
+   char config_root[SENSOR_PATH_LEN];
 };
 typedef struct sensor_runtime sensor_runtime_type;
 

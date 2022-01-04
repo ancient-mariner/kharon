@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "core_modules/vy_receiver.h"
 #include <stdio.h>
 #include "dev_info.h"
@@ -54,7 +70,7 @@ static void accum_init(void)
    memset(accum_, 0, sz);
 }
 
-// add value from one accumulator bin to another, applying specified 
+// add value from one accumulator bin to another, applying specified
 //    relative weight
 static void accum_add_element(
       /* in     */ const accumulator_element_type *src,
@@ -133,22 +149,22 @@ static void accum_blur(void)
       {
          uint32_t idx = x;
          accum_add_element(&tmp_accum_[idx], 0.66, &accum_[idx]);
-         accum_add_element(&tmp_accum_[idx+ACCUM_WIDTH], 0.33, 
+         accum_add_element(&tmp_accum_[idx+ACCUM_WIDTH], 0.33,
                &accum_[idx]);
       }
       // middle rows
       for (uint32_t y=1; y<ACCUM_HEIGHT-1; y++) {
          uint32_t idx = x + ACCUM_WIDTH * y;
-         accum_add_element(&tmp_accum_[idx-ACCUM_WIDTH], 0.25, 
+         accum_add_element(&tmp_accum_[idx-ACCUM_WIDTH], 0.25,
                &accum_[idx]);
          accum_add_element(&tmp_accum_[idx], 0.5, &accum_[idx]);
-         accum_add_element(&tmp_accum_[idx+ACCUM_WIDTH], 0.25, 
+         accum_add_element(&tmp_accum_[idx+ACCUM_WIDTH], 0.25,
                &accum_[idx]);
       }
       // bottom row
       {
          uint32_t idx = x + ACCUM_WIDTH * (ACCUM_HEIGHT - 1);
-         accum_add_element(&tmp_accum_[idx-ACCUM_WIDTH], 0.33, 
+         accum_add_element(&tmp_accum_[idx-ACCUM_WIDTH], 0.33,
                &accum_[idx]);
          accum_add_element(&tmp_accum_[idx], 0.66, &accum_[idx]);
       }
@@ -196,14 +212,14 @@ static void push_accumulator_to_panorama_level(
       /* in     */ const uint32_t level
       )
 {
-   uint32_t img_left = (uint32_t) (-ACCUM_HALF_WIDTH + (uint32_t) 
+   uint32_t img_left = (uint32_t) (-ACCUM_HALF_WIDTH + (uint32_t)
          ((double) phantom_center.x_deg * PIX_PER_DEG[level]));
    if (img_left > WORLD_WIDTH_PIX[level]) {
       img_left += WORLD_WIDTH_PIX[level];
       assert(img_left < WORLD_WIDTH_PIX[level]);
    }
    uint32_t img_top = (uint32_t) (
-         WORLD_HEIGHT_PIX[level]/2 - ACCUM_HALF_HEIGHT + (uint32_t) 
+         WORLD_HEIGHT_PIX[level]/2 - ACCUM_HALF_HEIGHT + (uint32_t)
          ((double) -phantom_center.y_deg * PIX_PER_DEG[level]));
 //printf("  img left=%d [right=%d]\n", img_left, img_left+ACCUM_WIDTH);
 //printf("  img top=%d [bottom=%d]\n", img_top, img_top+ACCUM_HEIGHT);
@@ -247,9 +263,9 @@ static void push_accumulator_to_panorama_level(
          assert(opaque <= 1.0);
          double pix_y = element->y / element->weight;
          double pix_v = element->v / element->weight;
-         double out_y = 
+         double out_y =
                pix_y * opaque + (double) pix->fg.color.y * (1.0 - opaque);
-         double out_v = 
+         double out_v =
                pix_v * opaque + (double) pix->fg.color.v * (1.0 - opaque);
 //if (x == ACCUM_WIDTH/2) {
 //   printf(" row %d    opaque %.3f  y %.1f  v %.1f\n", y, (double) opaque, (double) out_y, (double) out_v);
@@ -311,13 +327,13 @@ static void push_phantom_to_accumulator(
    // phantom pix / accum pix = 40
    // scale = 1/40
    //    2.5 / (1000 * 0.1) = 1/40
-   const double scale = phantom->arc_width.degrees / 
+   const double scale = phantom->arc_width.degrees /
          ((double) phantom_width_pix * DEG_PER_PIX[0]);
 //printf("Scale: %.4f   phantom pix offset %d,%d\n", (double) scale, phantom_offset.dx, phantom_offset.dy);
 //printf("Accum height=%d  width=%d  half height=%d  half_width=%d\n", ACCUM_HEIGHT, ACCUM_WIDTH, ACCUM_HALF_HEIGHT, ACCUM_HALF_WIDTH);
    // push each phantom pixel into the appropriate accumulator bin
    // NOTE to make this GPU-friendly, invert paradigm so each accum
-   //    bin pulls from all input phantom pixels. that will allow 
+   //    bin pulls from all input phantom pixels. that will allow
    //    accumulation to happen w/o possible race conditions
    // a,b are coordinates in phantom space
    // x,y are coordiantes in accumulator space
@@ -325,7 +341,7 @@ static void push_phantom_to_accumulator(
       // phantom resolution should be much higher than accum res, so
       //    using an int (versus double) shouldn't create too much of an
       //    artifact
-      int32_t y0 = (int32_t) (scale * (double) ((int32_t) b - 
+      int32_t y0 = (int32_t) (scale * (double) ((int32_t) b -
             (int32_t) phantom_half_height_pix - phantom_offset.dy));
       if (y0 < -((int32_t) ACCUM_HALF_HEIGHT)) {
          continue;
@@ -336,7 +352,7 @@ static void push_phantom_to_accumulator(
       uint32_t accum_row_idx = (uint32_t) (y * ACCUM_HEIGHT);
       uint32_t phantom_row_idx = (uint32_t) (b * phantom_width_pix);
       for (uint32_t a=0; a<phantom_width_pix; a++) {
-         int32_t x0 = (int32_t) (scale * (double) ((int32_t) a - 
+         int32_t x0 = (int32_t) (scale * (double) ((int32_t) a -
                (int32_t) phantom_half_width_pix - phantom_offset.dx));
          if (x0 < -((int32_t) ACCUM_HALF_WIDTH)) {
             continue;
@@ -377,9 +393,9 @@ static pixel_offset_type get_phantom_offset(
 //printf(" . target pix: %.2f,%.2f\n", (double) horiz_pix_target, (double) vert_pix_target);
    // fraction of a pixel that phantom is offset from world pix, in
    //    world pix
-   double horiz_pix_offset = horiz_pix_target - 
+   double horiz_pix_offset = horiz_pix_target -
          (double) ((int) horiz_pix_target);
-   double vert_pix_offset = vert_pix_target - 
+   double vert_pix_offset = vert_pix_target -
          (double) ((int) vert_pix_target);
 //printf(" . pix offset: %.2f,%.2f\n", (double) horiz_pix_offset, (double) vert_pix_offset);
    // degree offset of phantom center from pixel center, in degrees
@@ -387,13 +403,13 @@ static pixel_offset_type get_phantom_offset(
    double vert_deg_offset = vert_pix_offset * DEG_PER_PIX[0];
 //printf(" . deg offset: %.4f,%.4f\n", (double) horiz_deg_offset, (double) vert_deg_offset);
    // offset in phantom pixels
-   double phantom_ppd = 
+   double phantom_ppd =
          (double) phantom->image->size.x / phantom->arc_width.degrees;
    double phantom_horiz_pix_offset = horiz_deg_offset * phantom_ppd;
    double phantom_vert_pix_offset = vert_deg_offset * phantom_ppd;
 //printf(" . phantom pix offset: %.2f,%.2f\n", (double) phantom_horiz_pix_offset, (double) phantom_vert_pix_offset);
    //
-   pixel_offset_type offset = { 
+   pixel_offset_type offset = {
       .dx = (int16_t) phantom_horiz_pix_offset,
       .dy = (int16_t) phantom_vert_pix_offset,
       .dt = 0
@@ -460,7 +476,7 @@ static void convert_track_to_dxdy(
 
 
 // updates phantom position and returns its relative visual position
-// visual position is the center of the image, while calculation of 
+// visual position is the center of the image, while calculation of
 //    placement is based on image bottom (ie, phantom's wedge)
 static latlon_coordinate_type update_phantom_size_and_position(
       /* in out */       panorama_class_type *pan,
@@ -478,25 +494,25 @@ static latlon_coordinate_type update_phantom_size_and_position(
    //    planar) convert here as well
    latlon_coordinate_type pos;
    double range_meters = sqrt(
-         phantom->pos_x.meters * phantom->pos_x.meters + 
+         phantom->pos_x.meters * phantom->pos_x.meters +
          phantom->pos_y.meters * phantom->pos_y.meters);
    if (range_meters < 5.0) {
       // impact. there's no meaningful data to display
       goto impact;
    }
    //
-   phantom->arc_width.degrees = R2D * 
+   phantom->arc_width.degrees = R2D *
          atan(phantom->length.meters / range_meters);
    //
    pos.x_deg = R2D * atan2(phantom->pos_x.meters, phantom->pos_y.meters);
    if (pos.x_deg < 0.0) {
       pos.x_deg += 360.0;
    }
-   // y position represents where center of phantom will be drawn. this 
+   // y position represents where center of phantom will be drawn. this
    //    needs to be adjusted for phantom height, so phantom bottom (wedge)
    //    is at desired range
    pos.y_deg = -R2D * atan(pan->camera_height.meters / range_meters);
-   double height_degrees = phantom->arc_width.degrees * 
+   double height_degrees = phantom->arc_width.degrees *
          ((double) ACCUM_HEIGHT / (double) ACCUM_WIDTH);
    pos.y_deg += height_degrees / 2.0;
    /////////////////////////////////////////////
@@ -505,12 +521,12 @@ static latlon_coordinate_type update_phantom_size_and_position(
    }
 //printf("Arc: %.1f, range: %.1f\n", (double) phantom->arc_width.degrees, (double) range_meters);
    return pos;
-impact:  
+impact:
    // too close to display. consider it an impact. relocate phantom
    //    to 500m to north and set on horizon
    phantom->pos_x.meters = 0.0;
    phantom->pos_y.meters = 500.0;
-   phantom->arc_width.degrees = R2D * 
+   phantom->arc_width.degrees = R2D *
          atan(phantom->length.meters / phantom->pos_y.meters);
    pos.x_deg = 0.0;
    pos.y_deg = 0.0;
@@ -665,7 +681,7 @@ static void load_phantom_config(
          phantom->frames[num_frames] = img;
          num_frames++;
       } else {
-         fprintf(stderr, "Parse error in phantom config '%s'" 
+         fprintf(stderr, "Parse error in phantom config '%s'"
                " -- don't recognize token '%s'\n", config_name, tok);
          goto err;
       }
@@ -682,17 +698,17 @@ static void load_phantom_config(
    phantom->image = phantom->frames[0];
    // make sure enough data was read
    if (phantom->length.meters < 0.0) {
-      fprintf(stderr, "'init' field missing from phantom config '%s'\n", 
+      fprintf(stderr, "'init' field missing from phantom config '%s'\n",
             config_name);
       goto err;
    }
    if (num_tracks == 0) {
-      fprintf(stderr, "'set' field(s) missing from phantom config '%s'\n", 
+      fprintf(stderr, "'set' field(s) missing from phantom config '%s'\n",
             config_name);
       goto err;
    }
    if (num_frames == 0) {
-      fprintf(stderr, "frame field(s) missing from phantom config '%s'\n", 
+      fprintf(stderr, "frame field(s) missing from phantom config '%s'\n",
             config_name);
       goto err;
    }
@@ -714,7 +730,7 @@ void insert_phantom_image(
    if (pan_dp == NULL) {
       fprintf(stderr, "NULL source provided to insert_phantom_image\n");
       hard_exit(__func__, __LINE__);
-   } 
+   }
    /////////////////////////////////////////////////////////////////////
    panorama_class_type *pan = (panorama_class_type*) pan_dp->local;
    if (strcmp(pan_dp->td->class_name, PANORAMA_CLASS_NAME) != 0) {

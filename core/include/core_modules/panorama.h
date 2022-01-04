@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(PANORAMA_H)
 #define PANORAMA_H
 #include "pin_types.h"
@@ -17,7 +33,7 @@
 // stitches Y channel from available cameras to generate panoramic
 //    image
 //
-// takes 
+// takes
 //    optical_up output
 //
 // publishes pixel mapping array for each pyramid level. map stores
@@ -49,7 +65,7 @@
 //    and accuracy is dependent on vessel attitude. first implementation
 //    is that coverage extends +/-29 degrees from center of projected
 //    optical-up image (of 62 degree image)
-// stores 
+// stores
 //    0 if there's no image output on a radial
 //    1 if image output is present on given radial
 struct panorama_coverage {
@@ -88,7 +104,7 @@ typedef struct panorama_coverage panorama_coverage_type;
 #define COLOR_GRID_DIST_SIZE     64
 
 //// describes the categorization of a small portion of the field of view.
-////    square contains summary (over time) of what is observed in that 
+////    square contains summary (over time) of what is observed in that
 ////    portion of field of view
 //struct pan_color_grid_unit {
 //   // distribution of colors observed recently
@@ -97,13 +113,13 @@ typedef struct panorama_coverage panorama_coverage_type;
 //// TODO FIXME v range is too narrow to have a meaningful distribution,
 ////    as NIR causes most values to be near 128. until this is fixed
 ////    at the camera end the color_v distribution shouldn't be used.
-////    when it is, update keypoint/pixel_features.c:calc_pixel_features() 
+////    when it is, update keypoint/pixel_features.c:calc_pixel_features()
 ////    to include it when generating color score
 ////    (fix: eg, downsampling full-res image and getting value for v that
 ////    doesn't induce discretization artifacts by magnifying small
 ////    integral offset from 128)
 //   float color_v[NUM_PYRAMID_LEVELS][COLOR_GRID_DIST_SIZE];
-//   // total area under each distribution (this will be the same for 
+//   // total area under each distribution (this will be the same for
 //   //    all color channels)
 //   float num_samples[NUM_PYRAMID_LEVELS];
 //};
@@ -121,7 +137,7 @@ typedef struct panorama_coverage panorama_coverage_type;
 //    may be a few tenths of a degree off, which may result in >horizon
 //    pixels being mixed in with water pixels. also, the primary reason
 //    for maintaining a distribution is to reduce correlated motion
-//    in waves from forming a target, as water pixels should have common 
+//    in waves from forming a target, as water pixels should have common
 //    pixel values, while an actual target is more likely to have colors
 //    that are distinct from the water. if a ghost target appears on the
 //    horizon, that won't trigger a collision-avoidance panic as it will
@@ -165,7 +181,7 @@ typedef struct pan_color_grid pan_color_grid_type;
 // THE DATA STORED IN VOID_QUEUE IS OUT OF ORDER. IT SHOULD NOT BE READ
 //    DIRECTLY
 // panorama data should be accessed through get_frame_list(), which
-//    returns a linked list of all cached frames. the list is 
+//    returns a linked list of all cached frames. the list is
 //    read-only and is thread-safe. all frames in the list are guaranteed
 //    to be valid for 2 seconds.
 // expected use case is that data is pulled asynchronously and that
@@ -173,8 +189,8 @@ typedef struct pan_color_grid pan_color_grid_type;
 //    subscriber only cares about a small part of the visual scene
 //    at a time, and won't immediaately examine an area, unless it
 //    really wants to)
-// 
-// 
+//
+//
 struct panorama_output {
    // pointers are offsets in image buffer
    // overlap pixels identify fg and bg cameras for a given point in
@@ -187,7 +203,7 @@ struct panorama_output {
    // size of each level (this doesn't change -- could be made a static const)
    // TODO migrate to using static const
    image_size_type frame_size[NUM_PYRAMID_LEVELS];
-   // pyramid_ is allocation that the pyramids in the world_frame array 
+   // pyramid_ is allocation that the pyramids in the world_frame array
    //    points into (ie, it's a heap that stores memory for all pyramid
    //    levels, and the world_frame array points to the appropriate
    //    location in the heap for a particular level)
@@ -195,7 +211,7 @@ struct panorama_output {
    overlap_pixel_type *pyramid_;
    // recent history of colors seen at each region of world view
    // this is a pointer into panorama's color grid heap
-   // color distribution that is published is actually a sum of 
+   // color distribution that is published is actually a sum of
    //    the grid units surrounding a point in space, to reduce influence
    //    of object in field of view biasing distribution (distribution
    //    is to approximate background)
@@ -249,7 +265,7 @@ struct panorama_class {
    // 0 is grayscale output
    // 1 is color. red images w/ overlap regions having G & B elements
    uint32_t output_type;
-   // 
+   //
    log_info_type *log;
    // camera height above water when ship is level, in meters
    meter_type camera_height;

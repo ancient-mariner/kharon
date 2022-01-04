@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -21,9 +37,9 @@ static void wake_heart(void);
 static void create_udp_socket(void);
 void * udp_receiver_main(void*);
 
-// receives UDP sync packets and performs actions according to 
+// receives UDP sync packets and performs actions according to
 //    packet contents (eg, updating time, signaling frame capture)
-// 
+//
 // 2 threads active -- UDP receiver and heartbeat thread. receiver
 //    gets commands and sets state. heartbeat tracks state, state
 //    changes and sends camera commands
@@ -43,7 +59,7 @@ static struct sockaddr_in  s_sock_addr;
 //
 // if camera registered then create a 'heartbeat' thread that sends a
 //    SIGUSR1 signal to the camera to trigger frame acquisition
-// heartbeat checks to see if camera output is paused before sending 
+// heartbeat checks to see if camera output is paused before sending
 //    signal. if yes, thread enters indefinite sleep. on each waking,
 //    thread checks to see if pause is over. when so, thread resumes
 //    heartbeat pulses.
@@ -53,7 +69,7 @@ static pthread_t s_heartbeat_tid;
 static pthread_t s_camera_tid;
 static int s_camera_registered = 0;
 
-// sigusr2 handler -- this is a no-op. the role of sigusr2 is to 
+// sigusr2 handler -- this is a no-op. the role of sigusr2 is to
 //    wake the thread if it's sleeping. callback does nothing
 static void sigusr2_callback(int sig)
 {
@@ -98,7 +114,7 @@ static void * heartbeat_entry(void * not_used)
          }
          // wait for next frame
          increment_timef(&ts, CAMERA_FRAME_INTERVAL);
-         while ((rc = clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, 
+         while ((rc = clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME,
                      &ts, NULL)) != 0) {
             if (rc != EINTR) {
                perror("heartbeat sleep problem");
@@ -131,7 +147,7 @@ static void * heartbeat_entry(void * not_used)
    return NULL;
 }
 
-// called by camera process. starts 'heartbeat' thread that sends 
+// called by camera process. starts 'heartbeat' thread that sends
 //    periodic SIGUSR1 signals to camera process
 void register_camera()
 {
@@ -153,20 +169,20 @@ static void create_udp_socket()
       perror("Error creating udp receiver socket");
       hard_exit(__func__, 1);
    }
-   // bind socket to listening port 
+   // bind socket to listening port
    memset((char *) &s_sock_addr, 0, sizeof(s_sock_addr));
    s_sock_addr.sin_family = AF_INET;
    s_sock_addr.sin_port = htons(UDP_SYNC_PORT);
    s_sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
    // share port with others
    int one = 1;
-   if (setsockopt(s_sockfd, SOL_SOCKET, SO_REUSEADDR, &one, 
+   if (setsockopt(s_sockfd, SOL_SOCKET, SO_REUSEADDR, &one,
             sizeof(one)) != 0) {
       perror("Error setting SO_REUSEADDR in udp sync receiver");
       hard_exit(__func__, 2);
    }
    // bind port
-   if (bind(s_sockfd, (struct sockaddr*) &s_sock_addr, 
+   if (bind(s_sockfd, (struct sockaddr*) &s_sock_addr,
          sizeof(s_sock_addr))==-1) {
       perror("Error binding to port (udp sync receiver)");
       hard_exit(__func__, 3);
@@ -198,7 +214,7 @@ void * udp_receiver_main(void *not_used)
       // wait for next packet
       bytes_read = 0;
       while ((size_t) bytes_read < packet_len) {
-         n = recvfrom(s_sockfd, &bpacket[bytes_read], packet_len, MSG_WAITALL, 
+         n = recvfrom(s_sockfd, &bpacket[bytes_read], packet_len, MSG_WAITALL,
                (struct sockaddr*) &s_sock_addr, &sz);
          if (n < 0) {
             perror("UDP sync receiver interrupted while listening");
@@ -254,8 +270,8 @@ void * udp_receiver_main(void *not_used)
 int create_sync_receiver()
 {
    // this was probably done elsewhere, but do it here just to make sure
-   init_timekeeper();   
-   // 
+   init_timekeeper();
+   //
    if (s_thread_init >= 0) {
       fprintf(stderr, "Error - attempted to create multiple udp sync "
             "receivers\n");

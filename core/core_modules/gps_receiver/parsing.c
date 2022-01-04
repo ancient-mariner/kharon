@@ -1,4 +1,19 @@
-// parse individual fields from NMEA sentences
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 
 // skip next field and advance to character beyond next comma
@@ -63,10 +78,10 @@ printf("Error parsing UTC date in '%s'\n", sentence);
    //    require a comma to terminate it
    if (endptr[0] != ',') {
 printf("Terminating UTC date comma not detected '%s'\n", sentence);
-      log_err(gps->log, "Terminating UTC date comma not detected '%s'", 
+      log_err(gps->log, "Terminating UTC date comma not detected '%s'",
             sentence);
       goto err;
-   } 
+   }
    out->available |= GPS_REC_AVAILABLE_DATE;
    if (endptr[1] == 0) {
       *idx = -1;
@@ -115,10 +130,10 @@ printf("Error parsing UTC time in '%s'\n", sentence);
    //    require a comma to terminate it
    if (endptr[0] != ',') {
 printf("Terminating UTC time comma not detected '%s'\n", sentence);
-      log_err(gps->log, "Terminating UTC time comma not detected '%s'", 
+      log_err(gps->log, "Terminating UTC time comma not detected '%s'",
             sentence);
       goto err;
-   } 
+   }
    out->available |= GPS_REC_AVAILABLE_TIME;
    if (endptr[1] == 0) {
       *idx = -1;
@@ -169,10 +184,10 @@ printf("Error parsing latitude in '%s'\n", sentence);
    //    require a comma to terminate it
    if (endptr[0] != ',') {
 printf("Terminating latitude comma not detected '%s'\n", sentence);
-      log_err(gps->log, "Terminating latitude comma not detected '%s'", 
+      log_err(gps->log, "Terminating latitude comma not detected '%s'",
             sentence);
       goto err;
-   } 
+   }
    /////////////////////////////////////////////////////////////////////
    // read latitude north or south
    // convert from ddmm.mmmm to dd.mmmmmm
@@ -199,10 +214,10 @@ printf("Terminating latitude comma not detected '%s'\n", sentence);
    //    require a comma to terminate it
    if (endptr[2] != ',') {
 printf("Terminating latitude N/S comma not detected '%s'\n", sentence);
-      log_err(gps->log, "Terminating latitude N/S comma not detected '%s'", 
+      log_err(gps->log, "Terminating latitude N/S comma not detected '%s'",
             sentence);
       goto err;
-   } 
+   }
    /////////////////////////////////////////////
    out->pos.y_deg = lat;
    out->available |= GPS_REC_AVAILABLE_LATITUDE;
@@ -252,10 +267,10 @@ printf("Error parsing longitude in '%s'\n", sentence);
    //    require a comma to terminate it
    if (endptr[0] != ',') {
 printf("Terminating longitude comma not detected '%s'\n", sentence);
-      log_err(gps->log, "Terminating longitude comma not detected '%s'", 
+      log_err(gps->log, "Terminating longitude comma not detected '%s'",
             sentence);
       goto err;
-   } 
+   }
    /////////////////////////////////////////////////////////////////////
    // read east/west
    // convert from dddmm.mmmm to dd.mmmmmm
@@ -281,10 +296,10 @@ printf("Terminating longitude comma not detected '%s'\n", sentence);
    //    require a comma to terminate it
    if (endptr[2] != ',') {
 printf("Terminating longitude N/S comma not detected '%s'\n", sentence);
-      log_err(gps->log, "Terminating longitude N/S comma not detected '%s'", 
+      log_err(gps->log, "Terminating longitude N/S comma not detected '%s'",
             sentence);
       goto err;
-   } 
+   }
    /////////////////////////////////////////////
    out->pos.x_deg = lon;
    out->available |= GPS_REC_AVAILABLE_LONGITUDE;
@@ -339,10 +354,10 @@ printf("Error parsing UTC time in '%s'\n", sentence);
    //    require a comma to terminate it
    if (endptr[0] != ',') {
 printf("Terminating UTC time comma not detected '%s'\n", sentence);
-      log_err(gps->log, "Terminating UTC time comma not detected '%s'", 
+      log_err(gps->log, "Terminating UTC time comma not detected '%s'",
             sentence);
       goto err;
-   } 
+   }
    out->available |= GPS_REC_AVAILABLE_TRACK;
    if (endptr[1] == 0) {
       *idx = -1;
@@ -389,10 +404,10 @@ printf("Error parsing UTC time in '%s'\n", sentence);
    //    require a comma to terminate it
    if (endptr[0] != ',') {
 printf("Terminating UTC time comma not detected '%s'\n", sentence);
-      log_err(gps->log, "Terminating UTC time comma not detected '%s'", 
+      log_err(gps->log, "Terminating UTC time comma not detected '%s'",
             sentence);
       goto err;
-   } 
+   }
    out->available |= GPS_REC_AVAILABLE_SPEED;
    if (endptr[1] == 0) {
       *idx = -1;

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(WORLD_MAP_H)
 #define WORLD_MAP_H
 #include <stdint.h>
@@ -44,7 +60,7 @@ extern const uint32_t GEBCO_LEFT[8];
 #define NUM_MAP_LEVEL2_SQUARES   (MAP_LEVEL2_SIZE * MAP_LEVEL2_SIZE)
 #define NUM_MAP_LEVEL3_SQUARES   (MAP_LEVEL3_SIZE * MAP_LEVEL3_SIZE)
 
-// depth threshold such that, if water somewhere in a world grid square 
+// depth threshold such that, if water somewhere in a world grid square
 //    is shallower than this, submaps are created for that square
 #define SUBMAP_DEPTH_THRESHOLD_METERS   (65)
 
@@ -109,7 +125,7 @@ typedef union map_subgrid_pos map_subgrid_pos_type;
 ////////////////////////////////////////////////
 // level 1
 
-// available resolution of level2 map 
+// available resolution of level2 map
 #define MAP_FLAG_LEVEL_2    0x01
 #define MAP_FLAG_LEVEL_3    0x02
 #define MAP_FLAG_LEVEL_4    0x04   // not used presently -- 1sec resolution
@@ -127,7 +143,7 @@ union map_level1_square {
       // values in meters
       int16_t low;
       int16_t high;
-      // 
+      //
       uint16_t flags;
       uint16_t reserved;
    };
@@ -188,7 +204,7 @@ struct map_level3 {
 };
 typedef struct map_level3 map_level3_type;
 
-// 
+//
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 // API
@@ -315,7 +331,7 @@ world_coordinate_type convert_akn_to_world(
 
 
 // computes row and column for position with map located at map_center
-// if coordinate is w/in map, 0 is returned, otherwise if outside of 
+// if coordinate is w/in map, 0 is returned, otherwise if outside of
 //    map area, -1 is returned
 // it is assumed/required that map center is more than 0.5 degs away
 //    from north pole

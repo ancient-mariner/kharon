@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pinet.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,9 +32,9 @@
 #include "core_modules/attitude.h"
 
 static void make_weighted_average(
-      /* in     */ const datap_desc_type *dp, 
+      /* in     */ const datap_desc_type *dp,
       /* in out */       log_info_type *log,
-      /* in     */ const double t, 
+      /* in     */ const double t,
       /* in     */ const uint32_t idx_before,
       /* in     */ const uint32_t idx_after,
       /*    out */       attitude_output_type *rot
@@ -27,10 +43,10 @@ static void make_weighted_average(
    const double t0 = dp->ts[idx_before];
    const double t1 = dp->ts[idx_after];
    const double dt = t1 - t0;
-   log_info(log, "Interpolating %.3f (idx=%ld) on interval [%0.3f, %0.3f]", 
+   log_info(log, "Interpolating %.3f (idx=%ld) on interval [%0.3f, %0.3f]",
          t, idx_before, t0, t1);
    if (c_assert(dt > 0.0) != 0) {
-      // this is a recoverable error, but it indicates a problem 
+      // this is a recoverable error, but it indicates a problem
       //    somewhere (ie, this should never happen)
       log_err(log, "Internal attitude error. Time between successive "
             "timestamps is not increasing");
@@ -54,9 +70,9 @@ static void make_weighted_average(
 //    (probably OK, but need to check)
 // called by attitude consumer (e.g., optical_up)
 void get_attitude(
-      /* in     */ const datap_desc_type *dp, 
+      /* in     */ const datap_desc_type *dp,
       /* in out */       log_info_type *log,
-      /* in     */ const double t, 
+      /* in     */ const double t,
       /*    out */       enum attitude_query_state *out_status,
       /*    out */       attitude_output_type *rot,
       /* in out */       uint64_t *prev_idx

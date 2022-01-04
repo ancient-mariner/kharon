@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pinet.h"
 
 #include <stdio.h>
@@ -20,7 +36,7 @@ Performs system shutdown on request
 
 Listens on port 9000
 Accepts UDP packets. First 4 bytes of payload is version string. Version
-   is numerical ascii, starting at "001\0". Payload is 256 bytes. Total 
+   is numerical ascii, starting at "001\0". Payload is 256 bytes. Total
    packet size is 260 bytes. When a response is required, it is 256 bytes.
 version 0001:
    char[4]     header
@@ -55,20 +71,20 @@ static void create_udp_socket(void)
       perror("Error creating udp receiver socket");
       hard_exit(__func__, 1);
    }
-   // bind socket to listening port 
+   // bind socket to listening port
    memset((char *) &sock_addr_, 0, sizeof(sock_addr_));
    sock_addr_.sin_family = AF_INET;
    sock_addr_.sin_port = htons((int16_t) KILL_PORT);
    sock_addr_.sin_addr.s_addr = htonl(INADDR_ANY);
    // share port with others
    int one = 1;
-   if (setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, &one, 
+   if (setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, &one,
             sizeof(one)) != 0) {
       perror("Error setting SO_REUSEADDR in udp sync receiver");
       hard_exit(__func__, 2);
    }
    // bind port
-   if (bind(sockfd_, (struct sockaddr*) &sock_addr_, 
+   if (bind(sockfd_, (struct sockaddr*) &sock_addr_,
          sizeof(sock_addr_))==-1) {
       perror("Error binding to port (udp sync receiver)");
       hard_exit(__func__, 3);

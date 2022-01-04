@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,7 +49,7 @@ static pthread_mutex_t s_sync_mutex;
 //    interruption is due termination
 static int32_t s_abort_flag = 0;
 
-// sigusr2 handler -- this is a no-op. the role of sigusr2 is to 
+// sigusr2 handler -- this is a no-op. the role of sigusr2 is to
 //    wake the thread if it's sleeping
 static void sigusr2_callback(int sig)
 {
@@ -86,7 +102,7 @@ printf("UDP pre-run\n");
       goto err;
    }
    int32_t broadcast = 1;
-   if (setsockopt(udp->sockfd, SOL_SOCKET, SO_BROADCAST, 
+   if (setsockopt(udp->sockfd, SOL_SOCKET, SO_BROADCAST,
             &broadcast, sizeof(broadcast)) != 0) {
       perror("setsockopt broadcast");
       goto err;
@@ -134,7 +150,7 @@ void send_sync_packet(uint32_t type)
    // set packet timestamp
    snprintf(pack.timestamp, TIMESTAMP_STR_LEN, "%.6f", system_now());
    // send packet
-   if (sendto(s_udp->sockfd, &pack, sizeof(pack), 0, 
+   if (sendto(s_udp->sockfd, &pack, sizeof(pack), 0,
                &s_udp->sock_addr, sizeof(s_udp->sock_addr))==-1) {
       perror("UDP sync broadcast error");
       hard_exit(__FILE__, __LINE__);
@@ -147,7 +163,7 @@ static int32_t sync_sleep(double seconds)
 {
    increment_timef(&s_udp->bcast_time, seconds);
    int32_t rc;
-   while ((rc = clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, 
+   while ((rc = clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME,
                &s_udp->bcast_time, NULL)) != 0) {
       if (rc != EINTR) {
          perror("UDP frame sync sleep problem");
@@ -169,7 +185,7 @@ printf("UDP run\n");
    struct udp_sync_class *udp = (struct udp_sync_class*) dp->local;
    clock_gettime(CLOCK_MONOTONIC, &udp->bcast_time);
    /////////////////////////////////////////////////////////////////////
-   // approach: 
+   // approach:
    //    send time sync packet every X seconds
    //    before doing so, send packet to pause network traffic so
    //       packet reaches each node at ~ same time
@@ -188,7 +204,7 @@ printf("Send sync\n");
       if (sync_sleep(RUNNING_INTERVAL) < 0)
          break;
       send_sync_packet(UDP_SYNC_PACKET_PAUSE);
-      // wait for a second to make sure network is quiet and then send 
+      // wait for a second to make sure network is quiet and then send
       //    time sync packet
       if (sync_sleep(QUIET_INTERVAL) < 0)
          break;

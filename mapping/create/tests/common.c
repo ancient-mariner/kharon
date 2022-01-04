@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -39,10 +55,10 @@ static int32_t check_world_pos(
 {
    akn_position_type akn = { .akn_x = akn_x, .akn_y = akn_y };
    world_coordinate_type world = convert_akn_to_world(akn);
-   if ((fabs(world_x - world.lon) > 0.001) || 
+   if ((fabs(world_x - world.lon) > 0.001) ||
          (fabs(world_y - world.lat) > 0.001)) {
       fprintf(stderr, "%s akn->world error for %.1f, %.1f. Expected "
-            "%.3f,%.3f, got %.3f,%.3f\n", label, akn_x, akn_y, 
+            "%.3f,%.3f, got %.3f,%.3f\n", label, akn_x, akn_y,
             world_x, world_y, world.lon, world.lat);
       return 1;
    }
@@ -285,7 +301,7 @@ static int32_t test_convert_akn_to_map_coord(void)
    expected.y = 360;
    if (convert_akn_to_map_coord(pos, map_center, &map_pos) != 0) {
       fprintf(stderr, "Falsely reported that %.3f,%.3f is not in map "
-            "centered at %.3f,%.3f\n", pos.akn_x, pos.akn_y, 
+            "centered at %.3f,%.3f\n", pos.akn_x, pos.akn_y,
             map_center.akn_x, map_center.akn_y);
       errs++;
    }

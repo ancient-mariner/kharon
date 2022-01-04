@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "s2.h"
 #include <stdio.h>
 #include <assert.h>
@@ -35,7 +51,7 @@
 // GYR sensors should sample at 12.5ms intervals
 // ACC and MAG sensors should sample at 25ms intervals, or at a larger
 //    multiple of 12.5. to ease traffic on the I2C bus, sensor reads
-//    can be offset relative to each other. by convention, if an 
+//    can be offset relative to each other. by convention, if an
 //    offset is used, run the ACC on multiples of 25ms intervals, and
 //    MAG delayed 12.5ms from this
 // GPS assumed to sample at 1sec intervals, or at other multiple of
@@ -133,7 +149,7 @@ static void report_timing_error(
    //    should situation only be logged and ignored
    log_err(log_, "TIMING ERROR -- waketime is in the past");
    log_err(log_, "NOW: sec=%ld  nsec=%ld", now->tv_sec, now->tv_nsec);
-   snprintf(log_data_, SENSOR_PACKET_LOG_DATA, 
+   snprintf(log_data_, SENSOR_PACKET_LOG_DATA,
          "Waketime in the past: sec=%ld  nsec=%ld", now->tv_sec, now->tv_nsec);
    for (uint32_t i=0; i<MAX_SENSORS; i++) {
       const uint32_t flags = sensor_stack_[i].flags;
@@ -141,7 +157,7 @@ static void report_timing_error(
          break;
       if (flags & SENSOR_FLAG_DISABLED)
          continue;
-      log_err(log_, "%s:%s  sec=%ld  nsec=%ld", 
+      log_err(log_, "%s:%s  sec=%ld  nsec=%ld",
             sensor_stack_[i].device_addr,
             sensor_stack_[i].type_name,
             sensor_stack_[i].waketime.tv_sec,
@@ -157,11 +173,11 @@ static void print_consensus(
    const vector_type *gyr = &cons->gyr_axis;
    const vector_type *acc = &cons->acc;
    const vector_type *mag = &cons->mag;
-   printf("%6.2f,%6.2f,%6.2f,  ", 
+   printf("%6.2f,%6.2f,%6.2f,  ",
          (double) gyr->v[0], (double) gyr->v[1], (double) gyr->v[2]);
-   printf("%7.3f,%7.3f,%7.3f,  ", 
+   printf("%7.3f,%7.3f,%7.3f,  ",
          (double) acc->v[0], (double) acc->v[1], (double) acc->v[2]);
-   printf("%6.2f,%6.2f,%6.2f,  ", 
+   printf("%6.2f,%6.2f,%6.2f,  ",
          (double) mag->v[0], (double) mag->v[1], (double) mag->v[2]);
    printf("%6.2f\n", (double) cons->temp);
 }
@@ -215,7 +231,7 @@ static uint32_t read_config_info(void)
       if (dir->d_name[0] == '.')
          continue;
       // ignore entries with leading underscore (e.g., _readme.txt)
-      if (dir->d_name[0] == '_') 
+      if (dir->d_name[0] == '_')
          continue;
       if (num_sensors >= MAX_SENSORS) {
          log_err(log_, "Too many sensors i2c specified (max=%d)",
@@ -229,11 +245,11 @@ static uint32_t read_config_info(void)
       sensor_runtime_type *sensor = &sensor_stack_[num_sensors++];
       strncpy(sensor->name, dir->d_name, SENSOR_NAME_LEN);
       log_info(log_, "loading %s", dir->d_name);
-      snprintf(sensor->config_root, SENSOR_PATH_LEN, "%s%s/", root, 
+      snprintf(sensor->config_root, SENSOR_PATH_LEN, "%s%s/", root,
             dir->d_name);
       // get device address info
       FILE *fp;
-      fp = open_config_file_ro2(PI_DEV_ROOT, NULL, "sensors/i2c/", dir->d_name, 
+      fp = open_config_file_ro2(PI_DEV_ROOT, NULL, "sensors/i2c/", dir->d_name,
             "dev_addr");
       if (!fp) {
          log_err(log_, "Failed to open dev_addr for %s", dir->d_name);
@@ -246,7 +262,7 @@ static uint32_t read_config_info(void)
       }
       fclose(fp);
       // get name address info
-      fp = open_config_file_ro2(PI_DEV_ROOT, NULL, "sensors/i2c/", 
+      fp = open_config_file_ro2(PI_DEV_ROOT, NULL, "sensors/i2c/",
             dir->d_name, "dev_name");
       if (!fp) {
          log_err(log_, "Failed to open dev_name for %s", dir->d_name);
@@ -547,7 +563,7 @@ static int32_t base_initialization(
          master_time_ += delay;
          // update clock and log change
          double dt = now() - master_time_;
-         snprintf(log_data_, SENSOR_PACKET_LOG_DATA, 
+         snprintf(log_data_, SENSOR_PACKET_LOG_DATA,
                "Clock override -- dT=%.4f", dt);
          log_data_[SENSOR_PACKET_LOG_DATA-1] = 0;
          timekeeper_set_time_f(master_time_);
@@ -679,7 +695,7 @@ static int32_t acquisition_loop(
                         sensor->name);
                   sensor->flags |= SENSOR_FLAG_DISABLED;
                   continue;
-               }  
+               }
                sensor->self_test = NULL;
             }
             sensor->update(sensor, &data_available);
@@ -712,9 +728,9 @@ static int32_t acquisition_loop(
          if (flags & SENSOR_FLAG_MAG) {
             update_mag(sensor_stack_, &consensus);
          }
-         // on update to gyro, update consensus orientation then add 
+         // on update to gyro, update consensus orientation then add
          //    bias to signal from consensus attitude
-         if (flags & SENSOR_FLAG_GYRO) { 
+         if (flags & SENSOR_FLAG_GYRO) {
             update_gyr(sensor_stack_, &consensus);
          }
          //
@@ -735,13 +751,13 @@ static int32_t acquisition_loop(
                   log_err(log_, "Failed to send broadcast of concensus data");
                   break;   // network failure. exit and let supervisor restart
                }
-               // don't start logging until we successfully broadcast data. 
-               //    otherwise, if kernel not running but supervisor is, 
-               //    new logging directory will be created every 5 seconds 
+               // don't start logging until we successfully broadcast data.
+               //    otherwise, if kernel not running but supervisor is,
+               //    new logging directory will be created every 5 seconds
                //    (or whatever super's check interval is)
                if (!log_) {
                   log_ = get_logger("s2");
-                  log_info(log_, "Sensor acquisition process (%s)", 
+                  log_info(log_, "Sensor acquisition process (%s)",
                         SENSOR_BUILD_VERSION);
                }
             }

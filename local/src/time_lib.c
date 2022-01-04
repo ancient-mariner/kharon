@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "time_lib.h"
 #include <stdio.h>
 #include <assert.h>
@@ -10,10 +26,10 @@ microsecond_timestamp_type timestamp_from_real(
 {
    // simply casting an int64 to float and back can provide the wrong
    //    number, due rounding error. adding a small value before the cast
-   //    will compensate for that problem. a rounding factor = 4.99e-7 has 
+   //    will compensate for that problem. a rounding factor = 4.99e-7 has
    //    been tested round-trip for timestamps for 1ms resolution
    //    timestamps representing time out to 50 years (i.e., 1.6e9 seconds)
-   const microsecond_timestamp_type t = 
+   const microsecond_timestamp_type t =
          { .usec = (uint64_t) ((t_dbl + 4.99e-7) * 1.0e6) };
    return t;
 }
@@ -45,7 +61,7 @@ void double_to_timespec(
 {
    assert(seconds >= 0.0);
    ts->tv_sec = (time_t) (seconds);
-   ts->tv_nsec = (long) 
+   ts->tv_nsec = (long)
          (1.0e9 * (seconds - (double) ((time_t) (seconds))) + 0.5);
 }
 
@@ -64,7 +80,7 @@ double time_delta_seconds(
       /* in     */ const struct timespec *b
       )
 {
-   double t = (double) (b->tv_sec - a->tv_sec) + 
+   double t = (double) (b->tv_sec - a->tv_sec) +
          1.0e-9 * ((double) (b->tv_nsec - a->tv_nsec));
    return fabs(t);
 }
@@ -110,7 +126,7 @@ void timeadd_f(
 }
 
 
-// returns 1 if a is later than b, -1 if b is later than a, 
+// returns 1 if a is later than b, -1 if b is later than a,
 //    and 0 if they're equal
 int32_t timecmp(
       /* in     */ const struct timespec *a,
@@ -146,7 +162,7 @@ int32_t sleep_until(
    while (clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, waketime,
             NULL) != 0) {
       // check for quit signal -- in case sleeping forever
-      if (*quit != 0)   
+      if (*quit != 0)
          return EINTR;
       if ((errno != 0) && (errno != EINTR)) {
          return errno;
@@ -288,7 +304,7 @@ static uint32_t test_times(void)
    return errs;
 }
 
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
    (void) argc;
    (void) argv;

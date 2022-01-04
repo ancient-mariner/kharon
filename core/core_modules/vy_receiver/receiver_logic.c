@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pinet.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,7 +42,7 @@ static void wait_next_connection(
    struct vy_class *vy = (struct vy_class*) dp->local;
    while ((dp->run_state & DP_STATE_DONE) == 0) {
       log_info(vy->log, "VY waiting for connection");
-      if ((vy->connfd = wait_for_connection(vy->sockfd, 
+      if ((vy->connfd = wait_for_connection(vy->sockfd,
             dp->td->obj_name)) < 0) {
          if (vy->connfd == -2) {
             continue;
@@ -51,16 +67,16 @@ static void wait_next_connection(
       }
       magic = htonl(magic);
       if (magic != VY_STREAM_ID) {
-         log_err(vy->log, "%s received inappropriate magic number", 
+         log_err(vy->log, "%s received inappropriate magic number",
                dp->td->obj_name);
-         log_err(vy->log, "Received 0x%08x, expected 0x%08x", magic, 
+         log_err(vy->log, "Received 0x%08x, expected 0x%08x", magic,
                VY_STREAM_ID);
          response = HANDSHAKE_ERROR;
       }
       response = htonl(response);
       log_info(vy->log, "Sending handshake response");
       if (send_block(vy->connfd, &response, sizeof(response)) < 0) {
-         log_err(vy->log, "%s failed to send handshake response", 
+         log_err(vy->log, "%s failed to send handshake response",
                dp->td->obj_name);
          log_err(vy->log, "Breaking connection");
          close(vy->connfd);
@@ -117,7 +133,7 @@ err:
 }
 
 
-//static int save_pgm_file(const char *dir, const char* filename, 
+//static int save_pgm_file(const char *dir, const char* filename,
 //      struct datap_desc *uvy_dp, int32_t idx)
 static int32_t log_to_pgm_file(
       /* in     */ const struct datap_desc *dp,
@@ -125,7 +141,7 @@ static int32_t log_to_pgm_file(
       )
 {
    int32_t rc = -1;
-   // filename is actual acquisition time. log stores equivalent of 
+   // filename is actual acquisition time. log stores equivalent of
    //    frame number to associate with this time
    //const double t = out->frame_request_time;
    const double t = dp->ts[idx];
@@ -133,7 +149,7 @@ static int32_t log_to_pgm_file(
    struct vy_class *vy = (struct vy_class*) dp->local;
    char path[STR_LEN];
    snprintf(path, STR_LEN, "%s/%.3f.pgm", vy->data_folder, t);
-   if (write_pgm_file(vy->raw_v, vy->raw_y, path, 
+   if (write_pgm_file(vy->raw_v, vy->raw_y, path,
             CAM_ROWS, CAM_COLS) != 0) {
       fprintf(stderr, "Error writing VY output %s\n", path);
       goto err;
@@ -166,7 +182,7 @@ static void pull_data(
       }
       //unpack_sensor_header(&header, &pkt_type, &remote_time);
       log_debug(vy->log, "Unpack packet header");
-      unpack_sensor_header2(&header, &pkt_type, &frame_request, 
+      unpack_sensor_header2(&header, &pkt_type, &frame_request,
             &frame_received);
       if (pkt_type != VY_PACKET_TYPE) {
          log_err(vy->log, "Packet type error\nExpected 0x%08x, "
@@ -177,7 +193,7 @@ static void pull_data(
       if (header.log_data[0] != 0) {
       //if (header.log_data[0] != 0) {
          header.log_data[SENSOR_PACKET_LOG_DATA-1] = 0;
-         log_info(vy->log, "%s remote log: '%s'", dp->td->obj_name, 
+         log_info(vy->log, "%s remote log: '%s'", dp->td->obj_name,
                header.log_data);
       }
       // store timestamp (provided in packet header)
@@ -196,11 +212,11 @@ static void pull_data(
       dim.cols = htons((uint16_t) header.custom_16[1]);
       if ((dim.rows != CAM_ROWS) || (dim.cols != CAM_COLS)) {
          log_err(vy->log, "Frame size mismatch in %s", dp->td->obj_name);
-         log_err(vy->log, "Expecting %dx%d, received %d,%d", 
+         log_err(vy->log, "Expecting %dx%d, received %d,%d",
                CAM_COLS, CAM_ROWS, dim.cols, dim.rows);
          close(vy->connfd);
          vy->connfd = -1;
-         // this is a configuration error that cannot be fixed and 
+         // this is a configuration error that cannot be fixed and
          //    will otherwise repeat indefinitely
          hard_exit("vy_receiver::vy_class_run", 1);
       }
@@ -210,13 +226,13 @@ static void pull_data(
       // v channel
       //if (recv_block(vy->connfd, out->v_chan, CAM_N_PIX) < 0) {
       if (recv_block(vy->connfd, vy->raw_v, CAM_N_PIX) < 0) {
-         log_err(vy->log, "\n%s read error, v-chan. Breaking connection", 
+         log_err(vy->log, "\n%s read error, v-chan. Breaking connection",
                dp->td->obj_name);
          goto end;
       }
       // y channel
       if (recv_block(vy->connfd, vy->raw_y, CAM_N_PIX) < 0) {
-         log_err(vy->log, "\n%s read error, y-chan. Breaking connection", 
+         log_err(vy->log, "\n%s read error, y-chan. Breaking connection",
                dp->td->obj_name);
          goto end;
       }
@@ -272,7 +288,7 @@ static void pull_data(
       // all done. let others know
       dp->elements_produced++;
 //printf("Posting frame at %.6f. Remote time: %.6f\n", now(), remote_time);
-      log_info(vy->log, "Signaling data available (%ld)", 
+      log_info(vy->log, "Signaling data available (%ld)",
             dp->elements_produced);
       dp_signal_data_available(dp);
    }
@@ -310,14 +326,14 @@ void module_config_load_cam_to_ship(
       /*    out */       matrix_type *dev2ship
       )
 {
-   FILE *fp = open_config_file_ro2(get_environment(), device_name, "sensors", 
+   FILE *fp = open_config_file_ro2(get_environment(), device_name, "sensors",
          NULL, "cam_dev2ship");
    if (!fp) {
       log_err(log, "Unable to open cam-2-ship file for '%s'", module_name);
       goto err;
    }
    if (config_read_matrix(fp, dev2ship) != 0) {
-      log_err(log, "Unable to read alignment dev2ship for '%s'", 
+      log_err(log, "Unable to read alignment dev2ship for '%s'",
             module_name);
       goto err;
    }

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
@@ -27,7 +43,7 @@ err:
 }
 
 int write_pnm_file(
-      /* in     */ const char *filename, 
+      /* in     */ const char *filename,
       /* in     */ const image_size_type size,
       /* in     */ const pix_type * restrict rgb
       )
@@ -108,7 +124,7 @@ err:
 
 
 ////////////////////////////////////////////////////////////////////////
-// image 
+// image
 
 void free_image(image_type* img)
 {
@@ -140,7 +156,7 @@ image_type* raw_create_image(image_size_type size)
    }
    goto done;
 err:
-   fprintf(stderr, "Malloc error in raw_create_image (%d pix)\n", 
+   fprintf(stderr, "Malloc error in raw_create_image (%d pix)\n",
          (int32_t) n_pix);
    free_image(img);
    img = NULL;
@@ -339,12 +355,12 @@ uint8_t clamp255(double x)
 
 //static inline void yuv_to_rgb(pix_type *pix)
 //{
-//   uint8_t r = clamp255((double) pix->y + 
+//   uint8_t r = clamp255((double) pix->y +
 //            1.402f * ((double) ((pix->v-128))));
-//   uint8_t g = clamp255((double) pix->y - 
-//            0.344f * ((double) (pix->u-128)) - 
+//   uint8_t g = clamp255((double) pix->y -
+//            0.344f * ((double) (pix->u-128)) -
 //            0.714f * ((double) (pix->v-128)));
-//   uint8_t b = clamp255((double) pix->y + 
+//   uint8_t b = clamp255((double) pix->y +
 //            1.772f * ((double) ((pix->u-128))));
 //   pix->r = r;
 //   pix->g = g;

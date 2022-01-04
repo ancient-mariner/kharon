@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <fcntl.h>
@@ -30,7 +46,7 @@ static double log_timer_ = 0.0;
 
 static void write_acc_register(
       /* in out */       sensor_runtime_type *dev,
-      /* in     */ const uint8_t reg, 
+      /* in     */ const uint8_t reg,
       /* in     */ const uint8_t value
       )
 {
@@ -42,7 +58,7 @@ static void write_acc_register(
 
 static void write_mag_register(
       /* in out */       sensor_runtime_type *dev,
-      /* in     */ const uint8_t reg, 
+      /* in     */ const uint8_t reg,
       /* in     */ const uint8_t value
       )
 {
@@ -54,7 +70,7 @@ static void write_mag_register(
 
 static void write_gyr_register(
       /* in out */       sensor_runtime_type *dev,
-      /* in     */ const uint8_t reg, 
+      /* in     */ const uint8_t reg,
       /* in     */ const uint8_t value
       )
 {
@@ -184,7 +200,7 @@ static void pull_gyro_data(
          uint8_t raw[6];
          int16_t vals[3];
       } bucket;
-      // 
+      //
       int32_t accum[3];
       for (uint32_t i=0; i<3; i++)
          accum[i] = 0;
@@ -216,8 +232,8 @@ static void acc_data_available(
    uint8_t cmd = 0x80 | STATUS_REG_A;
    select_device(dev, dev->accel.accel_addr);
    int hw = dev->hw_device;
-   if (i2c_smbus_read_i2c_block_data(hw, cmd, ACC_DATA_AVAILABLE_SIZE, 
-         data) < 0) 
+   if (i2c_smbus_read_i2c_block_data(hw, cmd, ACC_DATA_AVAILABLE_SIZE,
+         data) < 0)
    {
       device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAG_ACC);
    }
@@ -237,11 +253,11 @@ static void pull_acc_data(
       int16_t data[3];
       read_acc_data(dev, data);
       apply_gain(data, &dev->accel.gain, &dev->accel.up);
-//      apply_gain_scale_offset(data, &dev->accel.gain, 
+//      apply_gain_scale_offset(data, &dev->accel.gain,
 //            &dev->accel.scale, &dev->accel.offset, &dev->accel.up);
 //print_vec(&dev->accel.up, "ACC data");
 //printf("ACC: %d, %d, %d  \n", data[0], data[1], data[2]);
-   } 
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -257,8 +273,8 @@ static void mag_data_available(
    uint8_t cmd = 0x80 | STATUS_REG_M;
    select_device(dev, dev->mag.mag_addr);
    int hw = dev->hw_device;
-   if (i2c_smbus_read_i2c_block_data(hw, cmd, MAG_DATA_AVAILABLE_SIZE, 
-         data) < 0) 
+   if (i2c_smbus_read_i2c_block_data(hw, cmd, MAG_DATA_AVAILABLE_SIZE,
+         data) < 0)
    {
       device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAG_MAG);
    }
@@ -277,7 +293,7 @@ static void pull_mag_temp_data(
       int16_t data[3];
       read_mag_data(dev, data);
       apply_gain(data, &dev->mag.gain, &dev->mag.mag);
-//      apply_gain_scale_offset(data, &dev->mag.gain, 
+//      apply_gain_scale_offset(data, &dev->mag.gain,
 //            &dev->mag.scale, &dev->mag.offset, &dev->mag.mag);
       // pull temp data too
       int16_t raw_temp[1];
@@ -286,7 +302,7 @@ static void pull_mag_temp_data(
 //printf("MAG: %d, %d, %d    TEMP: %d\n", data[0], data[1], data[2], raw_temp[0]);
 //print_vec(&dev->accel.mag, "MAG data");
 //printf("    temp=%f\n", (double) dev->temp.celcius);
-   } 
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -316,7 +332,7 @@ static void initialize_device(
    for (uint32_t i=0; i<3; i++)
       acc->gain.v[i] = acc_gain;
    // magnetometer
-   // REG5 TEMP on, high res, 12.5Hz 
+   // REG5 TEMP on, high res, 12.5Hz
    write_mag_register(device, CTRL_REG5_XM, 0b11101000);
    // REG6 +/- 2 Gauss
    write_mag_register(device, CTRL_REG6_XM, 0b00000000);
@@ -342,7 +358,7 @@ static void initialize_device(
    write_gyr_register(device, CTRL_REG5_G, 0b01000000);
    // FIFO_CTRL_REG stream mode, [unused] watermark=16
    write_gyr_register(device, FIFO_CTRL_REG_G, 0b01010000);
-   // 
+   //
    const double gyr_gain = 0.00875;
    //const float gyr_gain = 0.00875f * DT_SEC;
    for (uint32_t i=0; i<3; i++)
@@ -430,7 +446,7 @@ void lsm9ds0_update(
    if (t > log_timer_) {
       log_timer_ = t + DRIFT_LOG_INTERVAL;
       vector_type *drift_dps = &dev->gyro.drift_dps;
-      snprintf(dev->log_data, SENSOR_PACKET_LOG_DATA, 
+      snprintf(dev->log_data, SENSOR_PACKET_LOG_DATA,
             "drift dps: %.3f, %.3f, %.3f", (double) drift_dps->v[0],
             (double) drift_dps->v[1], (double) drift_dps->v[2]);
    }

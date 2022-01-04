@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #define _GNU_SOURCE
 #include "pin_types.h"
 #include <stdio.h>
@@ -20,10 +36,10 @@
 
 // blur first/last line of image
 static void blur_top_row(
-      /* in     */ const uint8_t *restrict r0, 
-      /* in     */ const uint8_t *restrict r1, 
-      /* in     */ const uint16_t img_w, 
-      /* in     */ const uint16_t buf_w, 
+      /* in     */ const uint8_t *restrict r0,
+      /* in     */ const uint8_t *restrict r1,
+      /* in     */ const uint16_t img_w,
+      /* in     */ const uint16_t buf_w,
       /*    out */ uint8_t *restrict y2)
 {
    // first col
@@ -49,11 +65,11 @@ static void blur_top_row(
 
 // blur center row in image
 static void blur_body(
-      /* in     */ const uint8_t *restrict r0, 
-      /* in     */ const uint8_t *restrict r1, 
-      /* in     */ const uint8_t *restrict r2, 
-      /* in     */ const uint16_t img_w, 
-      /* in     */ const uint16_t buf_w, 
+      /* in     */ const uint8_t *restrict r0,
+      /* in     */ const uint8_t *restrict r1,
+      /* in     */ const uint8_t *restrict r2,
+      /* in     */ const uint16_t img_w,
+      /* in     */ const uint16_t buf_w,
       /*    out */ uint8_t *restrict y2)
 {
    // first col
@@ -82,8 +98,8 @@ static void blur_body(
 
 // blur y, downsample it, and store results in y2
 void downsample(
-      /* in     */ const uint8_t *restrict img, 
-      /* in     */ const image_size_type img_size, 
+      /* in     */ const uint8_t *restrict img,
+      /* in     */ const image_size_type img_size,
       /* in     */ const image_size_type down_size,
       /*    out */ uint8_t *restrict down)
 {
@@ -92,8 +108,8 @@ void downsample(
 
 // blur y, downsample it, and store results in y2
 void downsample_33(
-      /* in     */ const uint8_t *restrict img, 
-      /* in     */ const image_size_type img_size, 
+      /* in     */ const uint8_t *restrict img,
+      /* in     */ const image_size_type img_size,
       /* in     */ const image_size_type down_size,
       /*    out */ uint8_t *restrict down)
 {
@@ -118,9 +134,9 @@ void downsample_33(
    // safety check
    if (buf != (&down[down_size.cols * down_size.rows])) {
       fprintf(stderr, "Internal error: downsample output buffer\n");
-      fprintf(stderr, "\tNumber of bytes in buffer: %d\n", 
+      fprintf(stderr, "\tNumber of bytes in buffer: %d\n",
             down_size.x * down_size.y);
-      fprintf(stderr, "\tNumber of bytes written: %d\n", 
+      fprintf(stderr, "\tNumber of bytes written: %d\n",
             (uint32_t) (buf - down));
       exit(1);
    }
@@ -133,7 +149,7 @@ void downsample_33(
 //
 //// downsample 2D array 'orig' to 'down'
 //// each downsmple pixel is weighed average of pixels in original
-////    array equivalent to if original array was convolved with 
+////    array equivalent to if original array was convolved with
 ////    Gaussian-like kernel.
 //// if original array were convolved with the 5x5 Gaussian kernel:
 ////
@@ -142,10 +158,10 @@ void downsample_33(
 ////   7  26  41  26   7
 ////   4  16  26  16   4
 ////   1   4   7   4   1
-////  
+////
 ////   divided by 273
 ////
-//// then the downsampled values would be the values in the original 
+//// then the downsampled values would be the values in the original
 ////    array weighted by the following:
 ////
 ////    1   5  11  11   5   1
@@ -171,10 +187,10 @@ void downsample_33(
 ////
 //// which can be further simplifed to:
 ////
-////      1 1  
+////      1 1
 ////    1 2 2 1
 ////    1 2 2 1
-////      1 1   
+////      1 1
 ////
 ////    divided by 16
 ////
@@ -182,10 +198,10 @@ void downsample_33(
 ////    images. switching to a higher center-weighted kernel improves this
 //// (comparison made between gimp-based downsample and iterative calls to downsample)
 ////
-////      1 1  
+////      1 1
 ////    1 4 4 1
 ////    1 4 4 1
-////      1 1   
+////      1 1
 ////
 ////    divided by 24
 //
@@ -212,11 +228,11 @@ void downsample_33(
 //
 //// blur first/last line of image
 //static void blur_line3(
-//      /* in     */ const uint8_t *restrict r0, 
-//      /* in     */ const uint8_t *restrict r1, 
-//      /* in     */ const uint8_t *restrict r2, 
-//      /* in     */ const uint16_t img_w, 
-//      /* in     */ const uint16_t buf_w, 
+//      /* in     */ const uint8_t *restrict r0,
+//      /* in     */ const uint8_t *restrict r1,
+//      /* in     */ const uint8_t *restrict r2,
+//      /* in     */ const uint16_t img_w,
+//      /* in     */ const uint16_t buf_w,
 //      /*    out */ uint8_t *restrict y2)
 //{
 //   uint32_t sum;
@@ -229,8 +245,8 @@ void downsample_33(
 //      } else {
 //#endif   // PIXEL_CARRIES_NULL
 //         sum = (uint32_t) (
-//               4*r0[0] + 4*r0[1] + r0[2] + 
-//               4*r1[0] + 4*r1[1] + r1[2] + 
+//               4*r0[0] + 4*r0[1] + r0[2] +
+//               4*r1[0] + 4*r1[1] + r1[2] +
 //                 r2[0] +   r2[1]);
 //         *y2++ = (uint8_t) ((sum + 10) / 20);   // round to nearest
 //#if defined(PIXEL_CARRIES_NULL)
@@ -256,8 +272,8 @@ void downsample_33(
 //         } else {
 //#endif   // PIXEL_CARRIES_NULL
 //            sum = (uint32_t) (
-//                  r0c0   + 4*r0[c1] + 4*r0[c2] + r0c3   + 
-//                  r1c0   + 4*r1[c1] + 4*r1[c2] + r1c3   + 
+//                  r0c0   + 4*r0[c1] + 4*r0[c2] + r0c3   +
+//                  r1c0   + 4*r1[c1] + 4*r1[c2] + r1c3   +
 //                             r2c1   +   r2c2);
 //            *y2++ = (uint8_t) ((sum + 11) / 22);   // round to nearest
 //#if defined(PIXEL_CARRIES_NULL)
@@ -292,12 +308,12 @@ void downsample_33(
 //
 //// blur center row in image
 //static void blur_line4(
-//      /* in     */ const uint8_t *restrict r0, 
-//      /* in     */ const uint8_t *restrict r1, 
-//      /* in     */ const uint8_t *restrict r2, 
+//      /* in     */ const uint8_t *restrict r0,
+//      /* in     */ const uint8_t *restrict r1,
+//      /* in     */ const uint8_t *restrict r2,
 //      /* in     */ const uint8_t *restrict r3,
-//      /* in     */ const uint16_t img_w, 
-//      /* in     */ const uint16_t buf_w, 
+//      /* in     */ const uint16_t img_w,
+//      /* in     */ const uint16_t buf_w,
 //      /*    out */ uint8_t *restrict y2)
 //{
 //   uint32_t sum;
@@ -311,8 +327,8 @@ void downsample_33(
 //#endif   // PIXEL_CARRIES_NULL
 //         sum = (uint32_t) (
 //                 r0[0] +   r0[1] +
-//               4*r1[0] + 4*r1[1] + r1[2] + 
-//               4*r2[0] + 4*r2[1] + r2[2] + 
+//               4*r1[0] + 4*r1[1] + r1[2] +
+//               4*r2[0] + 4*r2[1] + r2[2] +
 //                 r3[0] +   r3[1]);
 //         *y2++ = (uint8_t) ((sum+ 11) / 22);
 //#if defined(PIXEL_CARRIES_NULL)
@@ -382,8 +398,8 @@ void downsample_33(
 //
 //// blur y, downsample it, and store results in y2
 //void downsample(
-//      /* in     */ const uint8_t *restrict img, 
-//      /* in     */ const image_size_type img_size, 
+//      /* in     */ const uint8_t *restrict img,
+//      /* in     */ const image_size_type img_size,
 //      /* in     */ const image_size_type down_size,
 //      /*    out */ uint8_t *restrict down)
 //{
@@ -467,14 +483,14 @@ static uint32_t downsample_background(void);
 //  33,   33,   53,   11,
 //   7,   20,   59,   62,
 //  13,   86,   56,   44,
-//   1,   12,    0,    7 
+//   1,   12,    0,    7
 //};
 //
 //const uint8_t expected_bg[] = {
 //  0,   0,   0,   0,
 //  0,   0,   0,   0,
 //  0,   0,   0,   0,
-//  0,   0,   1,   0 
+//  0,   0,   1,   0
 //};
 //
 //#else
@@ -487,14 +503,14 @@ static uint32_t downsample_background(void);
 //  33,   33,   53,   11,
 //   7,   20,   59,   62,
 //  13,   86,   56,   44,
-//   1,   12,   27,    7 
+//   1,   12,   27,    7
 //};
 //
 //const uint8_t expected_bg[] = {
 //  0,   0,   0,   0,
 //  0,   1,   1,   0,
 //  1,   1,   1,   0,
-//  0,   1,   1,   1 
+//  0,   1,   1,   1
 //};
 //
 //#endif // PIXEL_CARRIES_NULL
@@ -559,7 +575,7 @@ static uint32_t downsample_background(void);
 //         printf("\n");
 //      }
 //      printf("total: %d\n", sum);
-//   } 
+//   }
 //   return errs;
 //}
 //
@@ -622,7 +638,7 @@ static uint32_t downsample_background(void);
 //         printf("\n");
 //      }
 //      printf("total: %d\n", sum);
-//   } 
+//   }
 //   return errs;
 //}
 
@@ -659,14 +675,14 @@ const uint8_t expected[] = {
   15,   33,   38,   27,
   12,   25,   44,   45,
    1,   72,   53,   84,
-   1,   25,   25,   17 
+   1,   25,   25,   17
 };
 
 const uint8_t expected_bg[] = {
   0,   0,   0,   0,
   0,   1,   1,   0,
   1,   1,   1,   0,
-  0,   0,   1,   1 
+  0,   0,   1,   1
 };
 
 
@@ -746,7 +762,7 @@ static uint32_t downsample_content()
          printf("\n");
       }
       printf("total: %d\n", sum);
-   } 
+   }
    return errs;
 }
 
@@ -807,7 +823,7 @@ static uint32_t downsample_background()
          printf("\n");
       }
       printf("total: %d\n", sum);
-   } 
+   }
    return errs;
 }
 

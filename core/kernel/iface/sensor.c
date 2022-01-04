@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "core_modules/attitude.h"
 #include "core_modules/frame_sync.h"
 #include "core_modules/gps_receiver.h"
@@ -7,7 +23,7 @@
 #include "core_modules/vy_receiver.h"
 
 ////////////////////////////////////////////////////////////////////////
-// attitude 
+// attitude
 
 static int32_t create_attitude(lua_State *L)
 {
@@ -84,10 +100,10 @@ static int32_t set_imu_priority_(lua_State *L)
    return 0;
 }
 
-// attitude 
+// attitude
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-// frame_sync 
+// frame_sync
 
 static int32_t create_frame_sync(lua_State *L)
 {
@@ -110,12 +126,12 @@ static int32_t create_frame_sync(lua_State *L)
    const char * str2 = get_string(L, __func__, 2);
    frame_sync_setup_type *sync_setup = malloc(sizeof *sync_setup);
    sync_setup->logging = determine_logging_state(str2);
-   launch_thread(str1, FRAME_SYNC_CLASS_NAME, frame_sync_class_init, 
+   launch_thread(str1, FRAME_SYNC_CLASS_NAME, frame_sync_class_init,
          sync_setup);
    return 0;
 }
 
-// frame_sync 
+// frame_sync
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 // gps
@@ -175,7 +191,7 @@ static int32_t create_gps_receiver(lua_State *L)
 // gps
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-// imu_receiver 
+// imu_receiver
 
 static int32_t create_imu_receiver(lua_State *L)
 {
@@ -206,10 +222,10 @@ static int32_t create_imu_receiver(lua_State *L)
    return 0;
 }
 
-// imu_receiver 
+// imu_receiver
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-// optical_up 
+// optical_up
 
 static int32_t create_optical_up(lua_State *L)
 {
@@ -233,15 +249,15 @@ static int32_t create_optical_up(lua_State *L)
    // allocated here -- must be freed in imu receiver
    optical_up_setup_type *optical_setup = malloc(sizeof *optical_setup);
    optical_setup->logging = determine_logging_state(str2);
-   launch_thread(str1, OPTICAL_UP_CLASS_NAME, optical_up_class_init, 
+   launch_thread(str1, OPTICAL_UP_CLASS_NAME, optical_up_class_init,
          optical_setup);
    return 0;
 }
 
-// optical_up 
+// optical_up
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-// panorama 
+// panorama
 
 static int32_t create_panorama(lua_State *L)
 {
@@ -313,10 +329,10 @@ static int32_t create_panorama(lua_State *L)
 //}
 
 
-// panorama 
+// panorama
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-// vy_receiver 
+// vy_receiver
 
 static int32_t create_vy_receiver(lua_State *L)
 {

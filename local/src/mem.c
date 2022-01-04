@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pinet.h"
 #include "mem.h"
 #include <stdlib.h>
@@ -46,7 +62,7 @@
 #define ALLOC_FENCE_SIZE   64
 
 //uint32_t get_cache_line_size()
-//{  
+//{
 //#if defined(INTEL)
 //   return (uint32_t) sysconf(_SC_LEVEL1_DCACHE_LINESIZE);
 //#elif defined(RPI)
@@ -55,7 +71,7 @@
 //   assert(sysconf(_SC_LEVEL1_DCACHE_LINESIZE) == 0);
 //   return 32u; // unclear if it's 32 or 64 bytes, so go w/ the latter
 //#endif   // INTEL | RPI
-//} 
+//}
 
 
 // returns number rounded up to next multiple of 64
@@ -89,7 +105,7 @@ void debug_print_boundaries(
    const uint32_t *head32 = (const uint32_t *) head;
    printf("Header\n------\n");
    for (uint32_t i=0; i<NUM_INT32; i+=2) {
-      printf("  0x%012lx\t0x%08x\t0x%08x\n", 
+      printf("  0x%012lx\t0x%08x\t0x%08x\n",
             (long unsigned int) &head32[i], head32[i], head32[i+1]);
    }
    printf("Trailer\n-------\n");
@@ -97,7 +113,7 @@ void debug_print_boundaries(
    const uint8_t *foot = base + jump;
    const uint32_t *foot32 = (const uint32_t *) foot;
    for (uint32_t i=0; i<NUM_INT32; i+=2) {
-      printf("  0x%012lx\t0x%08x\t0x%08x\n", 
+      printf("  0x%012lx\t0x%08x\t0x%08x\n",
             (long unsigned int) &foot32[i], foot32[i], foot32[i+1]);
       //printf("%08x  \t0x%08x\t\t0x%08x\n", &foot[i], foot[i], foot[i+1]);
    }
@@ -106,7 +122,7 @@ void debug_print_boundaries(
 // fingerprint is hopefully unique pattern that is copied into
 //    space immediately before and after allocation. establishes
 //    a boundary to detect over- and under-write errors
-static const uint32_t FINGERPRINT[ALLOC_FENCE_SIZE/4] = { 
+static const uint32_t FINGERPRINT[ALLOC_FENCE_SIZE/4] = {
    NULL_0_PATTERN, NULL_1_PATTERN, NULL_2_PATTERN, NULL_3_PATTERN,
    NULL_4_PATTERN, NULL_5_PATTERN, NULL_6_PATTERN, NULL_7_PATTERN,
    NULL_8_PATTERN, NULL_9_PATTERN, NULL_10_PATTERN, NULL_11_PATTERN,
@@ -195,7 +211,7 @@ static void * cache_malloc_block(struct memory_pool *pool, size_t num_bytes)
    size_t sz_64 = next_64(num_bytes);
    size_t sz = sz_64 + 2 * ALLOC_FENCE_SIZE;
    // allocate memory and initialize boundaries
-   // gcc automatically allocates on 16-byte boundaries on 64-bit, 
+   // gcc automatically allocates on 16-byte boundaries on 64-bit,
    //    but only 8-byte on 32-bit. to maintain 32-bit support
    //    but that's irrelevant if we're allocating to cache-line boundaries
    uint8_t * mem = NULL;
@@ -210,7 +226,7 @@ static void * cache_malloc_block(struct memory_pool *pool, size_t num_bytes)
    pthread_mutex_lock(&pool->mutex); // lock access to pool first
    if (pool->num_allocations >= pool->allocation_cap) {
       pool->allocation_cap *= 2;
-      pool->allocation_list = (void**) realloc(pool->allocation_list, 
+      pool->allocation_list = (void**) realloc(pool->allocation_list,
             pool->allocation_cap * sizeof(void*));
    }
    pool->allocation_list[pool->num_allocations++] = mem;
@@ -409,7 +425,7 @@ uint32_t test_layout(void)
    // make sure trailer is properly formed
    uint32_t expected;
    for (uint32_t i=0; i<16; i++) {
-      if (i == 0) 
+      if (i == 0)
          expected = 128;
       else if (i == 1)
          expected = 1;

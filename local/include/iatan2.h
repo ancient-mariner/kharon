@@ -1,10 +1,26 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(IATAN2_H)
 #define IATAN2_H
 #include <stdint.h>
 #include "pin_types.h"
 
 // an integer-based atan2() function is implemented here
-// 
+//
 // a separate version of the function returns the approximate vector
 //    length of (x,y)
 //
@@ -43,24 +59,24 @@
 #define ROUND_ANGLE_PI4(a)   (((uint8_t) (a + 16)) & 0xe0)
 
 
-// generate integral approximation of atan2, with output on [0,256), 
+// generate integral approximation of atan2, with output on [0,256),
 //    and 0-256 mapping to 0-360 degrees
 // 0 is north, 64 is east, 128 is south, 192 is west
 uint8_t iatan2(int32_t y, int32_t x);
 
 // approximate integral atan2 and len(x,y)
-// mimic atan2 logic and also generate integral approximation 
+// mimic atan2 logic and also generate integral approximation
 //    of sqrt(x*x + y*y)
 void rtheta(
-      /* in     */ const int32_t x, 
-      /* in     */ const int32_t y, 
-      /*    out */       uint32_t *r, 
+      /* in     */ const int32_t x,
+      /* in     */ const int32_t y,
+      /*    out */       uint32_t *r,
       /*    out */       uint8_t *theta
       );
 
 //void extract_orientation(
-//      /* in     */ const uint8_t *buf, 
-//      /* in     */ const image_coordinate_type size, 
+//      /* in     */ const uint8_t *buf,
+//      /* in     */ const image_coordinate_type size,
 //      /* in out */ orientation_type *ori);
 
 //// non-directed distance along ring between a and b
@@ -72,19 +88,19 @@ void rtheta(
 // returns value on [0,128]
 //uint8_t radial_distance(
 uint8_t angle_between_vectors(
-      /* in     */ const uint8_t a, 
+      /* in     */ const uint8_t a,
       /* in     */ const uint8_t b
       );
 
 // rotational distance necessary to bring lines at given orientations into
-//    alignment. 
+//    alignment.
 // return value on [0,64]
 // this is different than distance between vectors because a line is
 //    made of each vector mirrored across the origin. distance between
 //    lines is thus the minimal distance between any of these 4 vectors
 //uint8_t radial_distance_unoriented(
 uint8_t angle_between_lines(
-      /* in     */ const uint8_t a, 
+      /* in     */ const uint8_t a,
       /* in     */ const uint8_t b);
 
 #endif   // IATAN2_H

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pinet.h"
 #include <stdio.h>
 #include <stdint.h>
@@ -47,7 +63,7 @@ const double TEMP_GAIN = 1.0;
 
 static void write_register(
       /* in out */       sensor_runtime_type *dev,
-      /* in     */ const uint8_t reg, 
+      /* in     */ const uint8_t reg,
       /* in     */ const uint8_t value
       )
 {
@@ -67,7 +83,7 @@ int32_t mag3110_check_whoami(
    uint8_t cmd = WHO_AM_I;
    uint8_t data;
    select_device(dev, dev->mag.mag_addr);
-   if (i2c_smbus_read_i2c_block_data(dev->hw_device, cmd, 1, &data) < 0) 
+   if (i2c_smbus_read_i2c_block_data(dev->hw_device, cmd, 1, &data) < 0)
    {
       device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAG_MAG);
       goto err;
@@ -90,7 +106,7 @@ static uint8_t check_data_available(
 {
    uint8_t data;
    select_device(dev, dev->mag.mag_addr);
-   if (i2c_smbus_read_i2c_block_data(dev->hw_device, DR_STATUS, 1, &data) < 0) 
+   if (i2c_smbus_read_i2c_block_data(dev->hw_device, DR_STATUS, 1, &data) < 0)
    {
       device_error(dev, __FILE__, __LINE__, DR_STATUS, SENSOR_FLAG_MAG);
    }
@@ -104,7 +120,7 @@ static void read_mag_data(
 {
    uint8_t raw[6];
    uint8_t cmd = OUT_X_MSB;
-   if (i2c_smbus_read_i2c_block_data(dev->hw_device, cmd, 
+   if (i2c_smbus_read_i2c_block_data(dev->hw_device, cmd,
          sizeof(raw), raw) < 0) {
       device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAG_MAG);
    }

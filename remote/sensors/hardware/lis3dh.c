@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "s2.h"
 #include <stdio.h>
 #include <stdint.h>
@@ -33,12 +49,12 @@
 
 static int32_t write_register(
       /* in out */       sensor_runtime_type *dev,
-      /* in     */ const uint8_t reg, 
+      /* in     */ const uint8_t reg,
       /* in     */ const uint8_t value
       )
 {
    if (i2c_smbus_write_byte_data(dev->hw_device, reg, value) < 0) {
-      fprintf(stderr, "%s: write_register() error. reg=%d, value=%d\n", 
+      fprintf(stderr, "%s: write_register() error. reg=%d, value=%d\n",
             __FILE__, reg, value);
       device_error(dev, __FILE__, __LINE__, reg, dev->flags);
       return -1;
@@ -81,7 +97,7 @@ static int32_t read_acc_data(
    data[2] = (int16_t) (raw[4] | raw[5] << 8);
 //printf("DATA  0x%04x  0x%04x  0x%04x\n", (uint16_t) data[0], (uint16_t) data[1], (uint16_t) data[2]);
    apply_gain(data, &dev->accel.gain, &dev->accel.up);
-//   apply_gain_scale_offset(data, &dev->accel.gain, 
+//   apply_gain_scale_offset(data, &dev->accel.gain,
 //         &dev->accel.scale, &dev->accel.offset, &dev->accel.up);
    /////////////////////////////////////////////////////////////////////
    // temp  TODO figure out why this isn't providing temp data
@@ -96,8 +112,8 @@ static int32_t read_acc_data(
    //    the bits returned can represent temperature. the closest is
    //    dividint tdata by 32, but that's very unlikely to be right.
    //    output -1 to indicate unreliability of signal
-   //int16_t tdata = (int16_t) (raw[0] | raw[1] << 8);                             
-   //dev->temp.celcius = (float) (tdata/32);  
+   //int16_t tdata = (int16_t) (raw[0] | raw[1] << 8);
+   //dev->temp.celcius = (float) (tdata/32);
    dev->temp.celcius = -1.0f;
    /////////////////////////////////////////////////////////////////////
    return 0;
@@ -127,7 +143,7 @@ static void initialize_device(
    //
    sensor_accel_type *acc = &device->accel;
    // TODO investigate -- gain should be 1/1000, not 1/16000
-   const double acc_gain = 1.0 / 16000.0; 
+   const double acc_gain = 1.0 / 16000.0;
    for (uint32_t i=0; i<3; i++) {
       acc->gain.v[i] = acc_gain;
    }
@@ -160,7 +176,7 @@ int32_t lis3dh_setup(
    // run in default mode, so no initializtion necessary
    // set flags last -- only if initialization successful
    dev->flags |= SENSOR_FLAGS_ACC_TEMP;
-   // 
+   //
    dev->waketime.tv_sec = 0;
    dev->waketime.tv_nsec = WARMUP_INTERVAL * TIME_ADD_1MS;
    dev->state = 0;

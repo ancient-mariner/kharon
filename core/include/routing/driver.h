@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(DRIVER_H)
 #define DRIVER_H
 #if !defined(_GNU_SOURCE)
@@ -40,12 +56,12 @@ typedef struct associator_output associator_output_type;
 #define TARGET_RECORD_USE_BY_WINDOW_SEC      15.0
 
 
-// amount of time that GPS is offline that, after it comes back, the 
+// amount of time that GPS is offline that, after it comes back, the
 //    map is reloaded and route recomputed
 #define GPS_ROUTE_TIMEOUT_SEC    600.0
 
 // time w/o position data for map to no longer be consulted
-// TODO consider implementing some form of DR to extend this window. 
+// TODO consider implementing some form of DR to extend this window.
 //    incorporate uncertainty window
 // TODO consider adding position uncertainty window logic, with window
 //    growing while data unavailable
@@ -54,7 +70,7 @@ typedef struct associator_output associator_output_type;
 
 // when first starting up the system will be driving blind, if it's
 //    driving at all. inhibit alerts during this time as it's expected.
-//    perhaps trigger a pleasant beep during this period instead of 
+//    perhaps trigger a pleasant beep during this period instead of
 //    alarm klaxon
 #define DRIVING_BLIND_OK_WINDOW_SEC    30.0
 
@@ -68,7 +84,7 @@ typedef struct associator_output associator_output_type;
 
 // once course change sent to autopilot, otto acknowledges change. however,
 //    ack may not be received before next decision for course change
-//    is made. defer subsequent decisions for this interval to allow otto 
+//    is made. defer subsequent decisions for this interval to allow otto
 //    to ack previous request
 #define OTTO_COURSE_CHANGE_RESPSONSE_WINDOW_SEC      1.5
 
@@ -138,7 +154,7 @@ struct driver_class {
    // present route info
    // route memory is written to by multiple threads. the field
    //    course_changed_sec is written to by comm thread, while all
-   //    others are written by main driver thread. comm thread 
+   //    others are written by main driver thread. comm thread
    //    shouldn't update at more than 1Hz (usually much less) so
    //    the cache coherency issues shouldn't affect performance
    //    too mcuh
@@ -150,7 +166,7 @@ struct driver_class {
    path_map_type *path_map;
    route_map_type *route_map;
    /////////////////////////////////////////////
-   // control flags 
+   // control flags
    union {
       // all values are zero except for the conditions as described
       struct {
@@ -175,7 +191,7 @@ struct driver_class {
    union {
       // all values are zero except for the conditions as described
       struct {
-         // set to 1 when there's been a call to change one of 
+         // set to 1 when there's been a call to change one of
          //    these values from an outside thread
          uint8_t destination_change;
          uint8_t autotracking_change;
@@ -190,7 +206,7 @@ struct driver_class {
    // autotracking
    uint32_t autotracking_on_off; // turned on is 1, off 0
    // new heading in degrees, on [0,359], or >359 to disable
-   uint32_t new_autopilot_heading_degs; 
+   uint32_t new_autopilot_heading_degs;
    //
    pthread_mutex_t exchange_mutex;
    /////////////////////////////////////////////////////////////////////
@@ -212,11 +228,11 @@ struct driver_class {
    associator_output_type associator_out;
    double associator_sec;
 #endif   // USE_TRACKING
-   // 
+   //
    producer_record_type *gps;
    gps_receiver_output_type position_latest;
    double position_sec;
-   // 
+   //
    producer_record_type *attitude;
    attitude_output_type attitude_latest;
    double attitude_sec;
@@ -237,7 +253,7 @@ typedef struct driver_setup driver_setup_type;
 ////////////////////////////////////////////////////////////////////////
 // API
 
-// turns on/off dynamic autopilot control 
+// turns on/off dynamic autopilot control
 void set_autotracking(
       /* in     */ const uint32_t on_off
       );
@@ -252,7 +268,7 @@ void set_autopilot_heading(
       );
 
 // set new destination. induces new path calculation and route update
-// FIXME this may generate a race condition if called after 
+// FIXME this may generate a race condition if called after
 //    initialization (unlikely, but very possible)
 void set_destination(
       /* in     */ const world_coordinate_type destination,
@@ -300,19 +316,19 @@ void set_vessel_position(
 // functions shared for benefit of integration testing
 
 // puts subscore in lowest if it's lower than values there
-// lowest[0] should be the lowest of all values and lowest[1] is the 
+// lowest[0] should be the lowest of all values and lowest[1] is the
 //    2nd lowest. if lowest[0] is repeated, repeats is incremented
 void update_subscore(
-      /* in out */       double lowest[2], 
+      /* in out */       double lowest[2],
       /* in out */       int32_t *repeats,
       /* in     */ const double subscore
       );
 
 // combine lowest scores into single score value
-// provide weight of lowest value with 7 + 3 times number repeats, 
+// provide weight of lowest value with 7 + 3 times number repeats,
 //    and weight of 1 for 2nd lowest
 double combine_subscores(
-      /* in     */ const double lowest[2], 
+      /* in     */ const double lowest[2],
       /* in     */ const int32_t repeats
       );
 
@@ -329,7 +345,7 @@ double calc_direction_agreement(
 // establish course through local traffic and obstacles
 // follows path map flow as closely as practical, with constraint that
 //    course changes are assumed to be infrequent
-// calling function should check to make sure route isn't in error 
+// calling function should check to make sure route isn't in error
 // world map and path map must already be loaded
 // updates route map and route_info
 // NOTE calling function should make sure route_info state isn't

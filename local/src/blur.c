@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "blur.h"
 #include <string.h>
 #include <assert.h>
@@ -7,7 +23,7 @@
 #include <stdint.h>
 
 void blur_5x5(
-      /* in     */ const uint8_t *orig, 
+      /* in     */ const uint8_t *orig,
       /*    out */       uint8_t *blurred,
       /* in     */ const image_size_type size
       )
@@ -19,7 +35,7 @@ void blur_5x5(
           -2,      -1,       0,      +1,      +2,
        1*c-2,   1*c-1,   1*c  ,   1*c+1,   1*c+2,
        2*c-2,   2*c-1,   2*c  ,   2*c+1,   2*c+2,
-      
+
    };
    uint32_t weight[25] = {
       1,   4,   7,   4,   1,
@@ -107,7 +123,7 @@ void blur_image_r2(
             center = right0;
             right0 = right1;
             right1 = src[ctr_idx+2];
-            tmp[ctr_idx] = 
+            tmp[ctr_idx] =
                   ((left1 + 4*left0 + 6*center + 4*right0 + right1) >> 4);
          }
          ////////////////////////////////////////////////
@@ -156,7 +172,7 @@ void blur_image_r2(
             center = bot0;
             bot0 = bot1;
             bot1 = tmp[ctr_idx+2u*size.width];
-            dest[ctr_idx] = (uint8_t) 
+            dest[ctr_idx] = (uint8_t)
                   ((top1 + 4*top0 + 6*center + 4*bot0 + bot1) >> 4);
          }
          ////////////////////////////////////////////////
@@ -247,7 +263,7 @@ void blur_image_r1(
 
 // downsample 2D array 'orig' to 'down'
 // each downsmple pixel is weighed average of pixels in original
-//    array equivalent to if original array was convolved with 
+//    array equivalent to if original array was convolved with
 //    Gaussian-like kernel.
 // if original array were convolved with the 5x5 Gaussian kernel:
 //
@@ -256,10 +272,10 @@ void blur_image_r1(
 //   7  26  41  26   7
 //   4  16  26  16   4
 //   1   4   7   4   1
-//  
+//
 //   divided by 273
 //
-// then the downsampled values would be the values in the original 
+// then the downsampled values would be the values in the original
 //    array weighted by the following:
 //
 //    1   5  11  11   5   1
@@ -285,17 +301,17 @@ void blur_image_r1(
 //
 // which can be further simplifed to:
 //
-//      1 1  
+//      1 1
 //    1 2 2 1
 //    1 2 2 1
-//      1 1   
+//      1 1
 //
 //    divided by 16
 
 //// TODO evaluate and write test code for this
 //void downsample(
-//      /* in     */   uint8_t *orig, 
-//      /*    out */   uint8_t *down, 
+//      /* in     */   uint8_t *orig,
+//      /*    out */   uint8_t *down,
 //      /* in     */   const image_size_type orig_size)
 //{
 //   for (int r=0; r<orig_size.rows; r+=2) {
@@ -304,7 +320,7 @@ void blur_image_r1(
 //         float sum = 0.0;
 //         int idx = (c-1) + (r-1)*orig_size.cols;
 //         // idx is top-left of pixel of blurring mask (X in following):
-//         // X 1 1 
+//         // X 1 1
 //         // 1 2 2 1
 //         // 1 2 2 1
 //         //   1 1
@@ -343,9 +359,9 @@ void blur_image_r1(
 
 //// TODO evaluate and write test code for this
 //void downsample(
-//      /* in     */   uint8_t *orig, 
-//      /*    out */   uint8_t *down, 
-//      /* in     */   int orig_rows, 
+//      /* in     */   uint8_t *orig,
+//      /*    out */   uint8_t *down,
+//      /* in     */   int orig_rows,
 //      /* in     */   int orig_cols)
 //{
 //   for (int r=0; r<orig_rows; r+=2) {
@@ -354,7 +370,7 @@ void blur_image_r1(
 //         float sum = 0.0;
 //         int idx = (c-1) + (r-1)*orig_cols;
 //         // idx is top-left of pixel of blurring mask (X in following):
-//         // X 1 1 
+//         // X 1 1
 //         // 1 2 2 1
 //         // 1 2 2 1
 //         //   1 1

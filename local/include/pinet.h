@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(PINET_H)
 #define PINET_H
 #if !defined(_GNU_SOURCE)
@@ -90,7 +106,7 @@ void clear_imu_sensor_packet(
 
 const char * pinet_lib_version(void);
 
-// takes source name (eg, 'rvid-cam') and provides connection info 
+// takes source name (eg, 'rvid-cam') and provides connection info
 //    (IP + port) of receiving process
 // returns 0 on success, -1 on failure
 int get_network_target(const char *source, struct network_id *target);
@@ -115,7 +131,7 @@ int get_host_info(const char *receiver, struct network_id *host);
 // 3.1 extend header to store information to be logged
 // 3.2 IMU protocol changed to use 20 bits for sending floating points, from
 //    16; data sent to indicate when IMU channel offline; GPS added
-//   
+//
 
 #define GPS_BLOCK_SIZE     256
 
@@ -141,7 +157,7 @@ int init_server_backlog(
 int wait_for_connection(int sockfd, const char* name);
 
 // returns connection file descriptor, -1 on error, -2 on interrupt
-// does not check 
+// does not check
 int wait_for_connection_no_check(int sockfd, const char* name);
 
 // returns connection file descriptor, or -1 on error
@@ -161,7 +177,7 @@ int connect_to_server_no_wait(
 // when establishing a connection, server checks clietnt's communication
 //    protocol version to make sure it is supported
 // client sends protocol version, server checks it
-// each call returns 0 on success (ie, protocol numbers match) 
+// each call returns 0 on success (ie, protocol numbers match)
 //    and -1 otherwise
 // dt is the time difference of the client relative to the server
 //    (in seconds, measured from clock_gettime)

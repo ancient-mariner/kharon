@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <sys/time.h>
 #include "../accumulator.c"
@@ -157,7 +173,7 @@ void test_perspective_y(void)
       for (uint32_t i=0; i<CAM_HEIGHT_PIX_Y; i++) {
          uint32_t idx = i * CAM_WIDTH_PIX_Y_YUV;
          memset(&raw_img_y_[idx], 255, CAM_WIDTH_PIX_Y);
-         memset(&raw_img_y_[idx+CAM_WIDTH_PIX_Y], 128, 
+         memset(&raw_img_y_[idx+CAM_WIDTH_PIX_Y], 128,
                CAM_WIDTH_PIX_Y_YUV-CAM_WIDTH_PIX_Y);
          // draw diagonal lines across image
          uint32_t a = i * CAM_WIDTH_PIX_Y / CAM_HEIGHT_PIX_Y;
@@ -214,7 +230,7 @@ static void test_perspective_v(void)
       for (uint32_t i=0; i<CAM_HEIGHT_PIX_V; i++) {
          uint32_t idx = i * CAM_WIDTH_PIX_V_YUV;
          memset(&raw_img_v_[idx], 255, CAM_WIDTH_PIX_V);
-         memset(&raw_img_v_[idx+CAM_WIDTH_PIX_V], 128, 
+         memset(&raw_img_v_[idx+CAM_WIDTH_PIX_V], 128,
                CAM_WIDTH_PIX_V_YUV-CAM_WIDTH_PIX_V);
          // draw diagonal lines across image
          uint32_t a = i * CAM_WIDTH_PIX_V / CAM_HEIGHT_PIX_V;

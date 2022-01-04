@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(SHARE_C)
 #define SHARE_C
 
@@ -7,7 +23,7 @@ static void check_world_coordinate(
       /* in     */ const char *label
       )
 {
-   if (c_assert(coord.x_deg >= 0.0) || c_assert(coord.x_deg < 360.0) || 
+   if (c_assert(coord.x_deg >= 0.0) || c_assert(coord.x_deg < 360.0) ||
          c_assert(coord.y_deg >= -90.0) || c_assert(coord.y_deg <= 90.0)) {
       fprintf(stderr, "Coordinate from '%s' has illegal value: "
             " %.5f,%.5f\n", label, coord.x_deg, coord.y_deg);
@@ -36,7 +52,7 @@ void calc_meter_offset(
    } else if (dx_deg >= 360.0) {
       dx_deg -= 360.0;
    }
-   dx->meters = dx_deg * DEG_LAT_TO_METER * 
+   dx->meters = dx_deg * DEG_LAT_TO_METER *
          cos(D2R * 0.5 * (src.y_deg + dest.y_deg));
    dy->meters = (dest.y_deg - src.y_deg) * DEG_LAT_TO_METER;
 }
@@ -54,7 +70,7 @@ static meter_type calc_distance(
 {
    meter_type dx, dy;
    calc_meter_offset(src, dest, &dx, &dy, label);
-   meter_type dist = { .meters = 
+   meter_type dist = { .meters =
          sqrt(dx.meters * dx.meters + dy.meters * dy.meters) };
    return dist;
 }
@@ -74,7 +90,7 @@ world_coordinate_type calc_offset_position(
    double lat_corr = cos(D2R * source.lat);
    double dx_deg = dx_met * METER_TO_DEG_LAT / lat_corr;
    double dy_deg = dy_met * METER_TO_DEG_LAT;
-   world_coordinate_type dest = { 
+   world_coordinate_type dest = {
          .lon = source.lon + dx_deg, .lat = source.lat + dy_deg };
    if (dest.lon < 0.0) {
       dest.lon += 360.0;
@@ -104,11 +120,11 @@ image_coordinate_type get_pix_position_in_map(
    //    right is in x=360
    // convert meters to pixels. floor() will make -1.0m a -1 and +1.0m a +1
    // map-size / 2 is 360. a simple combination of these should be correct
-   int32_t x_offset_pix = 
+   int32_t x_offset_pix =
          (int32_t) floor(dx.meters / path_map->node_width.meters);
    // positive dy is up, whereas here it should be down as array origin is
    //    in top-left
-   int32_t y_offset_pix = 
+   int32_t y_offset_pix =
          (int32_t) floor(-dy.meters / path_map->node_height.meters);
    uint32_t x_pix = (uint32_t) ((int32_t) MAP_LEVEL3_SIZE/2 + x_offset_pix);
    uint32_t y_pix = (uint32_t) ((int32_t) MAP_LEVEL3_SIZE/2 + y_offset_pix);
@@ -136,10 +152,10 @@ static void shrink_path_stack(
       /* in out */       path_map_type *path_map
       )
 {
-   uint32_t stack_len = 
+   uint32_t stack_len =
          (uint32_t) (path_map->write_idx - path_map->read_idx);
 //printf("Shrinking path-map stack. Len=%d. Purging %d elements\n", stack_len, path_map->read_idx);
-   log_info(log_, "Shrinking path-map stack. Len=%d. Purging %d elements", 
+   log_info(log_, "Shrinking path-map stack. Len=%d. Purging %d elements",
          stack_len, path_map->read_idx);
    memmove(path_map->stack, &path_map->stack[path_map->read_idx],
          stack_len * sizeof *path_map->stack);
@@ -263,4 +279,4 @@ static pixel_offset_bitfield_type get_offset_mask_wide(
 ////////////////////////////////////////////////////////////////////////
 
 
-#endif   // SHARE_C 
+#endif   // SHARE_C

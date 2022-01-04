@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(ACCUMULATOR_H)
 #define ACCUMULATOR_H
 #include <stdint.h>
@@ -139,15 +155,15 @@ to the fence from N passing through the camera, with the camera
 centered at the point where N meets the ground, and the camera being
 at ground level. N is at the image center.
 
-Let the height of the fence, H, align with the top the image frame, 
-such that the height of the fence is half of the vertical field of 
-view (FOV_H) of the camera, or FOV_H/2. 
+Let the height of the fence, H, align with the top the image frame,
+such that the height of the fence is half of the vertical field of
+view (FOV_H) of the camera, or FOV_H/2.
 
-Assume that the checkerboard painted on the fence is the size such 
-that a grid square is one degree in horizontal and vertical FOV 
+Assume that the checkerboard painted on the fence is the size such
+that a grid square is one degree in horizontal and vertical FOV
 as seen from the camera at N.
 
-The 'undistorted' image of the fence will show the section of the 
+The 'undistorted' image of the fence will show the section of the
 fence between +/- FOV_W/2 from N. The top of the fence in this image
 will parallel the top of the camera frame. A perspective view would
 have the height of the fence at left and right be of lower relative
@@ -166,7 +182,7 @@ between parallel lines with increasing distance from the image center.
 
 To correct for perspective, the height of the fence at a given
 position in the image will be adjusted to its correct perspective
-location. Let H be the height of the fence at N. H' is the perspective 
+location. Let H be the height of the fence at N. H' is the perspective
 height of the fence at a given lateral position in the field of view.
 
    H' = H * cos(theta)
@@ -186,19 +202,19 @@ by the position of a pixel relative to the image top (or bottom).
 
 To correct for horizontal lines being equidistant, as opposed to
 getting closer with vertical distance from image center, the relative
-vertical position of each pixel is adjusted. 
+vertical position of each pixel is adjusted.
 There is no movement at the image center (the origin) and there's no
 relative movement at the image edges, as content there is at the field
 of view of the image. Intermediate pixels are shifted outward towards the
 edge.
 
-Let V be the vertical position of a pixel in the source image, and 
+Let V be the vertical position of a pixel in the source image, and
 V' the position in the perspective image. Vnorm' is the normalized
 position of V', with 1.0 being at the image edge and 0 at the origin.
 
 In the source image, the number of pixels from image center (N) to
-V is proportional to the physical distance. This is the undistored 
-image. Each pixel in the perspective view represents a fixed arc. 
+V is proportional to the physical distance. This is the undistored
+image. Each pixel in the perspective view represents a fixed arc.
 To go from undistored to perspective, image pixels must be converted
 from distance to angle.
 
@@ -216,8 +232,8 @@ Let
 
    V' = W * IMG_HEIGHT / FOV_HEIGHT
    Vnorm' = W / (FOV_HEIGHT / 2)
-   
-The projected vertical position of the pixel in perspective space, 
+
+The projected vertical position of the pixel in perspective space,
 Y', is
    Y' = Vnorm' * H' * PERSP_PIX_H / PIX_H
 

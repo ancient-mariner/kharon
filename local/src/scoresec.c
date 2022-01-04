@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pin_types.h"
 #include <stdio.h>
 
@@ -46,7 +62,7 @@ static uint32_t test_scoresec_to_degrees(void)
    degree_type deg = scoresec_to_degrees(ss);
    float expected = 180.0f;
    if (deg.degrees != expected) {
-      fprintf(stderr, "Incorrect value. Expected %.4f, got %.4f", 
+      fprintf(stderr, "Incorrect value. Expected %.4f, got %.4f",
             (double) expected, (double) deg.degrees);
       errs++;
    }
@@ -68,7 +84,7 @@ static uint32_t test_degrees_to_scoresec(void)
    scoresec_type ss = degrees_to_scoresec(deg);
    uint16_t expected = 0x8000;
    if (ss.uscore != expected) {
-      fprintf(stderr, "Incorrect value. Expected %d, got %d\n", 
+      fprintf(stderr, "Incorrect value. Expected %d, got %d\n",
             expected, ss.uscore);
       errs++;
    }
@@ -95,14 +111,14 @@ static uint32_t test_wrap(void)
       scoresec_type ab = degrees_to_scoresec(a - b);
       uint16_t expected_ab = 3641;
       if (ab.uscore != expected_ab) {
-         fprintf(stderr, "Incorrect %.1f-%.1f value. Expected %d, got %d\n", 
+         fprintf(stderr, "Incorrect %.1f-%.1f value. Expected %d, got %d\n",
                (double) a, (double) b, expected_ab, ab.uscore);
          errs++;
       }
       scoresec_type ba = degrees_to_scoresec(b - a);
       uint16_t expected_ba = 61895;
       if (ba.uscore != expected_ba) {
-         fprintf(stderr, "Incorrect %.1f-%.1f value. Expected %d, got %d\n", 
+         fprintf(stderr, "Incorrect %.1f-%.1f value. Expected %d, got %d\n",
                (double) b, (double) a, expected_ba, ba.uscore);
          errs++;
       }
@@ -113,14 +129,14 @@ static uint32_t test_wrap(void)
       scoresec_type ab = degrees_to_scoresec(a - b);
       uint16_t expected_ab = 3640;
       if (ab.uscore != expected_ab) {
-         fprintf(stderr, "Incorrect %.1f-%.1f value. Expected %d, got %d\n", 
+         fprintf(stderr, "Incorrect %.1f-%.1f value. Expected %d, got %d\n",
                (double) a, (double) b, expected_ab, ab.uscore);
          errs++;
       }
       scoresec_type ba = degrees_to_scoresec(b - a);
       uint16_t expected_ba = 61896;
       if (ba.uscore != expected_ba) {
-         fprintf(stderr, "Incorrect %.1f-%.1f value. Expected %d, got %d\n", 
+         fprintf(stderr, "Incorrect %.1f-%.1f value. Expected %d, got %d\n",
                (double) b, (double) a, expected_ba, ba.uscore);
          errs++;
       }
@@ -146,14 +162,14 @@ static uint32_t test_average_of_scoresecs(void)
       scoresec_type c = average_of_scoresecs(a, b);
       uint16_t expected = 3000;
       if (expected != c.uscore) {
-         fprintf(stderr, "Incorrect %d,%d midpoint. Expected %d, got %d\n", 
+         fprintf(stderr, "Incorrect %d,%d midpoint. Expected %d, got %d\n",
                a.uscore, b.uscore, expected, c.uscore);
          errs++;
       }
       scoresec_type d = average_of_scoresecs(b, a);
       expected = 35768;
       if (expected != d.uscore) {
-         fprintf(stderr, "Incorrect %d,%d midpoint. Expected %d, got %d\n", 
+         fprintf(stderr, "Incorrect %d,%d midpoint. Expected %d, got %d\n",
                a.uscore, b.uscore, expected, d.uscore);
          errs++;
       }

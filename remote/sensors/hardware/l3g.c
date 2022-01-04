@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <fcntl.h>
@@ -29,7 +45,7 @@ static double log_timer_ = 0.0;
 
 static void write_gyr_register(
       /* in out */       sensor_runtime_type *dev,
-      /* in     */ const uint8_t reg, 
+      /* in     */ const uint8_t reg,
       /* in     */ const uint8_t value
       )
 {
@@ -108,7 +124,7 @@ static void pull_gyro_data(
          uint8_t raw[6];
          int16_t vals[3];
       } bucket;
-      // 
+      //
       int32_t accum[3];
       for (uint32_t i=0; i<3; i++)
          accum[i] = 0;
@@ -169,7 +185,7 @@ static void initialize_device(
    write_gyr_register(device, CTRL_REG5, 0b01000000);
    // FIFO_CTRL_REG stream mode, [unused] watermark=16
    write_gyr_register(device, FIFO_CTRL_REG, 0b01010000);
-   // 
+   //
    const double gyr_gain = 0.00875;
    for (uint32_t i=0; i<3; i++)
       gyr->gain.v[i] = gyr_gain;
@@ -219,7 +235,7 @@ void l3g_update(
    if (t > log_timer_) {
       log_timer_ = t + DRIFT_LOG_INTERVAL;
       vector_type *drift_dps = &dev->gyro.drift_dps;
-      snprintf(dev->log_data, SENSOR_PACKET_LOG_DATA, 
+      snprintf(dev->log_data, SENSOR_PACKET_LOG_DATA,
             "drift dps: %.3f, %.3f, %.3f", (double) drift_dps->v[0],
             (double) drift_dps->v[1], (double) drift_dps->v[2]);
    }

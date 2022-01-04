@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(PIXEL_TYPES_H)
 #define  PIXEL_TYPES_H
 #include "pin_types.h"
@@ -66,17 +82,17 @@ typedef struct pixel_cam_info pixel_cam_info_type;
 #define PIX_FLAG_ALIGNED_KP        0x02
 
 // local salience peak
-#define PIX_FLAG_LOCAL_PEAK        0x04  
+#define PIX_FLAG_LOCAL_PEAK        0x04
 
 // salience peak that's below local salience threshold and so was suppressed
 // note: this isn't necessarily used
-#define PIX_FLAG_SUPPRESSED_PEAK   0x08  
+#define PIX_FLAG_SUPPRESSED_PEAK   0x08
 
 // approximate motion data is in available
 // this should be applied to pixels (during gaze) that are local peaks
 //    and that are immediately adjacent to peaks. if that assumption
 //    chages, evaluate tracker code and update as necessary
-#define PIX_FLAG_MOTION_DATA       0x10  
+#define PIX_FLAG_MOTION_DATA       0x10
 
 #define PIX_FLAG_HAS_TARGET         0x20
 
@@ -122,7 +138,7 @@ struct boundary_pixel {
    //       'down' is 8 pixels starting at (((ori+64) >> 4) & 15)
    //       'up' is 8 pixels starting at (((ori+192) >> 4) & 15)
    // NOTE: it was considered using 'Bresenham circle of radius 3' (eg,
-   //    see wikipedia description of FAST keypoint) but for small 
+   //    see wikipedia description of FAST keypoint) but for small
    //    features a radius 2 circle looks to be more appropriate. the
    //    12-point R2 circle was expanded to 16 bits for mathematical
    //    convenience
@@ -149,11 +165,11 @@ struct boundary_pixel {
 //    was too computationally expensive for little noise-reduction benefit
 //         // uniqueness of color for either side of this edge relative to
 //         //    colors observed in other nearby points in scene
-//         // value is based on size of distribution bin for most unique of 
-//         //    high/low colors. if distribution bin for most unique color 
+//         // value is based on size of distribution bin for most unique of
+//         //    high/low colors. if distribution bin for most unique color
 //         //    has ~10+% of all visible colors in the distribution, then
 //         //    score is 255. score is reduced linearly w/ %age. eg, 5% is
-//         //    128, 2.5% is 64, etc. 
+//         //    128, 2.5% is 64, etc.
 //         // actual value: score increased by 1 for every 0.04 %age, w/
 //         //    anything less than 0.04% being 1 (there is no valid zero
 //         //    score), <0.08%=2, <0.12%=3, etc
@@ -181,7 +197,7 @@ struct pixel_features {
       int32_t edgepoint_idx_signed;
    };
    // tracing edgepoints is done in same image frame as edgepoint
-   //    center resides in, even if ring extends into background 
+   //    center resides in, even if ring extends into background
    //    (ie, not in foreground). this is to avoid artifacts
    //    when trace spans data from different cameras
    // IMPORTANT: for this to work there must be sufficient overlap

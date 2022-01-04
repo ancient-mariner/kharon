@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -17,7 +33,7 @@ void print_destinations(
 int load_destination_database(void);
 
 // returns destination record associated with this name, and NULL if that
-//    name is not found. there is no checking for duplicate records -- 
+//    name is not found. there is no checking for duplicate records --
 //    the first match found is returned
 dest_record_type * get_destination_record(
       /* in     */ const char *name
@@ -34,7 +50,7 @@ static uint32_t num_allocated_records_ = 0;
 
 
 // returns destination record associated with this name, and NULL if that
-//    name is not found. there is no checking for duplicate records -- 
+//    name is not found. there is no checking for duplicate records --
 //    the first match found is returned
 dest_record_type * get_destination_record(
       /* in     */ const char *name
@@ -70,7 +86,7 @@ void print_destinations(
          }
       }
       cnt++;
-      printf("  %3d  %30s %11.4f %11.4f  %.1f\n", dest->line_num, dest->name, 
+      printf("  %3d  %30s %11.4f %11.4f  %.1f\n", dest->line_num, dest->name,
             dest->longitude, dest->latitude, (double) dest->radius.meters);
    }
    if (cnt == 0) {
@@ -108,7 +124,7 @@ int load_destination_database(void)
       }
       if (num_records_ >= num_allocated_records_) {
          num_allocated_records_ += DB_RECORD_BLOCK_SIZE;
-         records_ = 
+         records_ =
                realloc(records_, num_allocated_records_ * sizeof *records_);
       }
       dest_record_type *dest = &records_[num_records_++];
@@ -179,7 +195,7 @@ end:
 
 
 static void usage(
-      /* in     */ const int argc, 
+      /* in     */ const int argc,
       /* in     */ const char **argv
       )
 {
@@ -190,7 +206,7 @@ static void usage(
    printf("  Calling with a partial name will restrict the list to "
          "destinations\n");
    printf("     that begin with the string\n");
-   printf("  The database of destinations is at '%s'\n", 
+   printf("  The database of destinations is at '%s'\n",
          CHARLIE_DESTINATION_DB);
    printf("\n");
    exit(1);

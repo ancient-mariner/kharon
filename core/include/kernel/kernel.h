@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(PLAYA_H)
 #define PLAYA_H
 #if !defined _GNU_SOURCE
@@ -18,12 +34,12 @@
 
 // signal usage
 // from playa.c::init_signals
-//    SIGINT 
+//    SIGINT
 //    SIGALARM
 //       attempt graceful shutdown of system, through dp_abort, dp_wake
-//    SIGSEGV 
-//    SIGFPE 
-//    SIGILL 
+//    SIGSEGV
+//    SIGFPE
+//    SIGILL
 //    SIGBUS
 //       print stack trace and hard exit
 //    SIGRTMIN + 0   (= SIG_POSTMASTER_EXIT)

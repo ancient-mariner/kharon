@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pin_types.h"
 #include <stdio.h>
 #include <string.h>
@@ -82,9 +98,9 @@ int init_beacon_list(void)
    uint64_t expected_bytes = 180l * sizeof *beacon_indices_;
    if (num_bytes != expected_bytes) {
       // oh shit
-fprintf(stderr, "Beacon index is wrong size (%ld, expected %ld)", 
+fprintf(stderr, "Beacon index is wrong size (%ld, expected %ld)",
       num_bytes, expected_bytes);
-      log_err(log_, "Beacon index is wrong size (%ld, expected %ld)", 
+      log_err(log_, "Beacon index is wrong size (%ld, expected %ld)",
             num_bytes, expected_bytes);
       goto end;
    }
@@ -147,10 +163,10 @@ end:
 // this purges already-read elements
 static void shrink_beacon_path_stack(void)
 {
-   uint32_t stack_len = 
+   uint32_t stack_len =
          (uint32_t) (beacon_stack_write_idx_ - beacon_stack_read_idx_);
 printf("Shrinking path-map stack. Len=%d. Purging %d elements\n", stack_len, beacon_stack_read_idx_);
-   log_info(log_, "Shrinking beacon path-map stack. Len=%d. Purging %d elements", 
+   log_info(log_, "Shrinking beacon path-map stack. Len=%d. Purging %d elements",
          stack_len, beacon_stack_read_idx_);
    memmove(beacon_index_stack_, &beacon_index_stack_[beacon_stack_read_idx_],
          stack_len * sizeof *beacon_index_stack_);
@@ -196,7 +212,7 @@ static void process_next_stack_beacon(void)
    uint32_t stack_idx = beacon_stack_read_idx_++;
    uint32_t root_idx = beacon_index_stack_[stack_idx];
    beacon_record_type *root_beacon = get_beacon_record(root_idx);
-   // signed int32 for i as num_neighbors is signed (neg there 
+   // signed int32 for i as num_neighbors is signed (neg there
    //    means unprocessed)
 printf("beacon %d has %d neighbors\n", root_beacon->index, root_beacon->num_neighbors);
    for (int32_t i=0; i<root_beacon->num_neighbors; i++) {
@@ -217,7 +233,7 @@ static image_coordinate_type calculate_map_position_apos(
       )
 {
    world_coordinate_type wpos = convert_akn_to_world(apos);
-   return get_pix_position_in_map(path_map, wpos); 
+   return get_pix_position_in_map(path_map, wpos);
 }
 
 
@@ -229,11 +245,11 @@ static image_coordinate_type calculate_map_position_apos(
 //      )
 //{
 //   assert(beacon_num < MAX_BEACON_NEIGHBORS);
-//   return calculate_map_position_apos(path_map, 
+//   return calculate_map_position_apos(path_map,
 //         path_map->beacon_ref[beacon_num].coords);
 ////   akn_position_type apos = path_map->beacon_ref[beacon_num].coords;
 ////   world_coordinate_type wpos = convert_akn_to_world(apos);
-////   image_coordinate_type map_pos = get_pix_position_in_map(path_map, wpos); 
+////   image_coordinate_type map_pos = get_pix_position_in_map(path_map, wpos);
 ////   path_map->beacon_ref[beacon_num].pos_in_map = map_pos;
 //}
 
@@ -244,12 +260,12 @@ static void calculate_destination_map_position(
       )
 {
    world_coordinate_type wpos = convert_akn_to_world(path_map->destination);
-   image_coordinate_type map_pos = get_pix_position_in_map(path_map, wpos); 
+   image_coordinate_type map_pos = get_pix_position_in_map(path_map, wpos);
    path_map->dest_pix = map_pos;
 }
 
 // resort path-map's beacon list, or rather, partial resort
-// only do one pass, from list rear, as list is mostly sorted already 
+// only do one pass, from list rear, as list is mostly sorted already
 //    and the last entry is the one that can be out of order
 static void resort_beacons(
       /* in out */       path_map_type *path_map
@@ -310,7 +326,7 @@ static void add_beacon_to_list(
    dx *= (float) lat_correction;   // what dx would be in degrees at equator
 //float dd = sqrtf(dx*dx + dy*dy);
 //printf("center %.4f,%.4f   check %.4f,%.4f  (delta %.4f,%.4f   %.4f)\n", map_center.akn_x, map_center.akn_y, (double) candidate->akn_x, (double) candidate->akn_y, (double) dx, (double) dy, (double) dd);
-   if ((dx >= 0.5f) || (dy >= 0.5f)) {  
+   if ((dx >= 0.5f) || (dy >= 0.5f)) {
       // if more than 0.5 deg then more than 1/2 map height|width, so is
       //    outside of map
       goto end;
@@ -342,7 +358,7 @@ static void add_beacon_to_list(
          path_map->num_beacons++;
       }
    } else {
-      map_beacon_reference_type *ref = 
+      map_beacon_reference_type *ref =
             &path_map->beacon_ref[MAX_BEACON_NEIGHBORS-1];
       if (dist < ref->center_dist_met) {
          // beacon is closer than the farthest beacon in list
@@ -350,7 +366,7 @@ static void add_beacon_to_list(
          akn_position_type apos;
          apos.akn_x = (double) candidate->akn_x;
          apos.akn_y = (double) candidate->akn_y;
-         image_coordinate_type pix = 
+         image_coordinate_type pix =
                calculate_map_position_apos(path_map, apos);
          if ((pix.x < MAP_LEVEL3_SIZE) && (pix.y < MAP_LEVEL3_SIZE)) {
             // closer and w/in map. replace end of list and resort
@@ -388,7 +404,7 @@ static void get_beacon_indices(
    assert(row_high <= 180);
    // get the rows for this position. path map will extend into
    //    prev or next row, as beacon bands are the same height as
-   //    path map (ie, 1-deg). 
+   //    path map (ie, 1-deg).
    if (row_low == row_high) {
       // position is early in row (band). need to check previous
       //    for beacons
@@ -512,7 +528,7 @@ printf("Search indices %d to %d\n", first_record, first_record+num_records);
    calculate_destination_map_position(path_map);
    for (uint32_t i=0; i<path_map->num_beacons; i++) {
       map_beacon_reference_type *ref = &path_map->beacon_ref[i];
-      ref->pos_in_map = 
+      ref->pos_in_map =
             calculate_map_position_apos(path_map, ref->coords);
    }
    // get beacon weights

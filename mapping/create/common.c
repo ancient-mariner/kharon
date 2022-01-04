@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -154,7 +170,7 @@ map_level2_type *load_map_level2(
    map_level2_type *tmp_map = map;
    char map_name[BUF_LEN];
    sprintf(map_name, "%s%s%d/%d_%d.%s", root_dir,
-         LEVEL2_DIR_NAME, 10 * ((int) grid_pos.akn_y/10), 
+         LEVEL2_DIR_NAME, 10 * ((int) grid_pos.akn_y/10),
          grid_pos.akn_x, grid_pos.akn_y, MAP_LEVEL_2_FILE_EXTENSION);
    FILE *fp = fopen(map_name, "r");
    if (fp == NULL) {
@@ -188,7 +204,7 @@ map_level3_type *load_map_level3(
    map_level3_type *tmp_map = map;
    char map_name[BUF_LEN];
    sprintf(map_name, "%s%s%d/%d_%d.%s", root_dir,
-         LEVEL3_DIR_NAME, 10 * ((int) grid_pos.akn_y/10), grid_pos.akn_x, 
+         LEVEL3_DIR_NAME, 10 * ((int) grid_pos.akn_y/10), grid_pos.akn_x,
          grid_pos.akn_y, MAP_LEVEL_3_FILE_EXTENSION);
    FILE *fp = fopen(map_name, "r");
    if (fp == NULL) {
@@ -239,7 +255,7 @@ void write_map_level2(
 {
    char map_name[BUF_LEN];
    sprintf(map_name, "%s%s%d/%d_%d.%s", root_dir,
-         LEVEL2_DIR_NAME, 10 * ((int) grid_pos.akn_y/10), 
+         LEVEL2_DIR_NAME, 10 * ((int) grid_pos.akn_y/10),
          grid_pos.akn_x, grid_pos.akn_y, MAP_LEVEL_2_FILE_EXTENSION);
    FILE *fp = fopen(map_name, "w");
    if (fp == NULL) {
@@ -260,7 +276,7 @@ void write_map_level3(
 {
    char map_name[BUF_LEN];
    sprintf(map_name, "%s%s%d/%d_%d.%s", root_dir,
-         LEVEL3_DIR_NAME, 10 * ((int) grid_pos.akn_y/10), 
+         LEVEL3_DIR_NAME, 10 * ((int) grid_pos.akn_y/10),
          grid_pos.akn_x, grid_pos.akn_y, MAP_LEVEL_3_FILE_EXTENSION);
    FILE *fp = fopen(map_name, "w");
    if (fp == NULL) {
@@ -342,7 +358,7 @@ akn_position_type convert_latlon_to_akn(
 
 
 // computes map column for position with map located at map_center
-// if position is out of bounds (off map) then returns -1, otherwise 
+// if position is out of bounds (off map) then returns -1, otherwise
 //    returns 0
 // only requires that 'x' value be set in pos and map_center, as scale
 //    explicitly provided
@@ -396,7 +412,7 @@ invalid_col:
 
 
 // computes map row for position with map located at map_center
-// if position is out of bounds (off map) then returns -1, otherwise 
+// if position is out of bounds (off map) then returns -1, otherwise
 //    returns 0
 // only requires that 'y' value be set in pos and map_center
 static int32_t convert_akn_to_map_row(
@@ -431,7 +447,7 @@ out_of_bounds:
 
 
 // computes row and column for position with map located at map_center
-// if coordinate is w/in map, 0 is returned, otherwise if outside of 
+// if coordinate is w/in map, 0 is returned, otherwise if outside of
 //    map area, -1 is returned
 // it is assumed/required that map center is more than 0.5 degs away
 //    from north pole
@@ -563,7 +579,7 @@ all_done:
 }
 
 
-// returns max number of degees per nautical mile for map centered at 
+// returns max number of degees per nautical mile for map centered at
 //    this latitude
 static double get_deg_per_nm(
       /* in     */ const world_coordinate_type latlon
@@ -649,7 +665,7 @@ map_level3_type * build_60x60_map(
          }
          // copy content from input map buffers to output map
          for (uint32_t y=0; y<720; y++) {
-            // get latitude -- this is the top of the input map grid 
+            // get latitude -- this is the top of the input map grid
             //    plus 1/720 for each row, as 1-deg grid is 720 rows high
             //    and akn_deg value is increasing going down
             akn_position_type in_akn_deg;
@@ -666,7 +682,7 @@ map_level3_type * build_60x60_map(
             }
             // get output map row
             map_coordinate_type out_map_pos;
-            if (convert_akn_to_map_row(in_akn_deg, center, 
+            if (convert_akn_to_map_row(in_akn_deg, center,
                   &out_map_pos.y) != 0) {
                continue;
             }
@@ -689,14 +705,14 @@ map_level3_type * build_60x60_map(
 //printf("    dx_deg %.4f    dx_nm %.6f\n", dx_deg, dx_nm);
                if (fabs(dx_nm) < 30.0) {
                   // position is in output map. push depth value to map
-                  if (convert_akn_to_map_column(in_akn_deg, center, 
+                  if (convert_akn_to_map_column(in_akn_deg, center,
                         scale, &out_map_pos.x) != 0) {
 //printf("      out of bounds  in_deg %.4f  ctr_deg %.4f\n", in_akn_deg.akn_lon, center.akn_lon);
                      continue;
                   }
                   assert(out_map_pos.x < 720);
 //printf("      pos %d\n", out_map_pos.x);
-                  uint32_t out_idx = 
+                  uint32_t out_idx =
                         (uint32_t) (out_map_pos.x + out_map_pos.y * 720);
                   // if output map point is unknown, set it to depth from this
                   //    input map point. otherwise, select higher value from

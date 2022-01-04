@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "accumulator.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,9 +27,9 @@
 #define R2D ((float) (180.0 / M_PI))
 #endif // R2D
 
-/* 
+/*
 Defines accumulators for remapping 'undistorted' camera images to
-perspective views. One accumulator is used to produce an output 
+perspective views. One accumulator is used to produce an output
 image for each channel (intensity + color). Source images from each
 channel have different resultions, resulting in much duplicated code.
 
@@ -176,7 +192,7 @@ static void get_perspective_pix(
       x_pos += PERSP_WIDTH / 2.0f;
 //printf("  x persp pos (abs): %f\n", (double) x_pos);
    }
-   // values are based on left/top edge of pixel, and ne/nw/se/sw 
+   // values are based on left/top edge of pixel, and ne/nw/se/sw
    //    interpolation is based on this, so rounding to nearest
    //    integer value is not appropriate
    pos->x = (uint16_t) x_pos;
@@ -194,7 +210,7 @@ static void get_perspective_pix(
 static void create_accumulator_maps(void)
 {
    // intensity color channel
-   uint32_t sz_y = CAM_WIDTH_PIX_Y_YUV * CAM_HEIGHT_PIX_Y * 
+   uint32_t sz_y = CAM_WIDTH_PIX_Y_YUV * CAM_HEIGHT_PIX_Y *
          sizeof(*accum_map_y_);
    if (accum_map_y_ == NULL) {
       accum_map_y_ = malloc(sz_y);
@@ -208,7 +224,7 @@ static void create_accumulator_maps(void)
       }
    }
    // color channel
-   uint32_t sz_v = CAM_WIDTH_PIX_V_YUV * CAM_HEIGHT_PIX_V * 
+   uint32_t sz_v = CAM_WIDTH_PIX_V_YUV * CAM_HEIGHT_PIX_V *
          sizeof(*accum_map_v_);
    if (accum_map_v_ == NULL) {
       accum_map_v_ = malloc(sz_v);

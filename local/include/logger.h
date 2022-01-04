@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(LOGGER_H)
 #define LOGGER_H
 #if !defined(_GNU_SOURCE)
@@ -24,7 +40,7 @@
 //    setting is used. otherwise it should be set as one of the above
 //    values
 
-enum log_level { 
+enum log_level {
    LOG_LEVEL_ALL,    // all logging, including debug (default)
    LOG_LEVEL_INFO,   // info, warnings and errors
    LOG_LEVEL_WARN,   // warnings and errors
@@ -95,7 +111,7 @@ void close_logs(void);
 
 
 
-// write info to log file, if logging call priority is at or above 
+// write info to log file, if logging call priority is at or above
 //    set logging level
 void log_info(
       /* in out */       log_info_type *logger,

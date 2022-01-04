@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <math.h>
 // common functions between submodules
 
@@ -60,12 +76,12 @@ static inline void vector_to_latlon32(
 //    reverse projecting flattened image onto sphere
 // assume that image is uniformly projected on a planar sensor with
 //    uniform pixel sizes. sensor width and height are in degrees.
-//    find Z value that allows using x and y pixel offsets from 
+//    find Z value that allows using x and y pixel offsets from
 //    center w/o scaling
 // function projects pixel to unit sphere and rotates about image center
 //static void project_pixel_to_sphere(
-//      /* in      */ const int32_t x_pos, 
-//      /* in      */ const int32_t y_pos, 
+//      /* in      */ const int32_t x_pos,
+//      /* in      */ const int32_t y_pos,
 //      /*     out */       vector_type *vec
 //      )
 //{

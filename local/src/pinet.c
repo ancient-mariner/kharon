@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(_GNU_SOURCE)
 #define _GNU_SOURCE
 #endif   // _GNU_SOURCE
@@ -31,7 +47,7 @@
 ////////////////////////////////////////////////////////////////////////
 // globals
 
-// TODO consider deprecating and switching to DEG_TO_PIX and PIX_TO_DEG 
+// TODO consider deprecating and switching to DEG_TO_PIX and PIX_TO_DEG
 //    to be consistent w/ BAM constants. or not -- PPD is a widely used
 //    metric
 double PIX_PER_DEG[NUM_PYRAMID_LEVELS] = { 0.0 };
@@ -56,7 +72,7 @@ void set_ppd(
       /* in     */ const double ppd
       )
 {
-   // this cannot be called after the values it changes have been used 
+   // this cannot be called after the values it changes have been used
    // there's not presently a fool-proof way to prevent misdeeds, but at
    //    least try
    if (globals_accessed_) {
@@ -97,7 +113,7 @@ void set_ppd(
 }
 
 void set_world_height(
-      /* in     */ const double above_horizon, 
+      /* in     */ const double above_horizon,
       /* in     */ const double below_horizon
       )
 {
@@ -155,16 +171,16 @@ int connect_to_server(
    conn.sin_port = htons((uint16_t) net_id->port);
    inet_pton(AF_INET, net_id->ip, &conn.sin_addr);
    // try to connect
-   if ((rc = connect(sockfd, (const struct sockaddr*) &conn, 
+   if ((rc = connect(sockfd, (const struct sockaddr*) &conn,
             sizeof(conn))) < 0) {
-      log_err(log, "client unable to connect to %s:%d: %s", 
+      log_err(log, "client unable to connect to %s:%d: %s",
             net_id->ip, net_id->port, strerror(errno));
       goto err;
    }
-   // send communication protocol number -- server will send '1' if 
+   // send communication protocol number -- server will send '1' if
    //    protocol numbers match and -1 if not
    if (send_protocol_version(sockfd, COMMUNICATION_PROTOCOL_MAJOR,
-         COMMUNICATION_PROTOCOL_MINOR) != 0) 
+         COMMUNICATION_PROTOCOL_MINOR) != 0)
       goto err;
    // if we made it here, the connection was created successfully and
    //    the server accepted our communication protocol version
@@ -197,57 +213,57 @@ int connect_to_server_no_wait(
    }
    // make socket be non-blocking (for connect)
    int fcntl_arg = 0;
-   if( (fcntl_arg = fcntl(sockfd, F_GETFL, NULL)) < 0) { 
-      log_err(log, "Error fcntl(..., F_GETFL) (%s)", strerror(errno)); 
+   if( (fcntl_arg = fcntl(sockfd, F_GETFL, NULL)) < 0) {
+      log_err(log, "Error fcntl(..., F_GETFL) (%s)", strerror(errno));
       goto err;
-   } 
-   if( fcntl(sockfd, F_SETFL, fcntl_arg | O_NONBLOCK) < 0) { 
-      log_err(log, "Error fcntl(..., F_SETFL) (%s)", strerror(errno)); 
+   }
+   if( fcntl(sockfd, F_SETFL, fcntl_arg | O_NONBLOCK) < 0) {
+      log_err(log, "Error fcntl(..., F_SETFL) (%s)", strerror(errno));
       goto err;
-   } 
+   }
    // connect
    memset(&conn, 0, sizeof(conn));
    conn.sin_family = AF_INET;
    conn.sin_port = htons((uint16_t) net_id->port);
    inet_pton(AF_INET, net_id->ip, &conn.sin_addr);
    // try to connect
-   if ((rc = connect(sockfd, (const struct sockaddr*) &conn, 
+   if ((rc = connect(sockfd, (const struct sockaddr*) &conn,
             sizeof(conn))) < 0) {
       // the code here is supposed to work using a timeout value for
       //    the connect (timeout is the last param for select())
       // that's not working, but the connection does fail immediately
       //    if the target is not available, which is good enough
-      if (errno == EINPROGRESS) { 
+      if (errno == EINPROGRESS) {
          fd_set fdset;
          FD_ZERO(&fdset);
          FD_SET(sockfd, &fdset);
          int res = select(sockfd+1, NULL, &fdset, NULL, NULL);
-         if ((res < 0) && (errno != EINTR)) { 
-            log_err(log, "Error connecting %d - %s", errno, strerror(errno)); 
+         if ((res < 0) && (errno != EINTR)) {
+            log_err(log, "Error connecting %d - %s", errno, strerror(errno));
             goto err;
          } else if (res > 0) {
-            // Socket selected for write 
-            socklen_t lon = sizeof(int); 
+            // Socket selected for write
+            socklen_t lon = sizeof(int);
             int32_t valopt;
-            res = getsockopt(sockfd, SOL_SOCKET, SO_ERROR, 
+            res = getsockopt(sockfd, SOL_SOCKET, SO_ERROR,
                   (void*)(&valopt), &lon);
-            if (res < 0) { 
-               log_err(log, "Error in getsockopt() %d - %s", errno, 
-                     strerror(errno)); 
+            if (res < 0) {
+               log_err(log, "Error in getsockopt() %d - %s", errno,
+                     strerror(errno));
                goto err;
-            } 
-            // Check the value returned... 
-            if (valopt) { 
-               log_err(log, "Error in delayed connection() %d - %s", 
-                     valopt, strerror(valopt)); 
+            }
+            // Check the value returned...
+            if (valopt) {
+               log_err(log, "Error in delayed connection() %d - %s",
+                     valopt, strerror(valopt));
                goto err;
-            } 
+            }
          } else {
             log_err(log, "Timeout in select() -- cancelling");
             goto err;
          }
       } else {
-         log_err(log, "Client unable to connect to %s:%d: %s", 
+         log_err(log, "Client unable to connect to %s:%d: %s",
                net_id->ip, net_id->port, strerror(errno));
          goto err;
       }
@@ -255,10 +271,10 @@ int connect_to_server_no_wait(
    // restore timeout
    fcntl(sockfd, F_SETFL, fcntl_arg);
    if (check_protocol) {
-      // send communication protocol number -- server will send '1' if 
+      // send communication protocol number -- server will send '1' if
       //    protocol numbers match and -1 if not
       if (send_protocol_version(sockfd, COMMUNICATION_PROTOCOL_MAJOR,
-            COMMUNICATION_PROTOCOL_MINOR) != 0) 
+            COMMUNICATION_PROTOCOL_MINOR) != 0)
          goto err;
    }
    // if we made it here, the connection was created successfully and
@@ -346,7 +362,7 @@ int wait_for_connection_no_check(int sockfd, const char* name)
       }
       goto err;
    }
-   // 
+   //
    goto done;
 err:
    if (connfd >= 0)
@@ -378,11 +394,11 @@ int wait_for_connection(int sockfd, const char* name)
             COMMUNICATION_PROTOCOL_MINOR) != 0)
    {
       log_info_type *log = get_kernel_log();
-      log_err(log, "[%s] protocol version mismatch with connecting device", 
+      log_err(log, "[%s] protocol version mismatch with connecting device",
             name);
       goto err;
    }
-   // 
+   //
    goto done;
 err:
    if (connfd >= 0)
@@ -435,18 +451,18 @@ int send_protocol_version(int sockfd, uint32_t major, uint32_t minor)
    local_protocol.minor = htonl(minor);
    double start = system_now();
    local_protocol.timestamp[0] = 0;
-   if (write(sockfd, &local_protocol, sizeof(local_protocol)) != 
+   if (write(sockfd, &local_protocol, sizeof(local_protocol)) !=
          sizeof(local_protocol)) {
       log_info_type *log = get_kernel_log();
-      log_err(log, "Unable to send protocol version packet to server: %s", 
+      log_err(log, "Unable to send protocol version packet to server: %s",
             strerror(errno));
       goto err;
    }
    // read server's response
-   if (read(sockfd, &remote_protocol, sizeof(remote_protocol)) != 
+   if (read(sockfd, &remote_protocol, sizeof(remote_protocol)) !=
          sizeof(remote_protocol)) {
       log_info_type *log = get_kernel_log();
-      log_err(log, "Unable to read protocol packet from server: %s", 
+      log_err(log, "Unable to read protocol packet from server: %s",
             strerror(errno));
       goto err;
    }
@@ -482,17 +498,17 @@ int check_protocol_version(int sockfd, uint32_t major, uint32_t minor)
    local_protocol.major = htonl(major);
    local_protocol.minor = htonl(minor);
    // read client's protocol
-   if (read(sockfd, &remote_protocol, sizeof(remote_protocol)) != 
+   if (read(sockfd, &remote_protocol, sizeof(remote_protocol)) !=
          sizeof(remote_protocol)) {
       log_info_type *log = get_kernel_log();
-      log_err(log, "Unable to read protocol version packet from client: %s", 
+      log_err(log, "Unable to read protocol version packet from client: %s",
             strerror(errno));
       goto err;
    }
    // finish local protocol packet by writing present time
    snprintf(local_protocol.timestamp, TIMESTAMP_STR_LEN, "%.4f", system_now());
    // send response
-   if (write(sockfd, &local_protocol, sizeof(local_protocol)) != 
+   if (write(sockfd, &local_protocol, sizeof(local_protocol)) !=
          sizeof(local_protocol)) {
       log_info_type *log = get_kernel_log();
       log_err(log, "Unable to send protocol version packet to client: %s",
@@ -515,7 +531,7 @@ err:
 }
 
 ////////////////////////////////////////////////////////////////////////
-// 
+//
 
 int recv_block(int sockfd, void *data, uint32_t len)
 {
@@ -543,7 +559,7 @@ int send_block(int sockfd, const void *data, uint32_t len)
    size_t bytes_left = (size_t) len;
    size_t bytes_written = 0;
    while (bytes_left > 0) {
-      ssize_t n = write(sockfd, 
+      ssize_t n = write(sockfd,
             &((const char*)data)[bytes_written], bytes_left);
       if (n < 0) {
          log_info_type *log = get_kernel_log();
@@ -645,7 +661,7 @@ char *trim_whitespace(char *str)
          return NULL;
       // copy content to front of buffer
       char *dest = str;
-      while (*src) 
+      while (*src)
          *dest++ = *src++;
       *dest = 0;
    }
@@ -673,7 +689,7 @@ char *trim_leading_whitespace(char *str)
          return NULL;
       // copy content to front of buffer
       char *dest = str;
-      while (*src) 
+      while (*src)
          *dest++ = *src++;
       *dest = 0;
    }
@@ -777,7 +793,7 @@ void flush_to_zero()
    );
 #elif defined(RPI4)
    // pass
-   // TODO verify that FTZ is set w/ fast-math on arm8, or find 
+   // TODO verify that FTZ is set w/ fast-math on arm8, or find
    //    assembler instructions to set it
 #else
    // unexpected hardware -- treat this as an error so problem can

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(SPHERE_C)
 #define SPHERE_C
 #include <string.h>
@@ -22,7 +38,7 @@ static const vector_type* get_projection_map(
    // check cache to see if this configuration is already allocated
    // if so, return it
    char name[64];
-   sprintf(name, "%d %d %.2f %.2f", size.x, size.y, 
+   sprintf(name, "%d %d %.2f %.2f", size.x, size.y,
          (double) fov_horiz.degrees, (double) fov_vert.degrees);
    vector_type *map = NULL;
    for (uint32_t i=0; i<num_allocated_maps_; i++) {
@@ -42,9 +58,9 @@ static const vector_type* get_projection_map(
       strcpy(map_name_[num_allocated_maps_], name);
       map_cache_[num_allocated_maps_] = map;
       ++num_allocated_maps_;
-      const double d_h = (double) (size.x/2) / 
+      const double d_h = (double) (size.x/2) /
             tan(D2R * fov_horiz.degrees / 2.0);
-      const double d_v = (double) (size.y/2) / 
+      const double d_v = (double) (size.y/2) /
             tan(D2R * fov_vert.degrees / 2.0);
       const double d = 0.5 * (d_h + d_v);
 // print this out as a debugging measure, so error can more easily
@@ -52,7 +68,7 @@ static const vector_type* get_projection_map(
 printf("Rectilinear projection remapping for '%s' estimates circle radius as %.1f,%.1f on horiz,vert axes, so sphere is estimated at %.1f\n", name, d_h, d_v, d);
       // get mathematical center to measure pixel distances from it
       // distance is based on center of pixel so width is one pixel less
-      //    than number of pixels (outer 1/2 pixel on each side isn't 
+      //    than number of pixels (outer 1/2 pixel on each side isn't
       //    part of measurement)
       const double h_center = 0.5 * (double) (size.x - 1);
       const double v_center = 0.5 * (double) (size.y - 1);

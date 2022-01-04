@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(ATTITUDE_H)
 #define ATTITUDE_H
 #if !defined(_GNU_SOURCE)
@@ -18,7 +34,7 @@ publication is delayed to provide all IMU producers time to publish
 
 as of Dec 2019 (post-303), 'north' has been redefined. it used to be
    orthogonal to up, in the direction of north. it is now a float value
-   that is (-heading), and not actively stored. the former north value 
+   that is (-heading), and not actively stored. the former north value
    can be extracted from x component of the ship2world axis.
 
 heading output now split between magnetic and true. other modules
@@ -33,7 +49,7 @@ heading output now split between magnetic and true. other modules
 
 
 // 5 seconds of data should be sufficient. at 100Hz, 512 bins should do
-// right now data is only read in semi-real-time, to adjust images. 
+// right now data is only read in semi-real-time, to adjust images.
 //    if more history is required, increase this freely -- one second
 //    of data takes very little storage: 100 * 12(floats) * 4(bytes) = ~4k/sec
 #define ATTITUDE_QUEUE_LEN   512
@@ -52,7 +68,7 @@ heading output now split between magnetic and true. other modules
 // bootstrap interval. when starting up, or after gyro signal has
 //    been lost, the time constant of the complementary filter is
 //    shortened to integrate more data when estimating attitude,
-//    instead of using whatever signal that happens to be present 
+//    instead of using whatever signal that happens to be present
 //    on startup (the idea is to average out noise, but in rough
 //    seas the interval would need to be considerably larger than
 //    in normal cases)
@@ -76,7 +92,7 @@ Using obsolete acc/mag data is considered to be better than using nothing
 as gyro will still drift, and static acc/mag data will keep it from spinning,
 even if stabilized gyro position is incorrect (ie, not upright, and north
 in the wrong place). When signal returns, it is allowed to slowly correct
-gyro and avoid rapid attitude jumps. 
+gyro and avoid rapid attitude jumps.
 An auxiliary system will be required to help correct for such a scenario,
 e.g., horizon tracking, motion of previously static objects. This is
 a future task.
@@ -85,10 +101,10 @@ a future task.
 // time for measured ACC and MAG to bring erroneous 'stable' values
 //    ~63% of the way to their correct value, assuming non-biased gyro
 // TODO analyze how stable values are affected by this and biased gyro
-// use different constants for ACC and MAG. ACC is much noisier, esp. 
+// use different constants for ACC and MAG. ACC is much noisier, esp.
 //    in rough seas, where disruption can occur over much larger time
 //    scales. MAG sensor is noisy on short time scales but should be
-//    relativley stable in the absence of someone (something) actively 
+//    relativley stable in the absence of someone (something) actively
 //    disrupting it. a long time constsant for MAG can perform poorly
 //    in the case of a long, slow turn, as this induces an effective
 //    gyro drift of potentially large magnitude. a short MAG TAU can
@@ -108,7 +124,7 @@ a future task.
 //    through drift correction, but sometimes drift correction fails.
 //    predicted error for each measurement is now collected, based on
 //    what complementary filter indicates attitude should be and what
-//    acc/mag sensors indicate. error is averaged over time and is 
+//    acc/mag sensors indicate. error is averaged over time and is
 //    applied to complementary output to get estimated instantaneous attitude
 // TODO implement kalman filter
 #define FILTER_EST_ERROR_TAU_SEC    20.0
@@ -143,18 +159,18 @@ struct attitude_output {
    // rotation matrix for ship's sensor values to world space
    matrix_type ship2world;
    // filtered accelerometer and magnetometer values
-   vector_type acc; 
-   vector_type mag; 
+   vector_type acc;
+   vector_type mag;
    // magnitude of input acc and mag vectors (note: subject to being noisy)
    double acc_len;
    double mag_len;
    // most recent gyro reading
-   vector_type gyr; 
+   vector_type gyr;
    // derived values
    // compass heading(s)
    degree_type true_heading;
    // use awkward name for mag heading to reduce chance of accidental use
-   degree_type mag_heading_reference;  
+   degree_type mag_heading_reference;
    degree_type pitch;   // degrees above/below horizon
    degree_type roll;    // left/right tilt
    //
@@ -265,9 +281,9 @@ enum attitude_query_state { NA, FOUND, PENDING, MISSING };
 // fetch attitude at specified time
 // index of found sample is stored in idx
 void get_attitude(
-      /* in     */ const datap_desc_type *dp, 
+      /* in     */ const datap_desc_type *dp,
       /* in out */       log_info_type *log,
-      /* in     */ const double t, 
+      /* in     */ const double t,
       /*    out */       enum attitude_query_state *status,
       /*    out */       attitude_output_type *mat,
       /*    out */       uint64_t *idx
@@ -276,8 +292,8 @@ void get_attitude(
 // start searching at idx for sample occurring at t
 // index of found sample is stored in idx
 void get_attitude_since(
-      /* in     */ const datap_desc_type *dp, 
-      /* in     */ const double t, 
+      /* in     */ const datap_desc_type *dp,
+      /* in     */ const double t,
       /*    out */       enum attitude_query_state *status,
       /*    out */       attitude_output_type *mat,
       /* in out */       uint32_t *prev_idx

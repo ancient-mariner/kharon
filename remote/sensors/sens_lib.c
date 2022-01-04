@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "sens_lib.h"
 #include <stdio.h>
 #include <string.h>
@@ -10,7 +26,7 @@
 #include "pinet.h"
 #include "softiron.h"
 
-// when fast drift detection enabled, the time constant for the 
+// when fast drift detection enabled, the time constant for the
 //    high-pass filter is increased by the below multiplier, greatly
 //    reducing the time necessary to reach equilibrium. this is
 //    meant to be used in initial calibration
@@ -24,8 +40,8 @@ void enable_fast_gyro_drift_detection(void)
    gyro_fast_drift_detection_enabled_ = 1;
 }
 
-int is_fast_drift_detection_enabled(void)  
-{ 
+int is_fast_drift_detection_enabled(void)
+{
    return gyro_fast_drift_detection_enabled_;
 }
 
@@ -56,7 +72,7 @@ int i2c_smbus_read_i2c_block_data(int device, uint8_t cmd, size_t sz, void *raw)
 #endif   // INTEL
 
 // if device failure fails, the subsequent attempt to use the device
-//    will fail. 
+//    will fail.
 void select_device(
       /* in     */ const sensor_runtime_type *dev,
       /* in     */ const int addr
@@ -95,7 +111,7 @@ err:
 // handle device error
 // reason for error is unknown, as is severity. disable the modality
 //    where the error occurred, and inactivate the sensor if there
-//    are no active modalities. the sensor driver will shutdown 
+//    are no active modalities. the sensor driver will shutdown
 //    when it has insufficient sensors running. perhaps an app
 //    restart will fix the problem
 // TODO develop protocol to induce hard-reboot of device. that may be
@@ -109,10 +125,10 @@ void device_error(
       )
 {
    // report problem
-   fprintf(stderr, "WARNING Sensor communication error: %s:%d  reg=0x%02x\n", 
+   fprintf(stderr, "WARNING Sensor communication error: %s:%d  reg=0x%02x\n",
          src_file, line_num, reg);
    // disable device
-   fprintf(stderr, "        Disabling channel 0x%04x from %s : %s\n", 
+   fprintf(stderr, "        Disabling channel 0x%04x from %s : %s\n",
          (flag & SENSOR_FLAG_ANY_SENSOR), dev->device_addr, dev->type_name);
    dev->flags &= ~flag;
    if ((dev->flags & SENSOR_FLAG_ANY_SENSOR) == 0) {
@@ -166,11 +182,11 @@ void update_gyro_drift(
    for (uint32_t i=0; i<3; i++) {
       axis_dps->v[i] = ((double) accum[i]) * gain->v[i];
    }
-   // increase time constant with high rates of rotation, as these 
+   // increase time constant with high rates of rotation, as these
    //    usually due motion and not drift
    double dps = vector_len(axis_dps);
    double turn_scale = dps > 1.0 ? 1.0 / dps : 1.0;
-   const double tau = turn_scale * (gyro_fast_drift_detection_enabled_ ? 
+   const double tau = turn_scale * (gyro_fast_drift_detection_enabled_ ?
          TAU_MULTIPLIER * base_tau : base_tau);
    // drift estimate calcualted by taking long-term average of sensor output
    for (uint32_t i=0; i<3; i++) {
@@ -338,7 +354,7 @@ void init_sensor_gps_null(
 ////////////////////////////////////////////////////////////////////////
 // combining sensors
 
-// applies offset and scale 
+// applies offset and scale
 static void apply_acc_corrections(
       /* in out */       sensor_runtime_type *sensor,
       /*    out */       vector_type *value
@@ -373,7 +389,7 @@ void update_acc(
          confidence += conf;
          // realign axes of input data and copy to accumulator
          vector_type vec;
-         mult_matrix_vector(&sensor->accel.axis_alignment, 
+         mult_matrix_vector(&sensor->accel.axis_alignment,
                &sensor->accel.up, &vec);
          // apply offset and scale corrections
          apply_acc_corrections(sensor, &vec);
@@ -406,7 +422,7 @@ static void apply_mag_corrections(
    vector_type tmp;
    copy_vector(value, &tmp);
    // 'softiron' also handles hard iron offset
-   apply_softiron_correction(&sensor->mag.softiron, &sensor->mag.scale, 
+   apply_softiron_correction(&sensor->mag.softiron, &sensor->mag.scale,
          &sensor->mag.offset, &tmp, value);
 }
 
@@ -434,7 +450,7 @@ void update_mag(
                &sensor->mag.mag, &vec);
          // apply hard and soft iron corrections
          apply_mag_corrections(sensor, &vec);
-         // 
+         //
          mag_accum.v[0] += conf * vec.v[0];
          mag_accum.v[1] += conf * vec.v[1];
          mag_accum.v[2] += conf * vec.v[2];
@@ -511,7 +527,7 @@ void update_gyr(
          confidence += conf;
          // realign axes of input data and copy to accumulator
          vector_type vec;
-         mult_matrix_vector(&gyro->axis_alignment, 
+         mult_matrix_vector(&gyro->axis_alignment,
                &gyro->axis_dps, &vec);
          axis_dps.v[0] += conf * vec.v[0];
          axis_dps.v[1] += conf * vec.v[1];

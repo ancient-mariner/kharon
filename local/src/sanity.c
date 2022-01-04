@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pixel_types.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -116,8 +132,8 @@ static unsigned int check_pix_per_degree(void)
    unsigned int errs = 0;
    printf("Checking pixels per degree\n");
    // pixels per degree should be integral, at least on lowest pyramid
-   //    level (e.g., layout grids need full degree and full pixel 
-   //    boundaries; maybe image stitching does on all levels). 
+   //    level (e.g., layout grids need full degree and full pixel
+   //    boundaries; maybe image stitching does on all levels).
    // check all levels. if it's necessary to trim back test that can
    //    be done... after code is evaluated for safety
    // ugh. using PIXELS_PER_DEGREE requires linking to pinet.a
@@ -177,13 +193,13 @@ static unsigned int check_bam32_conversions(int argc)
 {
    unsigned int errs = 0;
    printf("Checking bam32 conversions\n");
-   // we can't hardcode a constant to check as the optimizer can 
+   // we can't hardcode a constant to check as the optimizer can
    //    get too smart and alter behavior (that's how this problem was
    //    found in the first place). use argc to build the constant.
    //    for this test to work, argc should always be 1 (ie, no params
    //    to test)
    {
-      // positive degrees <360 
+      // positive degrees <360
       double deg = 1.234 * (double) argc;
       bam32_type bam;
       CVT_DEG_TO_BAM32(deg, bam);
@@ -286,7 +302,7 @@ static unsigned int check_bam32_conversions(int argc)
 //#warning "Have this test run on every startup"
 // ...at least until there's a test system in place that runs the test
 //    as a part of the build
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
    (void) argc;
    (void) argv;

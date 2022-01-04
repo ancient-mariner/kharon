@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -16,7 +32,7 @@ int main(int argc, char **argv) {
    int32_t rows = atoi(argv[3]);
    const char *outfile = argv[4];
    printf("Converting %s -> %s (%dx%d)\n", infile, outfile, cols, rows);
-   // 
+   //
    uint32_t ycols = (uint32_t) (((cols + 31) / 32) * 32);
    uint32_t yrows = (uint32_t) (((rows + 15) / 16) * 16);
    uint32_t n_ypix = (uint32_t) (ycols * yrows);
@@ -29,7 +45,7 @@ int main(int argc, char **argv) {
       return 1;
    }
    fseek(ifp, 0, SEEK_END);
-   int64_t len = ftell(ifp); 
+   int64_t len = ftell(ifp);
    if (len != n_tot_ypix) {
       printf("Size mismatch. Expected input of %d bytes, found %ld\n",
             n_tot_ypix, len);

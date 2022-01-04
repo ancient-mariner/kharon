@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(_GNU_SOURCE)
 #define _GNU_SOURCE
 #endif   // _GNU_SOURCE
@@ -27,7 +43,7 @@ int reboot(int);
 //    one GPS, etc)
 
 // limit number of times the supervisor restarts drivers. if restart
-//    count exceeds this, something is probably wrong. have supervisor 
+//    count exceeds this, something is probably wrong. have supervisor
 //    exit and trigger hypervisor to power-cycle node. in the meantime
 //    just reboot node
 // NOTE: when testing, this will result in nodes rebooting every few
@@ -78,7 +94,7 @@ static void fatal_error(
       )
 {
    if (log_) {
-      fprintf(log_, "%.3f Fatal error in %s at line %d\n", 
+      fprintf(log_, "%.3f Fatal error in %s at line %d\n",
             system_now(), fn, line);
       fclose(log_);
    }
@@ -96,7 +112,7 @@ static void signal_handler(int signal_number)
       fclose(log_);
       exit(0);
    } else {
-      fprintf(log_, "%.3f Unrecognized signal in supervisor: %d\n", 
+      fprintf(log_, "%.3f Unrecognized signal in supervisor: %d\n",
             system_now(), signal_number);
    }
 }
@@ -126,7 +142,7 @@ static void init_static_storage(void)
 #if defined(ARM)
    if (gethostname(host_, HOST_NAME_MAX) < 0) {
       int err = errno;
-      fprintf(log_, "%.3f Unable to determine hostname (%s)\n", 
+      fprintf(log_, "%.3f Unable to determine hostname (%s)\n",
             system_now(), strerror(err));
       fatal_error(__func__, __LINE__);
    }
@@ -145,7 +161,7 @@ static void init_static_storage(void)
 }
 
 
-// turn args to tokens 
+// turn args to tokens
 static void set_argv(
       /* in out */       process_description_type *desc,
       /* in out */       char *cmd
@@ -167,7 +183,7 @@ static void set_argv(
    if (desc->argv[ARGV_MAX_LEN-1] != NULL) {
       fprintf(log_, "%.3f Too many command arguments encountered for "
             "process '%s'\n", system_now(), desc->name);
-      fprintf(log_, "%.3f Modify %s and recompile to change this\n", 
+      fprintf(log_, "%.3f Modify %s and recompile to change this\n",
             system_now(), __FILE__);
       fatal_error(__func__, __LINE__);
    }
@@ -196,7 +212,7 @@ static uint32_t load_system_info(void)
    struct dirent *dir = NULL;
    d = opendir(proc_path);
    if (d == NULL) {
-      fprintf(log_, "%.3fError reading process directory '%s'\n", 
+      fprintf(log_, "%.3fError reading process directory '%s'\n",
             system_now(), proc_path);
       errs++;
       goto end;
@@ -233,14 +249,14 @@ static uint32_t load_system_info(void)
       int32_t cnt = (int32_t) fread(cmd, 1, MAX_CMD_LEN, fp);
       fclose(fp);
       if (cnt <= 0)  {
-         fprintf(log_, "%.3f Failed to read content from %s\n", 
+         fprintf(log_, "%.3f Failed to read content from %s\n",
                system_now(), desc->dev_path);
          fflush(log_);
          // treat as soft error -- this process won't be launched
          continue;
       }
       if (cmd[MAX_CMD_LEN-1] != 0) {
-         fprintf(log_, "%.3f Command line for %s is too long. ", 
+         fprintf(log_, "%.3f Command line for %s is too long. ",
                system_now(), desc->dev_path);
          fprintf(log_, "If a longer command lie is required, alter "
                "MAX_CMD_LEN and recompile\n");
@@ -276,7 +292,7 @@ end:
 static void launch_process(char **argv)
 {
 #if defined(ARM)
-   fprintf(log_, "%.3f Launching %s (launch count: %d)\n", system_now(), 
+   fprintf(log_, "%.3f Launching %s (launch count: %d)\n", system_now(),
          argv[0], restarts_);
    pid_t pid = fork();
    if (pid == 0) {
@@ -285,13 +301,13 @@ static void launch_process(char **argv)
       char *envp[] = { NULL };
       if (execve(argv[0], argv, envp) != 0) {
          // This log message is likely to be lost  FIXME
-         fprintf(log_, "%.3f Child failed to launch '%s' (%s)\n", 
+         fprintf(log_, "%.3f Child failed to launch '%s' (%s)\n",
                system_now(), argv[0], strerror(errno));
          fclose(log_);
          exit(1);
       }
    } else if (pid < 0) {
-      fprintf(log_, "%.3f Forking error (%s)\n", system_now(), 
+      fprintf(log_, "%.3f Forking error (%s)\n", system_now(),
             strerror(errno));
       fflush(log_);
    } else {
@@ -317,12 +333,12 @@ int main(int argc, char **argv)
    char buf[256];
    sprintf(buf, "/tmp/log_supervisor_%d", getpid());
    log_ = fopen(buf, "w");
-   fprintf(log_, "%.3f Starting supervisor %s %s\n", system_now(), argv[0], 
+   fprintf(log_, "%.3f Starting supervisor %s %s\n", system_now(), argv[0],
          SUPER_BUILD_VERSION);
    struct timespec ts, rem;
    PROCTAB *proc;
    uint8_t alive[MAX_WATCHED_PROCS];
-   // setup signal handling 
+   // setup signal handling
    signal(SIGUSR1, signal_handler);
    signal(SIGUSR2, signal_handler);
    signal(SIGTERM, signal_handler);
@@ -332,7 +348,7 @@ int main(int argc, char **argv)
    //
    int rc;
    if (load_system_info() != 0) {
-      fprintf(log_, "%.3f Failed to load system info. Bailing out\n", 
+      fprintf(log_, "%.3f Failed to load system info. Bailing out\n",
             system_now());
       fclose(log_);
       return -1;
@@ -377,11 +393,11 @@ int main(int argc, char **argv)
       // check forced-exit indicator
       // look for presence of file to indicate process should exit
       if (access("/pinet/super_exit.txt", F_OK) == 0) {
-         fprintf(log_, "%.3f Found 'super_exit.txt' -- exiting\n", 
+         fprintf(log_, "%.3f Found 'super_exit.txt' -- exiting\n",
                system_now());
          // avoid reboot if file is present -- system enters continuous
          //    reboot cycle otherwise (!)
-         goto end;   
+         goto end;
       }
 #else
       // for non-ARM, always exit
@@ -394,7 +410,7 @@ int main(int argc, char **argv)
       while ((rc = nanosleep(&ts, &rem)) != 0) {
          if (errno != EINTR) {
             int err = errno;
-            fprintf(log_, "%.3f Error in nanosleep (%s)\n", 
+            fprintf(log_, "%.3f Error in nanosleep (%s)\n",
                   system_now(), strerror(err));
             goto restart;  // unexpected error -- try restarting system
          }

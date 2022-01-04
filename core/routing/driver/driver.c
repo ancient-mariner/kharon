@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pinet.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,7 +58,7 @@ static uint32_t autotracking_ = 0;
 // course can be set in one of two ways -- 'hard' and 'soft'
 // hard course set tells autopilot to follow compass heading no matter
 //    what. autotracking is disabled
-// soft set tells autopilot to follow heading but autotracking 
+// soft set tells autopilot to follow heading but autotracking
 //    (collision avoidance) is active
 // this can be achieved using autotracking_ and otto_heading_degs_
 //    -> if autotracking is 0, system using hard course following. when
@@ -77,7 +93,7 @@ static int32_t driver_ready_to_run = 0;   // set to 1 in pre_run
 
 ////////////////////////////////////////////////////////////////////////
 static void driver_add_producer(
-      /* in out */       datap_desc_type *self, 
+      /* in out */       datap_desc_type *self,
       /* in     */       datap_desc_type *prod
       )
 {
@@ -86,7 +102,7 @@ static void driver_add_producer(
       fprintf(stderr, "Too many producers for driver (max %d). Need "
             "to reconfigure or recompile", MAX_ATTACHED_PRODUCERS);
       fprintf(stderr, "Consumer: %s\n", self->td->obj_name);
-      fprintf(stderr, "Producer: %s (%s)\n", prod->td->obj_name, 
+      fprintf(stderr, "Producer: %s (%s)\n", prod->td->obj_name,
             prod->td->class_name);
       hard_exit(__FILE__, __LINE__);
    }
@@ -134,7 +150,7 @@ static void driver_add_producer(
    } else {
       fprintf(stderr, "Attempted to subscribe to incompatible producer\n");
       fprintf(stderr, "Consumer: %s\n", self->td->obj_name);
-      fprintf(stderr, "Producer: %s (%s)\n", prod->td->obj_name, 
+      fprintf(stderr, "Producer: %s (%s)\n", prod->td->obj_name,
             prod->td->class_name);
       hard_exit(__FILE__, __LINE__);
    }
@@ -178,7 +194,7 @@ static void driver_pre_run(
    if (driver_->attitude == NULL) {
       // attitude is required for any driver action. consider no
       //    attitude source a fatal error
-      fprintf(stderr, "Driver '%s' is not subscribed to an attitude source\n", 
+      fprintf(stderr, "Driver '%s' is not subscribed to an attitude source\n",
             self->td->obj_name);
       errs++;
    }
@@ -210,7 +226,7 @@ static void driver_pre_run(
 ////////////////////////////////////////////////////////////////////////
 // run
 
-// procedure called by other thread (e.g., via set_destination()) to wake 
+// procedure called by other thread (e.g., via set_destination()) to wake
 //    the driver
 void wake_driver(void)
 {
@@ -242,7 +258,7 @@ static void driver_run(
 #if defined(USE_TRACKING)
    // map and course are checked every time there's new associator data.
    //    when that data's not available, these are checked periodically
-   // map update interval 
+   // map update interval
    const double MAP_UPDATE_SEC = 10.0;
    double map_timer = start_time + MAP_UPDATE_SEC;
    // interval between course updates when these occur w/o new tracking data
@@ -259,7 +275,7 @@ static void driver_run(
       struct timespec ts;
       driver_->waketime = now() + WAKING_INTERVAL_SEC;
       double_to_timespec(driver_->waketime, &ts);
-      // before taking nap, check map validity. do this even if 
+      // before taking nap, check map validity. do this even if
       //    autotracking presently disabled
       // check is made right before nap so that in case map reload takes
       //    very long it's will have shorter response lag (ie, map update
@@ -267,7 +283,7 @@ static void driver_run(
       // if we've moved more than X miles then it's time to reload map,
       //    or if destination change was made
       check_for_messages();
-      check_for_stale_map();  
+      check_for_stale_map();
       reload_map();     // reload map if needed
       while (clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ts, NULL) != 0) {
          if ((self->run_state & DP_STATE_DONE) != 0) {
@@ -308,8 +324,8 @@ static void driver_run(
       course_timer = t + COURSE_UPDATE_SEC;
 #endif   // USE_TRACKING
       if (check_for_messages() != 0) {
-         // request came in to change state, possibly requiring 
-         //    reloading maps. do that before plotting course, even 
+         // request came in to change state, possibly requiring
+         //    reloading maps. do that before plotting course, even
          //    if there's a noticable delay
          reload_map();
       }
@@ -324,9 +340,9 @@ static void driver_run(
       }
       // copy array to output buffer
       // get data sink
-      uint32_t idx = (uint32_t) 
+      uint32_t idx = (uint32_t)
             (self->elements_produced % self->queue_length);
-      driver_output_type *out = 
+      driver_output_type *out =
             (driver_output_type*) dp_get_object_at(self, idx);
       memcpy(&out->route, &driver_->route, sizeof out->route);
       self->ts[idx] = t;
@@ -373,9 +389,9 @@ static void * driver_get_object_at(
       /* in     */ const datap_desc_type *self,
       /* in     */ const uint32_t idx
       )
-{  
+{
    return &self->void_queue[idx * sizeof(driver_output_type)];
-} 
+}
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -423,7 +439,7 @@ void * driver_init(void *driver_setup)
    //
    pthread_mutex_init(&driver_->exchange_mutex, NULL);
    //
-   image_size_type world_map_size = 
+   image_size_type world_map_size =
          { .x = WORLD_MAP_WIDTH_NODES, .y = WORLD_MAP_HEIGHT_NODES };
    driver_->path_map = create_path_map(world_map_size);
    meter_type route_node_width = { .meters = ROUTE_NODE_WIDTH_MET };
@@ -463,7 +479,7 @@ void set_autotracking(
       /* in     */ const uint32_t on_off
       )
 {
-   // request has been made by. remember it and handle request in 
+   // request has been made by. remember it and handle request in
    //    the driver thread
    pthread_mutex_lock(&driver_->exchange_mutex);
    driver_->autotracking_on_off = on_off;
@@ -480,7 +496,7 @@ void set_autopilot_heading(
       /* in     */ const uint32_t degs
       )
 {
-   // request has been made by. remember it and handle request in 
+   // request has been made by. remember it and handle request in
    //    the driver thread
    pthread_mutex_lock(&driver_->exchange_mutex);
    driver_->new_autopilot_heading_degs = degs;
@@ -501,7 +517,7 @@ void set_destination(
    if (driver_ == NULL) {
       return;
    }
-   // request has been made by. remember it and handle request in 
+   // request has been made by. remember it and handle request in
    //    the driver thread
    pthread_mutex_lock(&driver_->exchange_mutex);
    driver_->destination_change = 1;

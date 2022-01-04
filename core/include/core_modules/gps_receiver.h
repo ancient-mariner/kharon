@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(GPS_RECEIVER_H)
 #define GPS_RECEIVER_H
 #if !defined(_GNU_SOURCE)
@@ -15,7 +31,7 @@
 // receives and distributes information from networked GPS source
 // GPS data received from network is expected to be NMEA sentences
 
-// GPS receiver logs data as is reported from sensor so it can be 
+// GPS receiver logs data as is reported from sensor so it can be
 //    re-used as emulated input (e.g., to replay data). just like IMU data
 
 // GPS input is fed on the order of one or a few packets per second

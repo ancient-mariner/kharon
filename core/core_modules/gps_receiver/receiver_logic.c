@@ -1,10 +1,26 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 // see
 // https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html
 
 static char * nmea_device_[8] = {
    "GA",     // galileo
-   "GB",     // beidou 
+   "GB",     // beidou
    "GP",     // gps
    "GI",     // navIC
    "GL",     // glonass
@@ -38,7 +54,7 @@ static void start_network(
    gps_receiver_class_type *gps = (gps_receiver_class_type*) dp->local;
    while ((dp->run_state & DP_STATE_DONE) == 0) {
 printf("Waiting for connection\n");
-      if ((gps->connfd = 
+      if ((gps->connfd =
             wait_for_connection(gps->sockfd, dp->td->obj_name)) >= 0) {
 printf("Have connection\n");
          break; // have connection
@@ -69,7 +85,7 @@ void print_nmea_message(
       printf("    when  ");
       // zulu time is hhmmss.sss
       uint32_t hour = (uint32_t) (out->zulu_time / 10000.0);
-      uint32_t min = (uint32_t) 
+      uint32_t min = (uint32_t)
             (out->zulu_time - (double) (hour * 10000)) / 100;
       double sec = out->zulu_time - (double) (hour * 10000 + min * 100);
       printf("%02d:%02d:%02.3f", hour, min, sec);
@@ -136,7 +152,7 @@ Units                M  Meters
 Geoid Separation     Meters
 Units                M  Meters
 Age of diff. corr.      Second
-Diff. ref. station ID   0000  
+Diff. ref. station ID   0000
 */
 static void parse_gga(
       /* in out */       gps_receiver_class_type *gps,
@@ -154,7 +170,7 @@ static void parse_gga(
 /*
 RMC, from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html
 example:
-   $GPRMC,161229.487,A,3723.2475,N,12158.3416,W,0.13,309.62,120598,,*10 
+   $GPRMC,161229.487,A,3723.2475,N,12158.3416,W,0.13,309.62,120598,,*10
 UTC time    161229.487  hhmmss.sss
 Status   A  A = data valid or V = data not valid
 Latitude    3723.2475   ddmm.mmmm
@@ -165,7 +181,7 @@ Speed over ground    0.13  knots
 Course over ground   309.62   degrees
 Date  120598   ddmmyy
 Magnetic Variation      Degrees (E= East or W = West)
-Mode  A  A = Autonomous, D = DGPS, E =DR 
+Mode  A  A = Autonomous, D = DGPS, E =DR
 */
 static void parse_rmc(
       /* in out */       gps_receiver_class_type *gps,
@@ -184,7 +200,7 @@ static void parse_rmc(
 }
 
 
-// 
+//
 static void parse_and_publish(
       /* in out */       datap_desc_type *self,
       /* in out */       gps_receiver_class_type *gps,

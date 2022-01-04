@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -46,7 +62,7 @@ int check_whoami(void)
    uint8_t cmd = 0;
    uint8_t expected = 0x0f;
    uint8_t data;
-   if (i2c_smbus_read_i2c_block_data(device_, cmd, 1, &data) < 0) 
+   if (i2c_smbus_read_i2c_block_data(device_, cmd, 1, &data) < 0)
    {
       fprintf(stderr, "Error reading WHOAMI data\n");
       return -1;
@@ -60,7 +76,7 @@ int check_whoami(void)
 }
 
 static void write_register(
-      /* in     */ const uint8_t reg, 
+      /* in     */ const uint8_t reg,
       /* in     */ const uint8_t value
       )
 {

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -22,15 +38,15 @@ static int32_t test_load_declination(void)
    errs += load_declination(fname, latlon, &declination, &inclination);
    expected = 4.23;
    if (fabs(declination - expected) > 0.001) {
-      fprintf(stderr, "A declination %.1f,%.1f: Got %f, expected %f\n", 
-            (double) latlon.lon, (double) latlon.lat, (double) declination, 
+      fprintf(stderr, "A declination %.1f,%.1f: Got %f, expected %f\n",
+            (double) latlon.lon, (double) latlon.lat, (double) declination,
             (double) expected);
       errs++;
    }
    expected2 = 87.66;
    if (fabs(inclination - expected2) > 0.001) {
-      fprintf(stderr, "A inclination %.1f,%.1f: Got %f, expected %f\n", 
-            (double) latlon.lon, (double) latlon.lat, (double) inclination, 
+      fprintf(stderr, "A inclination %.1f,%.1f: Got %f, expected %f\n",
+            (double) latlon.lon, (double) latlon.lat, (double) inclination,
             (double) expected2);
       errs++;
    }
@@ -40,15 +56,15 @@ static int32_t test_load_declination(void)
    errs += load_declination(fname, latlon, &declination, &inclination);
    expected = 15.97;
    if (fabs(declination - expected) > 0.001) {
-      fprintf(stderr, "B declination %.1f,%.1f: Got %f, expected %f\n", 
-            (double) latlon.lon, (double) latlon.lat, (double) declination, 
+      fprintf(stderr, "B declination %.1f,%.1f: Got %f, expected %f\n",
+            (double) latlon.lon, (double) latlon.lat, (double) declination,
             (double) expected);
       errs++;
    }
    expected2 = 69.89;
    if (fabs(inclination - expected2) > 0.001) {
-      fprintf(stderr, "B inclination %.1f,%.1f: Got %f, expected %f\n", 
-            (double) latlon.lon, (double) latlon.lat, (double) inclination, 
+      fprintf(stderr, "B inclination %.1f,%.1f: Got %f, expected %f\n",
+            (double) latlon.lon, (double) latlon.lat, (double) inclination,
             (double) expected2);
       errs++;
    }
@@ -57,14 +73,14 @@ static int32_t test_load_declination(void)
    latlon.longitude = 237.0;
    errs += load_declination(fname, latlon, &declination, &inclination);
    if (fabs(declination - expected) > 0.001) {
-      fprintf(stderr, "C declination %.1f,%.1f: Got %f, expected %f\n", 
-            (double) latlon.lon, (double) latlon.lat, (double) declination, 
+      fprintf(stderr, "C declination %.1f,%.1f: Got %f, expected %f\n",
+            (double) latlon.lon, (double) latlon.lat, (double) declination,
             (double) expected);
       errs++;
    }
    if (fabs(inclination - expected2) > 0.001) {
-      fprintf(stderr, "C inclination %.1f,%.1f: Got %f, expected %f\n", 
-            (double) latlon.lon, (double) latlon.lat, (double) inclination, 
+      fprintf(stderr, "C inclination %.1f,%.1f: Got %f, expected %f\n",
+            (double) latlon.lon, (double) latlon.lat, (double) inclination,
             (double) expected2);
       errs++;
    }

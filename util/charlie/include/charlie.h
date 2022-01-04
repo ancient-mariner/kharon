@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(CHARLIE_H)
 #define CHARLIE_H
 #include <stdio.h>
@@ -19,7 +35,7 @@
 // destination database
 
 #define CHARLIE_DESTINATION_DB      "/opt/kharon/charlie/destinations.txt"
-// format of destination DB is 
+// format of destination DB is
 //    <name> <longitude> <latitude> <radius>
 // where 'radius' is how close we need to get to the target coordinates
 //    (in meters) before declaring success. NOTE this shouldn't be
@@ -48,15 +64,15 @@ int get_postmaster_address(
       );
 
 int send_postmaster_request(
-      /* in     */ const int sockfd, 
-      /* in     */ const struct pm_request *req, 
+      /* in     */ const int sockfd,
+      /* in     */ const struct pm_request *req,
       /* in     */ const void *data
       );
 
 int read_postmaster_response(
       /* in     */ const int sockfd,
       /* in     */ const struct pm_request *req,
-      /*    out */       struct pm_response *resp, 
+      /*    out */       struct pm_response *resp,
       /*    out */       uint8_t ** data
       );
 

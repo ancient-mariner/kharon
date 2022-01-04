@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(WORLD_MAP_C)
 #define WORLD_MAP_C
 #include <stdio.h>
@@ -56,7 +72,7 @@ static void mark_land_adjacency(
             path_map->feature_nodes[idx-2*size.x-1].near_cnt++;
             path_map->feature_nodes[idx-2*size.x  ].near_cnt++;
             path_map->feature_nodes[idx-2*size.x+1].near_cnt++;
-            // 
+            //
             path_map->feature_nodes[idx-  size.x-2].near_cnt++;
             path_map->feature_nodes[idx-  size.x+2].near_cnt++;
             //
@@ -91,7 +107,7 @@ static void mark_land_adjacency(
             path_map->feature_nodes[idx-3*size.x  ].near_cnt++;
             path_map->feature_nodes[idx-3*size.x+1].near_cnt++;
             path_map->feature_nodes[idx-3*size.x+2].near_cnt++;
-            // 
+            //
             path_map->feature_nodes[idx-2*size.x-3].near_cnt++;
             path_map->feature_nodes[idx-2*size.x+2].near_cnt++;
             path_map->feature_nodes[idx-2*size.x-2].near_cnt++;
@@ -138,9 +154,9 @@ printf("Loading 5-sec map at %.5f,%.5f  (%.5f,%.5f)\n", center.x_deg, center.y_d
    check_world_coordinate(center, __func__);
    assert(path_map->size.x == 720);
    assert(path_map->size.y == 720);
-   // any old beacons are stale on map load. at best it's confusing to 
+   // any old beacons are stale on map load. at best it's confusing to
    //    let them stay around
-   path_map->num_beacons = 0; 
+   path_map->num_beacons = 0;
    /////////////////////////////////////////////
    // (re)set variables
    path_map->center.x_deg = center.x_deg;
@@ -152,7 +168,7 @@ printf("Loading 5-sec map at %.5f,%.5f  (%.5f,%.5f)\n", center.x_deg, center.y_d
    path_map->node_width.meters = path_map->map_width.meters / 720.0;
    path_map->node_height.meters = path_map->map_height.meters / 720.0;
    // nodes are 'square' in the sense of degrees so no latitude correction
-   //    is necessary. this is OK up to Anchorage latitude, but perhaps 
+   //    is necessary. this is OK up to Anchorage latitude, but perhaps
    //    starts to fail above Prudoe
    /////////////////////////////////////////////
    // fetch map from database
@@ -160,12 +176,12 @@ printf("Loading 5-sec map at %.5f,%.5f  (%.5f,%.5f)\n", center.x_deg, center.y_d
    build_60x60_map(world_map_folder_, center, &map3);
    double decl, incl;
    char declination_fname[STR_LEN];
-   snprintf(declination_fname, STR_LEN, "%s%s", 
+   snprintf(declination_fname, STR_LEN, "%s%s",
          world_map_folder_, DECLINATION_FILE);
    if (load_declination(declination_fname, center, &decl, &incl) != 0) {
       // for now, treat inability to read declination as fatal error
       // TODO treat as soft err and have fallback
-      log_err(log_, "Failed to read/parse declination file '%s'", 
+      log_err(log_, "Failed to read/parse declination file '%s'",
             DECLINATION_FILE);
       hard_exit(__FILE__, __LINE__);
    }
@@ -209,7 +225,7 @@ void set_world_map_folder_name(
 
 const char* get_world_map_folder_name(void)
 {
-   // make sure folder name was initialized 
+   // make sure folder name was initialized
    // TODO implement less fragile logic -- ie, don't assert-crash in
    //    event of configuration oversight
    if (world_map_folder_[0] == 0) {

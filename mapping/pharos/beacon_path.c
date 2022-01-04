@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -52,7 +68,7 @@ static int write_output_file(void)
    int rc = -1;
    char outfile[STR_LEN];
    // open files later. if first opens, we can assume that 2nd will
-   sprintf(outfile, "%s%s.%d-%d", map_folder_, BEACON_FILE, 
+   sprintf(outfile, "%s%s.%d-%d", map_folder_, BEACON_FILE,
          start_row_, last_row_);
    printf("Writing updated beacons to '%s'\n", outfile);
    if (quit_ != 0) {
@@ -153,7 +169,7 @@ static void parse_command_line(int argc, char *argv[])
 usage:
    printf("Associates beacon with its neighbors, storing path distance\n");
    printf("\n");
-   printf("Usage: %s [-f <map folder>] [-r <start row>] [-e <last row>] \n", 
+   printf("Usage: %s [-f <map folder>] [-r <start row>] [-e <last row>] \n",
          argv[0]);
    printf("\n");
    printf("where:\n");
@@ -201,8 +217,8 @@ printf("Quit detected -- bailing out\n");
             // record has been processed -- nothing more to do
             continue;
          }
-         // build path map around this beacon. 
-         akn_position_type apos = { .akn_x = (double) home_rec->akn_x, 
+         // build path map around this beacon.
+         akn_position_type apos = { .akn_x = (double) home_rec->akn_x,
                .akn_y = (double) home_rec->akn_y };
          world_coordinate_type wpos = convert_akn_to_world(apos);
          load_world_5sec_map(wpos, path_map);
@@ -221,11 +237,11 @@ printf("Beacon %d at %.4f,%.4f has neighbors: (of %d)\n", home_rec->index, (doub
             }
 //            calculate_beacon_map_position(path_map, b);
             // calculate beacon map position
-            world_coordinate_type beac_wpos = 
-                  convert_akn_to_world(ref->coords);                      
-            ref->pos_in_map = get_pix_position_in_map(path_map, beac_wpos); 
+            world_coordinate_type beac_wpos =
+                  convert_akn_to_world(ref->coords);
+            ref->pos_in_map = get_pix_position_in_map(path_map, beac_wpos);
             //
-            uint32_t map_node_idx = (uint32_t) (ref->pos_in_map.x + 
+            uint32_t map_node_idx = (uint32_t) (ref->pos_in_map.x +
                   ref->pos_in_map.y * path_map->size.x);
 printf("  neighbor %d at %d,%d\n", b, ref->pos_in_map.x, ref->pos_in_map.y);
             path_map_node_type *node = &path_map->nodes[map_node_idx];

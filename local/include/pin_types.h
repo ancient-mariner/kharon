@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(PIN_TYPES_H)
 #define PIN_TYPES_H
 #if !defined(_GNU_SOURCE)
@@ -21,8 +37,8 @@
 
 ////////////////////////////////////////////////////////////////////////
 // runtime "constants"
-// normaly CAPS denotes a constant. several of are technically not, 
-//    but practically they are, as they are set on initialization 
+// normaly CAPS denotes a constant. several of are technically not,
+//    but practically they are, as they are set on initialization
 //    and don't change. it's a crime against style, but a victimless one
 // set via runtime's init_globals; updated via set_ppd()
 extern double PIX_PER_DEG[NUM_PYRAMID_LEVELS];
@@ -61,7 +77,7 @@ void set_ppd(
 
 // sets WORLD_HEIGHT*
 void set_world_height(
-      /* in     */ const double above_horizon, 
+      /* in     */ const double above_horizon,
       /* in     */ const double below_horizon
       );
 
@@ -78,7 +94,7 @@ void set_world_height(
 // timestamps are sent as text over the network
 // this is the size of the buffer that they're written to
 // timestamps are in seconds and are generally to 4 significant digits: %.4f
-// one year of seconds is approx: 
+// one year of seconds is approx:
 //     +31500000.0000
 //     12345678901234
 // -> 15 digits (14 + null)
@@ -96,7 +112,7 @@ typedef struct network_id network_id_type;
 // dt is the amount of time, in seconds, since the previous packet
 //    was sent. negative value indicates no previous packet
 // custom fields are for use by sensor streams
-// all ints are stored in network byte order, and floats are 
+// all ints are stored in network byte order, and floats are
 //    stored as text strings
 #define SENSOR_PACKET_LOG_DATA   64
 struct sensor_packet_header {
@@ -105,12 +121,12 @@ struct sensor_packet_header {
       int16_t custom_16[4];
       int32_t custom_32[2];
    };
-   // 
+   //
    char timestamp[TIMESTAMP_STR_LEN];
    // optional 2nd time. for camera, this is when frame was delivered to
    //    the application, with regular timestamp being approximate
    //    time of acquisition start
-   char timestamp_2[TIMESTAMP_STR_LEN];   
+   char timestamp_2[TIMESTAMP_STR_LEN];
    // consider moving sync service to pi node, as part of pi_super,
    //    with hub being receiver. possibly split frame sync from time sync
    char log_data[SENSOR_PACKET_LOG_DATA];
@@ -132,7 +148,7 @@ typedef struct sensor_packet_header sensor_packet_header_type;
 
 // vy packet is derived from yuv. yuv has one full-resolution Y channel
 //    and two half-resolution uv channels. vy has equal resolution y and v
-//    channels (implementation: y is downsampled while v is sent; u is 
+//    channels (implementation: y is downsampled while v is sent; u is
 //    dropped)
 #define VY_PACKET_TYPE   (0x11235004)
 // custom_s[0] is img height (rows), in pixels
@@ -189,12 +205,12 @@ struct udp_sync_packet {
 //
 // communication protocol must take into account delay in frame capture
 // TODO revisit finding out approx capture/exposure time
-// sending command to (pi) camera to capture image takes approx. 3x 
+// sending command to (pi) camera to capture image takes approx. 3x
 //    exposure time (ie, 20ms exposure -> 60ms delay before frame ready)
 // udp design is to control/synchronize frames between cameras. this only
 //    reliable if signal gets through to all cams at same time. if one
 //    network link (eg, cam3) is saturated w/ frame upload while another
-//    (eg, cam4) is open then request delivery to one cam will be 
+//    (eg, cam4) is open then request delivery to one cam will be
 //    delayed relative to other. also, must be confident that receipt of
 //    message will induce capture -- if camera process is busy uploading
 //    image when message comes in then it may not be ready to start
@@ -206,13 +222,13 @@ struct udp_sync_packet {
 //    to 2nd thread when image ready (eg, memcpy). 2nd waits for next
 //    capture request to arrive before sending frame. 1st can use
 //    two pthread condition signals to sync main and 2nd thread.
-//    frame delivery takes for 1 full acq cycle plus transfer time 
+//    frame delivery takes for 1 full acq cycle plus transfer time
 //    (eg, 350ms)
 // problem: network will be saturated when IMU data for presently
 //    acquired frame is happening, so arrival of positional packets
 //    will be delayed. this can be compensated-for if udp packet sends
 //    master time and each IMU packet uses this for clock sync, and sends
-//    time of imu acquisition. then exact arrival time of packets not 
+//    time of imu acquisition. then exact arrival time of packets not
 //    important
 // network traffic will go in bursts, sync'd to bcast of udp packet.
 //    network saturation follows bcast until all frame data delivered.
@@ -232,7 +248,7 @@ struct udp_sync_packet {
 // udp_sync_receiver
 
 ////////////////////////////////////////////////////////////////////////
-// VY 
+// VY
 // derived from YUV. camera process (on RPi) takes YUV signal, strips out U,
 //    and then downsamples Y to match V size. YUV buffer is removed and
 //    only raw image is sent.
@@ -304,7 +320,7 @@ struct udp_sync_packet {
 #define HARDWARE_INTERFRAME_INTERVAL   (1.0 / HARDWARE_FRAME_RATE)
 
 ////////////////////////////////////////////////////////////////////////
-// shared 
+// shared
 
 //#define  CAMERA_FRAME_INTERVAL         (1.0 / 6.0)
 
@@ -334,12 +350,12 @@ typedef struct matrix_type matrix_type;
 // "IMU" is used here generically to mean navigation or environment
 //    sensor
 
-enum { IMU_ACC=0, 
-         IMU_MAG, 
-         IMU_GYR, 
-         IMU_GPS, 
-         IMU_BARO, 
-         IMU_TEMP, 
+enum { IMU_ACC=0,
+         IMU_MAG,
+         IMU_GYR,
+         IMU_GPS,
+         IMU_BARO,
+         IMU_TEMP,
          NUM_IMU_CHANNELS };
 
 // state stores availability of each data channel
@@ -351,7 +367,7 @@ union imu_modality_state {
 typedef union imu_modality_state imu_modality_state_type;
 
 
-// IMU sensor data 
+// IMU sensor data
 struct imu_sensor_packet {
    struct vector_type gyr;
    struct vector_type acc;
@@ -378,7 +394,7 @@ typedef struct dt_second dt_second_type;
 
 ////////////////////////////////////////////////////////////////////////
 // binary angular measurement
-// NOTE 
+// NOTE
 //    all operations should be performed on .angleXX
 //    .sangleXX should be read-only
 // C specification has wrapping of signed ints as undefined (even though it
@@ -390,7 +406,7 @@ union bam8 {
 };
 typedef union bam8 bam8_type;
 
-// direct degree->BAM conversions are not safe due C specification 
+// direct degree->BAM conversions are not safe due C specification
 //    ambiguities in converting from float to integer when out of rage. they
 //    usually work as expected but in edge cases they can fail. constants
 //    should not be used in code w/o care. underscore appended to discourage
@@ -445,9 +461,9 @@ typedef union bam64 bam64_type;
 //#define DEG_TO_BAM32_FLT      ((float) DEG_TO_BAM32)
 
 // when representing world space, x=0 is 0 longitude. x increases moving
-//    eastward. y=0 is north pole, 2^31 is south pole, thus values are 
-//    increasing going right and down, like in an image. y values above 
-//    2^31 are undefined. 
+//    eastward. y=0 is north pole, 2^31 is south pole, thus values are
+//    increasing going right and down, like in an image. y values above
+//    2^31 are undefined.
 union bam32_coordinate {
    struct {
       bam32_type x;
@@ -609,7 +625,7 @@ struct motion_2d_dps {
 typedef struct motion_2d_dps motion_2d_dps_type;
 
 ////////////////////////////////////////////////////////////////////////
-// 
+//
 
 
 //
@@ -655,7 +671,7 @@ union image_coordinate {
 };
 typedef union image_coordinate image_coordinate_type;
 
-// wrapper for relative dimensions 
+// wrapper for relative dimensions
 union signed_coordinate {
    struct { int16_t y, x; };
    uint32_t all;
@@ -739,7 +755,7 @@ typedef struct meter_2d_motion meter_2d_motion_type;
 // world:
 // stores latitude [-90,90] and longitude [0,360) of a visual scene
 //    projected onto a sphere. north latitude is up (+Y axis) and
-//    0 longitude is world compass north (+Z axis), east lon=90, 
+//    0 longitude is world compass north (+Z axis), east lon=90,
 //    west lon=270 (+X axis)
 ////    NOTE: for some calculations, longitude adjusted to (-180,180]
 ////    so cannot be assumed to be positive  TODO deprecate negative degrees
@@ -871,7 +887,7 @@ struct ground_track {
 typedef struct ground_track ground_track_type;
 
 struct bearing {
-   double r; 
+   double r;
    double theta;
 };
 typedef struct bearing bearing_type;

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pin_types.h"
 #include "pixel_types.h"
 #include "accumulator.h"
@@ -27,7 +43,7 @@
 //    rotation or remapping operation
 // the auxiliary channel Z is used to store image border information,
 //    which is used in edge and salience detection. pixels with
-//    non-zero border values are discounted because of border 
+//    non-zero border values are discounted because of border
 //    artifacts. to prevent non-image areas from registering
 //    edges at the image boundary, accumulator squares with zero
 //    weight will be flagged as border areas, and so will be
@@ -73,7 +89,7 @@ static void push_pixel_to_accumulator(
       /* in out */       vy_accumulator_type * restrict accum
       )
 {
-   // sphere image top left is max lat (+lat in upper hemisphere) and 
+   // sphere image top left is max lat (+lat in upper hemisphere) and
    //    least lon (lon increasing rightward)
    // image buffer top left is least x, least y. need to invert y at some
    //    point so image isn't upside down
@@ -98,7 +114,7 @@ static void push_pixel_to_accumulator(
    pix_lon.degrees += accum->half_width.degrees;
 //printf("  offset to lat=%f lon=%f\n", (double) pix_latlon.latitude, (double) pix_latlon.longitude);
    // find accumulator bin this pixel maps to
-   // ppd is multiplied by 8 to more easily find which part of 
+   // ppd is multiplied by 8 to more easily find which part of
    //    bin pixel is centered at
    uint32_t x_pos_x8 = (uint32_t) (pix_lon.degrees * pix_per_degree_x8);
    uint32_t y_pos_x8 = (uint32_t) (pix_lat.degrees * pix_per_degree_x8);
@@ -226,7 +242,7 @@ static int32_t test_push_pixel_to_accumulator(void)
    }
    degree_type accum_width = { .degrees = dpp * (double) img_sz.x };
    degree_type accum_height = { .degrees = dpp * (double) img_sz.y };
-   vy_accumulator_type *acc = create_vy_accumulator(img_sz, 
+   vy_accumulator_type *acc = create_vy_accumulator(img_sz,
          accum_width, accum_height);
    degree_type image_center_lat = { .degrees = 0.0 };
    degree_type image_center_lon = { .degrees = 0.0 };
@@ -234,9 +250,9 @@ static int32_t test_push_pixel_to_accumulator(void)
    vy_accumulator_pixel_type pix = { .y=100, .v=0 };
    // should all be in desired pixel
    errs += check_acc_pix(acc, 1, 1, 0, 0, 0, 0);
-   // 
+   //
    set_vector(&vec, 0.0, 0.0, 1.0);
-   push_pixel_to_accumulator(pix, 0, &vec, image_center_lon, 
+   push_pixel_to_accumulator(pix, 0, &vec, image_center_lon,
          image_center_lat, 80.0, acc);
    // pixel is pushed right,up half of the accumulator because it's at image
    //    center
@@ -250,10 +266,10 @@ static int32_t test_push_pixel_to_accumulator(void)
    //////////////////////////
    // shift y up by half a pixel so all content goes to upper accum bin
    // one pixel is approx 0.001745 displacement on x or y
-   // NOTE: validating test requires tweaking due to small round-off 
+   // NOTE: validating test requires tweaking due to small round-off
    //    errors can put pixel in bin adjacent the one that's expected
    set_vector(&vec, 0.0f, 0.0008725f, 0.9983f);
-   push_pixel_to_accumulator(pix, 0, &vec, image_center_lon, 
+   push_pixel_to_accumulator(pix, 0, &vec, image_center_lon,
          image_center_lat, 80.0f, acc);
    // accumulated input is 3200 + 6400
    errs += check_acc_pix(acc, img_sz.x/2, img_sz.y/2, 9600, 0, 0, 96);
@@ -264,7 +280,7 @@ static int32_t test_push_pixel_to_accumulator(void)
    // shift y by up quarter pixel so 1/4 goes to top and 3/4 goes to bottom
    //    (with no shift, split is half and half)
    set_vector(&vec, -0.00349, 0.0004363, 0.99648);
-   push_pixel_to_accumulator(pix, 0, &vec, image_center_lon, 
+   push_pixel_to_accumulator(pix, 0, &vec, image_center_lon,
          image_center_lat, 80.0, acc);
    errs += check_acc_pix(acc, img_sz.x/2+2, img_sz.y/2, 4800, 0, 0, 48);
    errs += check_acc_pix(acc, img_sz.x/2+2, img_sz.y/2+1, 1600, 0, 0, 16);
@@ -272,7 +288,7 @@ static int32_t test_push_pixel_to_accumulator(void)
    // move right 4.125 pixels to fresh accum territory: 7/8 left and 1/8 right
    // shift y by 3/8 pixel so 1/8 goes to top and 7/8 goes to bottom
    set_vector(&vec, -0.00720, 0.000654, 0.99648);
-   push_pixel_to_accumulator(pix, 0, &vec, image_center_lon, 
+   push_pixel_to_accumulator(pix, 0, &vec, image_center_lon,
          image_center_lat, 80.0, acc);
    errs += check_acc_pix(acc, img_sz.x/2+4, img_sz.y/2, 4900, 0, 0, 49);
    errs += check_acc_pix(acc, img_sz.x/2+5, img_sz.y/2, 700, 0, 0, 7);

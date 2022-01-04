@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -14,8 +30,8 @@
 //    store depth as positive
 // Jan 2020 -- 5 files 'failed' this check, but analysis shows that 4 are
 //    in clear tidal areas (Turnagain Arm, Knik Arm, Chesapeake Bay, SE AK)
-//    and looked correct, and sampling showed another that appeared 
-//    to be correct (SW AK -- H11064.xyz), although that one is 
+//    and looked correct, and sampling showed another that appeared
+//    to be correct (SW AK -- H11064.xyz), although that one is
 //    questionable. all other 7500 were as expected
 
 
@@ -176,7 +192,7 @@ int main(int argc, char **argv)
    FILE *cat_fp = NULL;  // for catalog file
    // allocate for entire world. US maps shouldn't take enough
    //    space to overwhelm memory. if there's a problem add logic to
-   //    add from only a specific region, or just # of files processed 
+   //    add from only a specific region, or just # of files processed
    //    at once
    //
    if (argc != 2) {

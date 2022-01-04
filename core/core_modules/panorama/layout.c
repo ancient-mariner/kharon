@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 // builds image from highest, lowest and average distribution values
 void write_array_image(
@@ -82,7 +98,7 @@ void write_array_image(
 }
 
 
-// initialize color grid, setting size values and allocating memory for 
+// initialize color grid, setting size values and allocating memory for
 //    grid array
 static void init_color_grid(
       /* in out */       pan_color_grid_type *grid
@@ -91,10 +107,10 @@ static void init_color_grid(
    // calculate location of grid top and get number of rows
    float above_deg = WORLD_HEIGHT_ABOVE_HORIZ_DEGS + GRID_BELOW_HORIZON_OFFSET;
    float below_deg = WORLD_HEIGHT_BELOW_HORIZ_DEGS - GRID_BELOW_HORIZON_OFFSET;
-   // find integeral number of grid rows above and below offset line 
-   const uint32_t num_rows_above = (uint32_t) 
+   // find integeral number of grid rows above and below offset line
+   const uint32_t num_rows_above = (uint32_t)
          (above_deg / COLOR_GRID_UNIT_HEIGHT_DEG + 0.9999f);
-   const uint32_t num_rows_below = (uint32_t) 
+   const uint32_t num_rows_below = (uint32_t)
          (below_deg / COLOR_GRID_UNIT_HEIGHT_DEG + 0.9999f);
    const uint32_t num_rows = num_rows_above + num_rows_below;
    grid->size.rows = (uint16_t) num_rows;
@@ -104,7 +120,7 @@ static void init_color_grid(
    // get top offset (virtual top of grid). offset is the number of pixels
    //    between actual top of panoramic view and where top of first grid
    //    row lies
-   float gap_deg = COLOR_GRID_UNIT_HEIGHT_DEG * (float) num_rows_above - 
+   float gap_deg = COLOR_GRID_UNIT_HEIGHT_DEG * (float) num_rows_above -
          above_deg;
    for (uint32_t lev=0; lev<NUM_PYRAMID_LEVELS; lev++) {
       grid->top_buffer[lev] = (uint32_t) (gap_deg * PIX_PER_DEG[lev]);
@@ -151,7 +167,7 @@ printf("TAU: %.4f\n", 1.0 - COLOR_GRID_TAU);
       for (uint32_t y=0; y<world_size.y; y++) {
          // get base indices for desired row
          uint32_t row_idx = y * world_size.cols;
-         uint32_t grid_row = (uint32_t) (dpp * (float) (y + buffer) / 
+         uint32_t grid_row = (uint32_t) (dpp * (float) (y + buffer) /
                COLOR_GRID_UNIT_HEIGHT_DEG);
          uint32_t grid_row_idx = grid_row * NUM_COLOR_GRIDS_HORIZ;
          ///////////////

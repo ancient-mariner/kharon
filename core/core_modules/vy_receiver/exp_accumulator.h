@@ -1,11 +1,27 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(ACCUMULATOR_H)
 #define ACCUMULATOR_H
 #include <stdint.h>
 
-// approx field of view of camera. note that the number of pixels on 
-//    each dimension don't fully align with using only 3 significant 
+// approx field of view of camera. note that the number of pixels on
+//    each dimension don't fully align with using only 3 significant
 //    digits here (e.g., actual width may be 62.22 or 62.17)
-// this is close enough though. the code should commpensate for 
+// this is close enough though. the code should commpensate for
 //    irregularities
 #define FOV_WIDTH_DEGREES    62.2f
 #define FOV_HEIGHT_DEGREES   48.8f
@@ -22,7 +38,7 @@
 //    running across input image, shows that PPD 10 and 12 provide good
 //    results when 3x3 blurring kernel is used before accumulation.
 //    using higher PPD is possible. centeral region of image will
-//    be upsampled if using PPD>12, but peripheral regions will maintain 
+//    be upsampled if using PPD>12, but peripheral regions will maintain
 //    more of the detail available there
 #define PIX_PER_DEGREE_BASE     12
 
@@ -122,9 +138,9 @@ typedef struct accumulator_coord accumulator_coord_type;
 Camera provides image that has been 'undistorted' in the sense that
 parallel lines in the real world are represented as parallel lines
 in the camera image. This is most apparent viewing a checkerboard or
-graph that is perpendicular to the camera's view. While the squares 
-closer to the camera have are relatively larger in their field of 
-view, versus squares further from the camera, all are displayed with 
+graph that is perpendicular to the camera's view. While the squares
+closer to the camera have are relatively larger in their field of
+view, versus squares further from the camera, all are displayed with
 equal size and dimension.
 
 An analogy, used here, is a brick wall. Imagine a brick wall with
@@ -135,11 +151,11 @@ at location N, with a line orthogonal to the fence at N passing
 through the camera (C)
 
 In an 'undistored' image of the fence, all bricks will appear of
-equal size, whether they be closest to the camera (near N) or 
+equal size, whether they be closest to the camera (near N) or
 in the periphery. Undistored images cannot be readily stitched
 because they do not reflect what is actually seen from C.
 
-To stitch images together, the image must be transformed to a 
+To stitch images together, the image must be transformed to a
 'perspective' view, where each pixel in the image represents a
 radial arc of the light received from the camera from w/in that
 arc (as opposed to each pixel representing a physical distance, as
@@ -148,7 +164,7 @@ in the undistorted image)
 To generate a perspective image, each pixel in the undistored image
 must be remapped and projected.
 
-Let K be the distance between C and N, in units of the physical 
+Let K be the distance between C and N, in units of the physical
 distance represented by each pixel in the undistored image:
 
    K_x = (ING_WIDTH / 2) / tan(FOV_W / 2)
@@ -165,7 +181,7 @@ Let J be the distance from C to P:
 
    P_x' = asin(x / J) * IMG_WIDTH / FOV_W
    P_y' = asin(y / J) * IMG_HEIGHT / FOV_H
- 
+
 so P' = (P_x', P_y')
 
 */

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "sensor_packet.h"
 #include <stdio.h>
 #include <assert.h>
@@ -10,13 +26,13 @@ void print_sensor_data(
       /* in     */ const struct imu_sensor_packet *s
       )
 {
-   printf("%6.2f,%6.2f,%6.2f,  ", (double) (s->gyr.v[0]), 
+   printf("%6.2f,%6.2f,%6.2f,  ", (double) (s->gyr.v[0]),
             (double) (s->gyr.v[1]), (double) (s->gyr.v[2]));
-   printf("%7.3f,%7.3f,%7.3f,  ", (double) (s->acc.v[0]), 
+   printf("%7.3f,%7.3f,%7.3f,  ", (double) (s->acc.v[0]),
             (double) (s->acc.v[1]), (double) (s->acc.v[2]));
-   printf("%6.2f,%6.2f,%6.2f,  ", (double) (s->mag.v[0]), 
+   printf("%6.2f,%6.2f,%6.2f,  ", (double) (s->mag.v[0]),
             (double) (s->mag.v[1]), (double) (s->mag.v[2]));
-   printf("%6.2f,%6.2f,%6.2f,  ", (double) (s->gps.v[0]), 
+   printf("%6.2f,%6.2f,%6.2f,  ", (double) (s->gps.v[0]),
             (double) (s->gps.v[1]), (double) (s->gps.v[2]));
    printf("%6.2f\n", (double) (s->temp));
    printf("%6.2f\n", (double) (s->baro));
@@ -40,7 +56,7 @@ void print_sensor_data2(
 //}
 
 void serialize_sensor_packet(
-      /* in     */ const struct imu_sensor_packet *s, 
+      /* in     */ const struct imu_sensor_packet *s,
       /*    out */       char serial[SP_SERIAL_LENGTH]
       )
 {
@@ -55,7 +71,7 @@ void serialize_sensor_packet(
    // Gyro
    if (s->state.avail[IMU_GYR]) {
       for (uint32_t i=0; i<3; i++) {
-         snprintf(&serial[idx], FLOAT_SERIAL_BYTES-1, "%.7e", 
+         snprintf(&serial[idx], FLOAT_SERIAL_BYTES-1, "%.7e",
                (double)(s->gyr.v[i]));
          idx += FLOAT_SERIAL_BYTES;
       }
@@ -66,7 +82,7 @@ void serialize_sensor_packet(
    // Acc
    if (s->state.avail[IMU_ACC]) {
       for (uint32_t i=0; i<3; i++) {
-         snprintf(&serial[idx], FLOAT_SERIAL_BYTES-1, "%.7e", 
+         snprintf(&serial[idx], FLOAT_SERIAL_BYTES-1, "%.7e",
                (double) (s->acc.v[i]));
          idx += FLOAT_SERIAL_BYTES;
       }
@@ -77,7 +93,7 @@ void serialize_sensor_packet(
    // Mag
    if (s->state.avail[IMU_MAG]) {
       for (uint32_t i=0; i<3; i++) {
-         snprintf(&serial[idx], FLOAT_SERIAL_BYTES-1, "%.7e", 
+         snprintf(&serial[idx], FLOAT_SERIAL_BYTES-1, "%.7e",
                (double) (s->mag.v[i]));
          idx += FLOAT_SERIAL_BYTES;
       }
@@ -88,7 +104,7 @@ void serialize_sensor_packet(
    // GPS
    if (s->state.avail[IMU_GPS]) {
       for (uint32_t i=0; i<3; i++) {
-         snprintf(&serial[idx], FLOAT_SERIAL_BYTES-1, "%.7e", 
+         snprintf(&serial[idx], FLOAT_SERIAL_BYTES-1, "%.7e",
                (double) (s->gps.v[i]));
          idx += FLOAT_SERIAL_BYTES;
       }
@@ -114,8 +130,8 @@ void serialize_sensor_packet(
 
 void restore_sensor_packet_individual(
       /* in     */ const char serial[SP_SERIAL_LENGTH],
-      /*    out */       struct vector_type *gyr, 
-      /*    out */       struct vector_type *acc, 
+      /*    out */       struct vector_type *gyr,
+      /*    out */       struct vector_type *acc,
       /*    out */       struct vector_type *mag,
       /*    out */       struct vector_type *gps,
       /*    out */       double * temp,
@@ -207,7 +223,7 @@ void restore_sensor_packet(
       /*    out */       struct imu_sensor_packet *s
       )
 {
-   restore_sensor_packet_individual(serial, 
+   restore_sensor_packet_individual(serial,
          &s->gyr, &s->acc, &s->mag, &s->gps, &s->temp, &s->baro,
          &s->state);
 }

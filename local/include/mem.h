@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(MEM_H)
 #define MEM_H
 #if !defined(_GNU_SOURCE)
@@ -7,16 +23,16 @@
 #include <pthread.h>
 
 
-// (mostly) thread-safe library for allocating and recycling memory 
+// (mostly) thread-safe library for allocating and recycling memory
 //    blocks of specific sizes
 // allocated memory is on cache-line boundaries (ie, 64-byte)
 // a pre- and post- buffer is added to each allocation to help detect
 //    memory under/overflow
 //
-// NOTE: if memory is allocated using the default pool, it must be 
+// NOTE: if memory is allocated using the default pool, it must be
 //    freed in the thread that it was created, as there's a different
 //    default pool for each thread
-//    
+//
 // NOTE: this is not efficient for small allocations
 
 
@@ -35,7 +51,7 @@ uint32_t get_cache_line_size(void);
 
 
 // boundry is 16 bytes
-// boundry is length of cache line. 
+// boundry is length of cache line.
 struct alloc_boundary {
    uint32_t  size;      // number of bytes allocated
    uint32_t  in_use;

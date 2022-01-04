@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(MAPPING_H)
 #define MAPPING_H
 #include "pin_types.h"
@@ -33,17 +49,17 @@ typedef struct target_record_export target_record_export_type;
 // map of outside world
 
 // per wikipedia
-#define METERS_PER_DEG_LAT          (40007863 / 360.0) 
-#define METERS_PER_DEG_LON_EQUATOR  (40075017 / 360.0) 
+#define METERS_PER_DEG_LAT          (40007863 / 360.0)
+#define METERS_PER_DEG_LON_EQUATOR  (40075017 / 360.0)
 // adapt degs to meters longitude by multiplying by cos(lat)
 
-#define NM_PER_DEG_LON_EQUATOR  (21638.77791 / 360.0) 
+#define NM_PER_DEG_LON_EQUATOR  (21638.77791 / 360.0)
 #define NM_LON_EQUATOR           21638.7779
 
 #define DEGS_LAT_PER_METER       (1.0 / METERS_PER_DEG_LAT)
 
-#define DEG_LAT_TO_METER            (40007863.0 / 360.0) 
-#define DEG_LON_EQUATOR_TO_METER    (40075017.0 / 360.0) 
+#define DEG_LAT_TO_METER            (40007863.0 / 360.0)
+#define DEG_LON_EQUATOR_TO_METER    (40075017.0 / 360.0)
 
 #define METER_TO_DEG_LAT            (360.0 / 40007863.0)
 
@@ -54,7 +70,7 @@ typedef struct target_record_export target_record_export_type;
 
 ////////////////////////////////////////////////
 // width and height, in nodes, of 5-second map. note that height
-//    of map nodes are 5 arc-seconds. width is in nautical mile 
+//    of map nodes are 5 arc-seconds. width is in nautical mile
 //    equivalent of 5 arc-seconds latitude (ie, 1/12nm)
 #define WORLD_MAP_5SEC_WIDTH     720
 #define WORLD_MAP_5SEC_HEIGHT    720
@@ -97,15 +113,15 @@ typedef struct target_record_export target_record_export_type;
 
 // below penalties are multiplicative
 
-// adjacent non-passable should have high penalty, as rocks in 
-//    non-passable area may be uncomfortably close to boundary of 
+// adjacent non-passable should have high penalty, as rocks in
+//    non-passable area may be uncomfortably close to boundary of
 //    adjacent cell. if cell considered passable it should score above
 //    reciprocal heading score, otherwise turning around will be
 //    preferred to crossing cell
 #define TERRAIN_PENALTY_ADJACENT_NON_PASSABLE   0.2
 
 // cell that's next to land-adjacent cell. not dangerous but something
-//    perhaps better avoided 
+//    perhaps better avoided
 // this now applies to next to land-adjacent, and next-to-next
 #define TERRAIN_PENALTY_SEMI_ADJACENT_NON_PASSABLE   0.8
 
@@ -130,7 +146,7 @@ typedef struct target_record_export target_record_export_type;
 #define AXIAL_SPEED_LIMIT_MPS    10.0
 
 
-// WMM declares region around magnetic pole a 'caution' zone when 
+// WMM declares region around magnetic pole a 'caution' zone when
 //    inclination is >84 degrees, and an 'unstable' zone
 //    when inclination >88 degrees. these areas should be avoided
 //    unless there's a reliable non-magnetic sensor to determine north
@@ -142,7 +158,7 @@ typedef struct target_record_export target_record_export_type;
 #define MAGENTIC_POLE_UNSTABLE_INCLINATION   88.0
 
 
-// takes signed double representing distance from horizon and 
+// takes signed double representing distance from horizon and
 //    approximates range. this should not be used for angles
 //    above 25 degrees
 // use planar approximation of surface. for camera height of >10m and
@@ -171,7 +187,7 @@ typedef struct target_record_export target_record_export_type;
 #define VESSEL_OFFSET_FROM_MAP_CENTER_NM     10.0
 
 // if beacon is w/in this distance of vessel, don't include it in map
-// this should be larger than 
+// this should be larger than
 #define VESSEL_BEACON_INHIBITION_RING_NM     4.0
 
 
@@ -186,7 +202,7 @@ union map_feature_node {
       int16_t  depth_meters;
       // number of nearby nodes of different types. this is used for
       //    route scoring
-      // node itself may be impassable -- that's separately 
+      // node itself may be impassable -- that's separately
       //    determined by depth
       union {
          struct {
@@ -228,7 +244,7 @@ struct path_map_node {
    // approximate course to steer in this path node to reach destination
    bam16_type true_course;
    // actual course to follow -- true course may be overriden
-   bam16_type active_course;  
+   bam16_type active_course;
    //
    float weight;    // effective 'distance' of this node from destination
    float passage_penalty;   // weight penalty to transition this node
@@ -286,7 +302,7 @@ struct path_map {
    /////////////////////////////////////////////////////////////////////
    // positions
    // maintaining state for determining when update is necessary
-   // path is updated when vessel has moved more than X nm from 
+   // path is updated when vessel has moved more than X nm from
    //    point when map was last updated
    image_coordinate_type   vessel_start_pix;
    // destination may be outside of map bounds.
@@ -309,13 +325,13 @@ typedef struct path_map path_map_type;
 //    change unless it's necessary
 
 // route map is designed as a 255x255 array of 20 meter tall/wide grids,
-//    representing a circle of radius 127. center of map is vessel 
+//    representing a circle of radius 127. center of map is vessel
 //    location. a ring is traced out from center based on present
 //    speed, representing the position of vessel for all possible
 //    headings it can take. turn is initially considered instanteous.
 //    in future version, need to take into account that ring edge
 //    in opposite direction of travel must be moved in toward center.
-// position of nearby targets and land are overlayed 
+// position of nearby targets and land are overlayed
 //    on map at their forecast position every X(=5) seconds. if target
 //    overlaps ring then that ring location is flagged as collision
 //    risk. note that target (and land) positions are relative. land
@@ -324,7 +340,7 @@ typedef struct path_map path_map_type;
 //    after time T (duration to reach that point)
 // for all collision risks, the radial of the risk is eliminated from
 //    being a possible course to take
-// algorithm only checks for home vessel being on linear path from 
+// algorithm only checks for home vessel being on linear path from
 //    start point. multi-path gets computationally much harder using
 //    the strategy here. a simple multi-path approach is select a
 //    handful of points, say 1-minute away from center, 10-degrees
@@ -377,7 +393,7 @@ where
 // TODO base intervals depend on camera height from water. when low (eg, 3m)
 //    then long intervals are mostly useless, as range detection beyond
 //    a few hundred meters isn't very accurate
-enum { 
+enum {
    VIABILITY_INTERVAL_0,      // e.g., <15 sec
    VIABILITY_INTERVAL_1,      // e.g., >15 and <30 sec
    VIABILITY_INTERVAL_2,      // e.g., >30 and <60 sec
@@ -427,7 +443,7 @@ struct radial_viability {
    // how closely this radial aligns with desired course
    double direction_score;
    // arc score is a measure of the arc width of passage along each radial
-   // low score indicates narrow or shallow passage. for open passage, 
+   // low score indicates narrow or shallow passage. for open passage,
    //    arc score should equal regular score (arc width hard-coded in
    //    share.c:calculate_arc_scores()
    double terrain_arc[NUM_VIABILITY_INTERVALS];
@@ -445,7 +461,7 @@ struct route_map_node {
    // more or less static values
    signed_coordinate_type pos;   // position in route map
    // corresponding grid position in world and path maps
-   image_coordinate_type world_pos;   
+   image_coordinate_type world_pos;
    // radial from map center of node center
    bam16_type  radial;
    // make note of left and right radial edges of node (necessary
@@ -473,7 +489,7 @@ typedef struct route_map_node route_map_node_type;
 // now that collision avoidance doesn't rely on route map, there's
 //    limited reason to keep using it, as path and world maps are the
 //    only maps used for navigation
-// TODO reduce map resolution to be closer to world map; consider 
+// TODO reduce map resolution to be closer to world map; consider
 //    eliminating to reduce code complexity
 struct route_map {
    image_size_type   size;
@@ -490,7 +506,7 @@ typedef struct route_map route_map_type;
 
 ////////////////////////////////////////////////////////////////////////
 
-// represents position, heading and speed of vessel as well as 
+// represents position, heading and speed of vessel as well as
 //    estimated future (or past) position based on heading and speed
 // represents vessel motion plus target motion when analyzing paths to
 //    avoid collision risks
@@ -508,7 +524,7 @@ struct vessel_position_info {
    meter_type  position_accuracy;
    /////////////////////////////////////////////
    // estimated heading (absolute)
-   true_heading_type true_heading;   
+   true_heading_type true_heading;
    // motion along NS/EW (x/y) directions -- this is based on TRUE heading
    // degree representation is corrected for latitude
    degree_offset_type motion_per_second;
@@ -537,8 +553,8 @@ typedef struct vessel_position_info vessel_position_info_type;
 ////    around large objects (eg, container ship) and a smaller around
 ////    flotsam or buoys (which will default to the vessels avoidance
 ////    radius)
-// 
-// avoidance is now a repulsive force, the magnitude of which is 
+//
+// avoidance is now a repulsive force, the magnitude of which is
 //    sqrt(distance/ring)/2, w/ low number repulsive and high being OK.
 //    repulsive force is reduced by confidence level, so a low-confidence
 //    target will have its avoidance score moved most of the way to
@@ -562,7 +578,7 @@ typedef struct vessel_position_info vessel_position_info_type;
 
 ////////////////////////////////////////////////
 
-// offset between two adjacent pixels 
+// offset between two adjacent pixels
 // no pixels set means there's no offset. 0x80 is north, 0x40 is NE, etc
 struct pixel_offset_bitfield {
    uint8_t mask;

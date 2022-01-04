@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,7 +65,7 @@ static void gps_receiver_class_pre_run(
    //
    uint32_t port = (uint32_t) atoi(port_str);
    if (c_assert(port <= 0x00007fff)) {
-      log_err(gps->log, 
+      log_err(gps->log,
             "Configuration error: port size greater than int16 (%d)", port);
       goto err;
    }
@@ -125,7 +141,7 @@ static void gps_receiver_abort(struct datap_desc *dp)
    log_info(gps->log, "aborting");
    if (gps->connfd >= 0) {
       if (shutdown(gps->connfd, SHUT_RDWR) != 0) {
-         log_err(gps->log, "Error shutting down connection (%s)", 
+         log_err(gps->log, "Error shutting down connection (%s)",
                strerror(errno));
       }
       gps->connfd = -1;
@@ -172,7 +188,7 @@ void * gps_receiver_init(void * gps_setup)
       gps->logfile = fopen(buf, "w");
       if (gps->logfile == NULL) {
          // non-fatal error. we just loose logging
-         log_err(gps->log, "Unable to create data logfile for %s (%s)", 
+         log_err(gps->log, "Unable to create data logfile for %s (%s)",
                dp->td->obj_name, buf);
       } else {
          log_info(gps->log, "%s logging data to %s", dp->td->obj_name, buf);
@@ -186,14 +202,14 @@ void * gps_receiver_init(void * gps_setup)
    gps->sockfd = -1;
    gps->connfd = -1;
    /////////////////////////////////////////////
-   // allocate dp->void_queue, dp->ts 
+   // allocate dp->void_queue, dp->ts
    dp->ts = calloc(1, GPS_RECEIVER_QUEUE_LEN * sizeof(*dp->ts));
    dp->element_size = sizeof(gps_receiver_output_type);;
    dp->queue_length = GPS_RECEIVER_QUEUE_LEN;
    dp->void_queue = calloc(1, GPS_RECEIVER_QUEUE_LEN * dp->element_size);
    // TODO consider setting the update_interval to 1 so that an
-   //    alert is set every time data is said to be available, but add 
-   //    auxiliary logic to control when a signal is sent that data is 
+   //    alert is set every time data is said to be available, but add
+   //    auxiliary logic to control when a signal is sent that data is
    //    available
 //   dp->update_ctr = 0;
 //   dp->update_interval = 2;

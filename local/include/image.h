@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(IMAGE_H)
 #define IMAGE_H
 #include "pin_types.h"
@@ -17,7 +33,7 @@ _Static_assert(sizeof(rgb_pix_type) <= 4, "foo");
 union pix_type {
    struct { uint8_t r, g, b, a; };   // RGBA
    struct {
-      union { 
+      union {
          struct { uint8_t y, u; };
          struct { uint8_t h, s; };
       };
@@ -56,8 +72,8 @@ void convert_yuv_to_rgb(image_type * restrict img);
 void free_image(image_type *img);
 
 int write_pnm_file(
-      /* in     */ const char *filename, 
-      /* in     */ const image_size_type size, 
+      /* in     */ const char *filename,
+      /* in     */ const image_size_type size,
       /* in     */ const pix_type *restrict rgb);
 
 int write_pnm_file_by_channel(const char *filename, image_size_type size, uint8_t * restrict r, uint8_t * restrict g, uint8_t * restrict b);

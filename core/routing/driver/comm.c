@@ -1,6 +1,22 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdint.h>
 
-// this file should be able to be run stand-alone for testing so 
+// this file should be able to be run stand-alone for testing so
 //    include header content in it
 
 // computer data sent to autopilot
@@ -125,8 +141,8 @@ uint32_t heading_data_available_ = 0;
 // serial setup
 
 static int set_interface_attributes(
-      /* in     */ const int32_t fd, 
-      /* in     */ const speed_t speed, 
+      /* in     */ const int32_t fd,
+      /* in     */ const speed_t speed,
       /* in     */ const uint32_t parity
       )
 {
@@ -176,7 +192,7 @@ static void open_serial_device(void)
          // post failure-to-open message, but only on first failure
          //    and intermittent subsequent ones (not every attempt)
          if ((fail_cnt++ & 7) == 0) {
-            fprintf(stderr, "Error opening '%s': %s\n", 
+            fprintf(stderr, "Error opening '%s': %s\n",
                   TTY_DEV_NAME, strerror (errno));
          }
       } else {
@@ -195,7 +211,7 @@ static void shutdown_connections(void)
 {
    if (serial_fd_ >= 0) {
       if (close(serial_fd_) != 0) {
-         fprintf(stderr, "Error shutting down serial fd (%s)\n", 
+         fprintf(stderr, "Error shutting down serial fd (%s)\n",
                strerror(errno));
       }
       serial_fd_ = -1;
@@ -335,13 +351,13 @@ static void convert_packet8_to_tiller(
       assert(tiller.tiller_position <= 1024);
    }
    // course data
-   tiller.course = (int16_t) 
+   tiller.course = (int16_t)
          ((serial_data->data[2] << 7) | (serial_data->data[3] & 0x7f));
    // heading data
-   tiller.heading = (int16_t) 
+   tiller.heading = (int16_t)
          ((serial_data->data[4] << 7) | (serial_data->data[5] & 0x7f));
    // turn rate data
-   tiller.dps = (int16_t) 
+   tiller.dps = (int16_t)
          ((serial_data->data[6] << 7) | (serial_data->data[7] & 0x7f));
    // carry up sign bits
    if (tiller.dps & 0x2000) {
@@ -402,7 +418,7 @@ static void * comm_thread_main(
    sa.sa_handler = comm_handler_sigusr1;
    sigaction(SIGUSR1, &sa, NULL);
    memset(debug_data_, 0, DEBUG_DATA_LEN);
-   // 
+   //
    // packet to autopilot
    serial_packet_8_type out_data;
    out_data.data_all = 0;
@@ -462,8 +478,8 @@ if ((ctr++ & 7) == 0) {
                driver_->route.course_changed_sec = t;
             }
             //
-            log_info(driver_->log, "Tiller at %d  crs %d  head %d  dps %d", 
-                  tiller_data_.tiller_position, tiller_data_.course, 
+            log_info(driver_->log, "Tiller at %d  crs %d  head %d  dps %d",
+                  tiller_data_.tiller_position, tiller_data_.course,
                   tiller_data_.heading, tiller_data_.dps);
             tiller_data_prev_ = tiller_data_;
 #endif // SIMULATE_DRIVER

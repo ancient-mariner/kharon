@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 #include "device_align.c"
 
@@ -32,12 +48,12 @@ static void update_vector_streams(
          ///////////////////////////////
          // send data to each stream
          if ((att->acc_stream[i] != NULL) && (imu_out->state.avail[IMU_ACC])) {
-            update_stream_data(att->acc_stream[i], 
+            update_stream_data(att->acc_stream[i],
                   &imu_out->modality[IMU_ACC], t);
 //log_info(att->log, "ACC at %.3f from %s", t, producer->td->obj_name);
          }
          if ((att->mag_stream[i] != NULL) && (imu_out->state.avail[IMU_MAG])) {
-            update_stream_data(att->mag_stream[i], 
+            update_stream_data(att->mag_stream[i],
                   &imu_out->modality[IMU_MAG], t);
 //log_info(att->log, "MAG at %.3f from %s", t, producer->td->obj_name);
          }
@@ -252,7 +268,7 @@ static void pull_p23_data(
 // pull mag data from most recently updated stream
 // this is an emergency fallback procedure and should only be used when
 //    all live streams have failed. the logic here is that it's assumed
-//    that the most recent sample, even if old, is semi-accurate. 
+//    that the most recent sample, even if old, is semi-accurate.
 //    that should be largely
 //    true if the vessel doesn't turn. if it assumes a new heading, the
 //    gyro will drift back to assume the heading from when the mag sensors
@@ -347,7 +363,7 @@ static void count_avail_chans_by_priority_resample(
       microsecond_type t = is_sample_available(stream[i]);
       while ((t.usec > 0) && (t.usec < att->next_publish_time.usec)) {
          // data is stale (ie, it's older than desired publication time)
-         // get sample and discard 
+         // get sample and discard
          vector_type ignore;
          get_next_sample(stream[i], &ignore);
          t = is_sample_available(stream[i]);
@@ -368,7 +384,7 @@ static void count_avail_chans_by_priority_resample(
                cnt[2]++;
                break;
          }
-      } 
+      }
       // keep track of earliest available sample time
       // TODO remove first conditional -- it should be redundant w/ 2nd
       //    but that appears to not be the case
@@ -396,7 +412,7 @@ static int publish_if_available(
    // check number of P1 channels available
    uint32_t cnt[3];
    microsecond_type earliest_sample;   // ignored here
-   count_avail_chans_by_priority_resample(att, att->gyr_stream, 
+   count_avail_chans_by_priority_resample(att, att->gyr_stream,
          &earliest_sample, cnt);
    if (cnt[0] < att->num_p1_gyr) {
       goto end;
@@ -413,7 +429,7 @@ static int publish_if_available(
    // if we made it to here then there's sufficient content available on
    //    all modalities to publish. do so
    vector_type gyr, acc, mag;
-   // first, peek into streams to check alignment (otherwise the streams 
+   // first, peek into streams to check alignment (otherwise the streams
    //    are modified when data is pulled)
    perform_gyro_alignment(self);
    pull_p12_data_resample(att, att->gyr_stream, &gyr);
@@ -429,7 +445,7 @@ log_info(att->log, "Standard publish %.3f", (double) att->next_publish_time.usec
    publish_data(att, self);
    rc = 1;
 end:
-   return rc;  
+   return rc;
 }
 
 
@@ -451,9 +467,9 @@ log_warn(att->log, "\nForce publish %.3f", (double) att->next_publish_time.usec 
    uint32_t gyr_cnt[3];   // stores number of streams w/ data avail for each pri
    vector_type gyr;
    microsecond_type earliest_sample;
-   count_avail_chans_by_priority_resample(att, att->gyr_stream, 
+   count_avail_chans_by_priority_resample(att, att->gyr_stream,
          &earliest_sample, gyr_cnt);
-   // cases to consider 
+   // cases to consider
    //    A) present P1 data available
    //    B) present P2/P3 data available (no present P1)
    //    C) no present data but future P1 data
@@ -465,17 +481,17 @@ log_info(log_, "CD Earliest gyro %.3f  Next %.3f\n", (double) earliest_sample.us
 //printf("Earliest sample: %ld\n", earliest_sample.usec);
 //printf("Next publish: %ld\n", att->next_publish_time.usec);
       // Case C or D. sample time advanced to convert to case A/B
-      // next available data is in the future. advance init timer and 
+      // next available data is in the future. advance init timer and
       //    next publication time (we can do that here because ACC and MAG
       //    streams haven't been read yet
-      att->init_timer.seconds += 1.0e-6 * (double) 
+      att->init_timer.seconds += 1.0e-6 * (double)
             (earliest_sample.usec - att->next_publish_time.usec);
       if (att->init_timer.seconds > BOOTSTRAP_INTERVAL_SEC) {
          att->init_timer.seconds = BOOTSTRAP_INTERVAL_SEC;
       }
 //printf("init timer: %f\n", att->init_timer.seconds);
       // we're advancing publish time so need to keep track of how much
-      dt.dt_sec += (double) 
+      dt.dt_sec += (double)
             (earliest_sample.usec - att->next_publish_time.usec) * 1.0e-6;
 printf("DT: %.3f\n", dt.dt_sec);
       // if dT is too large things can blow up -- this is most observable
@@ -486,7 +502,7 @@ printf("DT: %.3f\n", dt.dt_sec);
       log_warn(log_, "Force dT=%.3f seconds", dt.dt_sec);
       att->next_publish_time.usec = earliest_sample.usec;
       // see what's available at the new publication time
-      count_avail_chans_by_priority_resample(att, att->gyr_stream, 
+      count_avail_chans_by_priority_resample(att, att->gyr_stream,
             &earliest_sample, gyr_cnt);
 //printf("Earliest sample: %ld\n", earliest_sample.usec);
 //printf("Next publish: %ld\n", att->next_publish_time.usec);
@@ -519,7 +535,7 @@ log_info(log_, "Case B\n");
    // get best mag and acc
    // if there's content on p1, pull from active p1 and p2
    // else if no p1, pull from p2 and p3 if they exist
-   // otherwise (ie, no p1,p2,p3) then pull from p1 or p2 sensor that 
+   // otherwise (ie, no p1,p2,p3) then pull from p1 or p2 sensor that
    //    had data most recently
    // ACC
    uint32_t acc_cnt[3];
@@ -564,6 +580,6 @@ log_info(log_, " Mag fallback");
    rc = 1;
 end:
 //printf("done force publish\n");
-   return rc;  
+   return rc;
 }
 

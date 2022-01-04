@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "s2.h"
 #include <stdio.h>
 #include <stdint.h>
@@ -23,7 +39,7 @@
 
 static void write_acc_register(
       /* in out */       sensor_runtime_type *dev,
-      /* in     */ const uint8_t reg, 
+      /* in     */ const uint8_t reg,
       /* in     */ const uint8_t value
       )
 {
@@ -35,7 +51,7 @@ static void write_acc_register(
 
 static void write_mag_register(
       /* in out */       sensor_runtime_type *dev,
-      /* in     */ const uint8_t reg, 
+      /* in     */ const uint8_t reg,
       /* in     */ const uint8_t value
       )
 {
@@ -114,8 +130,8 @@ static void acc_data_available(
    uint8_t cmd = 0x80 | STATUS_REG_A;
    select_device(dev, dev->accel.accel_addr);
    int hw = dev->hw_device;
-   if (i2c_smbus_read_i2c_block_data(hw, cmd, ACC_DATA_AVAILABLE_SIZE, 
-         data) < 0) 
+   if (i2c_smbus_read_i2c_block_data(hw, cmd, ACC_DATA_AVAILABLE_SIZE,
+         data) < 0)
    {
       device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAG_ACC);
    }
@@ -135,11 +151,11 @@ static void pull_acc_data(
       int16_t data[3];
       read_acc_data(dev, data);
       apply_gain(data, &dev->accel.gain, &dev->accel.up);
-//      apply_gain_scale_offset(data, &dev->accel.gain, 
+//      apply_gain_scale_offset(data, &dev->accel.gain,
 //            &dev->accel.scale, &dev->accel.offset, &dev->accel.up);
 //print_vec(&dev->accel.up, "ACC data");
 //printf("ACC: %d, %d, %d  \n", data[0], data[1], data[2]);
-   } 
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -155,8 +171,8 @@ static void mag_data_available(
    uint8_t cmd = 0x80 | SR_REG_M;
    select_device(dev, dev->mag.mag_addr);
    int hw = dev->hw_device;
-   if (i2c_smbus_read_i2c_block_data(hw, cmd, MAG_DATA_AVAILABLE_SIZE, 
-         data) < 0) 
+   if (i2c_smbus_read_i2c_block_data(hw, cmd, MAG_DATA_AVAILABLE_SIZE,
+         data) < 0)
    {
       device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAG_MAG);
    }
@@ -175,7 +191,7 @@ static void pull_mag_temp_data(
       int16_t data[3];
       read_mag_data(dev, data);
       apply_gain(data, &dev->mag.gain, &dev->mag.mag);
-//      apply_gain_scale_offset(data, &dev->mag.gain, 
+//      apply_gain_scale_offset(data, &dev->mag.gain,
 //            &dev->mag.scale, &dev->mag.offset, &dev->mag.mag);
       // pull temp data too
       int16_t raw_temp[1];
@@ -184,7 +200,7 @@ static void pull_mag_temp_data(
 //printf("MAG: %d, %d, %d    TEMP: %d\n", data[0], data[1], data[2], raw_temp[0]);
 //print_vec(&dev->accel.mag, "MAG data");
 //printf("    temp=%f\n", (double) dev->temp.celcius);
-   } 
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////

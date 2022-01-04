@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "dev_info.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,7 +73,7 @@ char * get_next_line(
       trim_leading_whitespace(content);
       char c = content[0];
       if ((c != '#') && (c != 0) && (c != 10) && (c != 13)) {
-         // found a non-comment line with apparent content. strip trailing 
+         // found a non-comment line with apparent content. strip trailing
          //    newline and return directly
          truncate_at_newline(content, max_len);
          return content;
@@ -121,7 +137,7 @@ void build_path_string2(
    }
    // hostname
    if (host != NULL) {
-      idx += snprintf(&full_path[idx], max_len-(uint32_t)idx, "%s%s", 
+      idx += snprintf(&full_path[idx], max_len-(uint32_t)idx, "%s%s",
             full_path[idx-1] == '/' ? "" : "/", host);
    } else {
       char hostname[HOST_LEN];
@@ -131,12 +147,12 @@ void build_path_string2(
          full_path[0] = 0;
          return;
       }
-      idx += snprintf(&full_path[idx], max_len-(uint32_t)idx, "%s%s", 
+      idx += snprintf(&full_path[idx], max_len-(uint32_t)idx, "%s%s",
             full_path[idx-1] == '/' ? "" : "/", hostname);
    }
    // include path1, obj and path2 in name if value(s) provided
    if (path1 != NULL) {
-      idx += snprintf(&full_path[idx], max_len-(uint32_t)idx, "%s%s", 
+      idx += snprintf(&full_path[idx], max_len-(uint32_t)idx, "%s%s",
             full_path[idx-1] == '/' ? "" : "/", path1);
    }
    if (obj != NULL) {
@@ -169,7 +185,7 @@ FILE * open_config_file_ro2(
    FILE *fp = fopen(fname, "r");
    if (!fp) {
       log_info_type *log = get_kernel_log();
-      log_err(log, "Unable to open file '%s' (ro) : %s", fname, 
+      log_err(log, "Unable to open file '%s' (ro) : %s", fname,
             strerror(errno));
    }
    // let calling process handle error
@@ -190,7 +206,7 @@ FILE * open_config_file_w2(
    FILE *fp = fopen(fname, "w");
    if (!fp) {
       log_info_type *log = get_kernel_log();
-      log_err(log, "Unable to open file '%s' (w) : %s", fname, 
+      log_err(log, "Unable to open file '%s' (w) : %s", fname,
             strerror(errno));
    }
    // let calling process handle error
@@ -336,7 +352,7 @@ err:
 // read config
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-// 
+//
 
 int32_t config_write_vector2(
       /* in     */ const char *root,
@@ -354,7 +370,7 @@ int32_t config_write_vector2(
       log_err(log, "Unable to write config file (%s)", strerror(errno));
       return -1;
    }
-   fprintf(fp, "%f\t%f\t%f\n", (double) vec->v[0], 
+   fprintf(fp, "%f\t%f\t%f\n", (double) vec->v[0],
          (double) vec->v[1], (double) vec->v[2]);
    fclose(fp);
    return 0;
@@ -446,7 +462,7 @@ err:
 // the endpoint target <env>/<host>/endpoints/<name> stores the port number
 //    for the endpoint for <name>
 // the file dev/<host>/ip_addr stores the IP address of <host>
-// this is for use by emulation 
+// this is for use by emulation
 int32_t resolve_sensor_endpoint_for_host(
       /* in     */ const char *endpoint_name,
       /* in     */ const char *host_name,
@@ -459,7 +475,7 @@ int32_t resolve_sensor_endpoint_for_host(
    /////////////////////////////////////////////
    // get endpoint info (e.g., "ghost imu_1")
    assert(dev_[0] != 0);
-   FILE *fp = open_config_file_ro2(dev_, host_name, "sensors", 
+   FILE *fp = open_config_file_ro2(dev_, host_name, "sensors",
          endpoint_name, NULL);
    log_info_type *log = get_kernel_log();
    if (!fp)
@@ -624,7 +640,7 @@ static uint32_t test_build_path_string(void)
 
 static uint32_t write_test_file(void)
 {
-   
+
    FILE *fp = fopen(TEST_FILE, "w");
    if (!fp) {
       fprintf(stderr, "Unable to create test file '%s'\n", TEST_FILE);
@@ -694,7 +710,7 @@ static uint32_t test_file_read(void)
       fprintf(stderr, "Incorrect vector from test file\n");
       fprintf(stderr, "Expected: %f,%f,%f\n", (double) v0, (double) v1,
             (double) v2);
-      fprintf(stderr, "Got:      %f,%f,%f\n", (double) vec.v[0], 
+      fprintf(stderr, "Got:      %f,%f,%f\n", (double) vec.v[0],
             (double) vec.v[1], (double) vec.v[2]);
       errs++;
    }

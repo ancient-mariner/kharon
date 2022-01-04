@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(FRAME_SYNC_H)
 #define FRAME_SYNC_H
 #include "pin_types.h"
@@ -7,12 +23,12 @@
 #include "core_modules/optical_up.h"
 
 
-// observes image data published by optical_up and groups frames 
-//    together that ~correspond to the same point in time. 
+// observes image data published by optical_up and groups frames
+//    together that ~correspond to the same point in time.
 //    published time is the time of the earliest frame in the
 //    group
 //
-// takes 
+// takes
 //    optical_up output
 //
 // publishes list of cameras frames (upright) at a particular time
@@ -28,7 +44,7 @@ struct frame_sync_output {
    // consumer is expected to check each slot to see if data is available
    // NOTE: this points to a specific output entry in the optical_up
    //    queue. this isn't very safe or robust as there's nothing
-   //    here to detect this slot in the output buffer being 
+   //    here to detect this slot in the output buffer being
    //    overwritten. it's ok for now but thought should be given
    //    to strengthening this later
    optical_up_output_type  *frames[MAX_NUM_CAMERAS];

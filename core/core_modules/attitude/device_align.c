@@ -1,5 +1,21 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
-// update alignment estimate between gyro-based sensors. 
+// update alignment estimate between gyro-based sensors.
 //    using measured rotation from different sensors an estimate is made
 //    of how (mis)aligned the axes of the sensors are to each other.
 // algorithm looks at only some of sampled data
@@ -46,7 +62,7 @@ if (start < 0) {
       }
       vector_type cross;
       vector_type sample = stream->resampled[stream->read_queue_idx];
-      double samp_sum = fabs(sample.v[0]) + fabs(sample.v[1]) + 
+      double samp_sum = fabs(sample.v[0]) + fabs(sample.v[1]) +
             fabs(sample.v[2]);
       if (samp_sum < MIN_ALIGNMENT_DPS)  {
 //printf("  partner %d below thresh\n", i);

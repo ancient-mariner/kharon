@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pinet.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,7 +59,7 @@ static declination_type declination_ = { .degrees = 0.0 };
 //    which way is up. compensate for this by using acc/mag initially
 //    and slowly bringing gyro online. the interval here is how many
 //    seconds until the gyro reaches full strength (ie, its maximal
-//    influence determining roll, tilt and yaw). 
+//    influence determining roll, tilt and yaw).
 
 
 // version 1: pull data from single IMU
@@ -58,7 +74,7 @@ static declination_type declination_ = { .degrees = 0.0 };
    and obvious problems in fallback (priority) system led to complete rewrite.
 
    Attempted to remove reset but image artifacts are too high during
-   (re)bootstrapping that the attitude signal is essentually useless. 
+   (re)bootstrapping that the attitude signal is essentually useless.
    reset resumed, but only for initial bootstrap and after gyro signal
    is lost
 **/
@@ -72,14 +88,14 @@ Publication is delayed to provide time for data to arrive. Window length
    response)
 After a sample is received with timestamp greater than T+W+I, IMU producers
    are scanned and a sample is generated for T+I. only data available
-   at that time is used (e.g., if an IMU producer is offline or delayed 
+   at that time is used (e.g., if an IMU producer is offline or delayed
    then it's values won't be used). imu data is used based on the
    priority of each modality in each IMU producer
 Output data is complementary filtered. It was considered to disable
-   complementary filter when ACC signal varied from baseline (e.g., 
-   more than +/-10% from baseline), as strong acceleration could 
+   complementary filter when ACC signal varied from baseline (e.g.,
+   more than +/-10% from baseline), as strong acceleration could
    add noise to system, but the low weight of ACC,MAG in the filter
-   would average out noise over time, and use of a cutoff threshold 
+   would average out noise over time, and use of a cutoff threshold
    could itself introduce unexpected biases (e.g., if motion was
    above threshold in one direction but below in opposite, correcting
    signal to gyro would be biased)
@@ -94,10 +110,10 @@ TODO provide weak bias to gyro so that Y is always positive. in event
    if MAG is unavailable then at worst case north will be lost. provide
    this artificial up whenever ACC is offline
 
-Bootstrapping (reset) is done when gyro shows slow rotation (e.g., <2dps) 
-   and acc is stable (e.g., <5% change over 2 seconds). start with acc/mag 
-   weight at 1.0 and gyro at 0.0. slowly change balance over window 
-   (e.g., 5sec) until gyro reaches full strength (e.g., 0.995). time only 
+Bootstrapping (reset) is done when gyro shows slow rotation (e.g., <2dps)
+   and acc is stable (e.g., <5% change over 2 seconds). start with acc/mag
+   weight at 1.0 and gyro at 0.0. slowly change balance over window
+   (e.g., 5sec) until gyro reaches full strength (e.g., 0.995). time only
    considered when stability criteria met
 
 modalities are "acc", "mag", "gyr"
@@ -110,10 +126,10 @@ modalities are "acc", "mag", "gyr"
 ////////////////////////////////////////////////////////////////////////
 
 // the only supported producer is imu receiver. if additional producers
-//    types are necessary, imu receivers should be moved into an 
+//    types are necessary, imu receivers should be moved into an
 //    independent list
 static void attitude_add_producer(
-      /* in out */       datap_desc_type *self, 
+      /* in out */       datap_desc_type *self,
       /* in     */       datap_desc_type *prod
       )
 {
@@ -128,7 +144,7 @@ static void attitude_add_producer(
    } else {
       fprintf(stderr, "Attempted to subscribe to incompatible producer\n");
       fprintf(stderr, "Consumer: %s\n", self->td->obj_name);
-      fprintf(stderr, "Producer: %s (%s)\n", prod->td->obj_name, 
+      fprintf(stderr, "Producer: %s (%s)\n", prod->td->obj_name,
             prod->td->class_name);
       hard_exit("attitude_class::add_producer", 1);
    }
@@ -138,7 +154,7 @@ static void attitude_add_producer(
 ////////////////////////////////////////////////////////////////////////
 
 // the only supported producer is imu receiver. if additional producers
-//    types are necessary, imu receivers should be moved into an 
+//    types are necessary, imu receivers should be moved into an
 //    independent list
 static void initialize_streams(
       /* in out */       datap_desc_type *self
@@ -193,8 +209,8 @@ static void initialize_streams(
    }
    ///////////////
    // make sure there are priority-1 inputs for all modalities
-   if ((att->num_p1_gyr == 0) || 
-         (att->num_p1_acc == 0) || 
+   if ((att->num_p1_gyr == 0) ||
+         (att->num_p1_acc == 0) ||
          (att->num_p1_mag == 0)) {
       log_err(att->log, "Attitude requires at least one priority-1 input "
             "from each GYR, ACC and MAG");
@@ -234,7 +250,7 @@ static void attitude_class_run(
    }
    /////////////////////////////////////////////////////////////////////
    // bootstrap
-   // get first available output sample and use that as a base time 
+   // get first available output sample and use that as a base time
    //    for publishing data
    while ((self->run_state & DP_STATE_DONE) == 0) {
       dp_wait(self);
@@ -292,7 +308,7 @@ static void attitude_class_run(
          // push new data to streams
          update_vector_streams(self, att);
          // timeout is when ACC and MAG streams are considered offline
-         microsecond_type timeout = 
+         microsecond_type timeout =
                { .usec = present_t.usec - ACC_MAG_TIMEOUT_USEC };
          // check streams. if previous publication too far in past, force
          //    a new publication based on what's available. otherwise, only
@@ -336,10 +352,10 @@ static void * attitude_get_object_at(
       /* in     */ const datap_desc_type *dp,
       /* in     */ const uint32_t idx
       )
-{  
+{
    assert(idx < dp->queue_length);
    return &dp->void_queue[idx * sizeof(attitude_output_type)];
-} 
+}
 
 
 ////////////////////////////////////////////////////////////////////////

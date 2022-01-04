@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(POSTMASTER_H)
 #define  POSTMASTER_H
 #include "pinet.h"
@@ -18,7 +34,7 @@ enum postmaster_state get_postmaster_state(void);
 //};
 
 // TODO stream data to disk when appropriate modules are active and data
-//    is coming in. imu always active, so is always saved. 
+//    is coming in. imu always active, so is always saved.
 //    cam data is saved when frames are delivered (if don't want frames,
 //    run without loading those modules)
 // TODO stream IMU to flat file and import to database later. transactions
@@ -37,7 +53,7 @@ enum {
    PM_CMD_AUTOPILOT_OFF,   // turns auto-tracking off
    // aim
    // set specific autopilot heading. implicit autopilot_off
-   PM_CMD_SET_HEADING,     
+   PM_CMD_SET_HEADING,
    // go
    PM_CMD_SET_DESTINATION,
    //       lon stored as BAM32 in custom0
@@ -50,7 +66,7 @@ enum {
 
 struct pm_request {
    uint32_t request_type;
-   // number of bytes of data that follow header 
+   // number of bytes of data that follow header
    //    (handled in type-dependent way)
    uint32_t header_bytes;  // should be called 'payload_bytes'
    // type-dependent values
@@ -62,7 +78,7 @@ typedef struct pm_request pm_request_type;
 
 struct pm_response {
    uint32_t request_type;  // returns request type, or PM_CMD_NULL if unknown
-   // number of bytes of data that follow header 
+   // number of bytes of data that follow header
    uint32_t response_bytes;   // should be called 'payload_bytes'
    uint8_t t[32];    // server time that response was sent (text of float64)
    // type-dependent values

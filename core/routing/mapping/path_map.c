@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(PATH_MAP_C)
 #define PATH_MAP_C
 #include <stdio.h>
@@ -59,7 +75,7 @@ path_map_type * create_path_map(
 }
 
 
-// if node at root+offset belongs as part of path, sets node values 
+// if node at root+offset belongs as part of path, sets node values
 //    (eg, weight and  link to parent)
 // add pixel to stack for future neighbor analysis
 static void add_node_to_stack_(
@@ -74,7 +90,7 @@ static void add_node_to_stack_(
    int32_t new_x = (int32_t) root_node->pos.x + offset.dx;
    int32_t new_y = (int32_t) root_node->pos.y + offset.dy;
 //printf("  evaluate %d,%d\n", new_x, new_y);
-   if ((new_x < 0) || (new_x >= path_map->size.x) || (new_y < 0) || 
+   if ((new_x < 0) || (new_x >= path_map->size.x) || (new_y < 0) ||
          (new_y >= path_map->size.y)) {
       goto end;
    }
@@ -106,7 +122,7 @@ static void add_node_to_stack_(
    } else if (feature_node->depth_meters < MIN_TRAVERSABLE_DEPTH_METERS) {
       // this is below min depth, but technically traversible. add to
       //    passage weight
-      penalty += (float) (PATH_BELOW_MIN_DEPTH_PENALTY_PER_METER * 
+      penalty += (float) (PATH_BELOW_MIN_DEPTH_PENALTY_PER_METER *
             (MIN_TRAVERSABLE_DEPTH_METERS - feature_node->depth_meters));
    }
    // path tracing algorithm is deterministic and can follow vert or
@@ -118,7 +134,7 @@ static void add_node_to_stack_(
    float new_weight = root_node->weight + penalty + traverse_wt +
          (float) jitter;
    if (child_node->flags & PATH_NODE_FLAG_PROCESSED) {
-      // already-processed node 
+      // already-processed node
       // see if this path might provide it a lower weight
       if (child_node->weight <= new_weight) {
          goto end;
@@ -127,7 +143,7 @@ static void add_node_to_stack_(
       //    updated weight to neighbors
 //printf("    UPDATE\n");
    }
-   // add point to stack for 
+   // add point to stack for
    child_node->parent_id = root_idx;
    child_node->weight = new_weight;
 //printf("    set weight %.3f\n", new_weight);
@@ -140,7 +156,7 @@ end:
    ;
 }
 
-// if node at root+offset belongs as part of path, sets node values 
+// if node at root+offset belongs as part of path, sets node values
 //    (eg, weight and  link to parent)
 // add pixel to stack for future neighbor analysis
 static void add_node_to_stack(
@@ -154,7 +170,7 @@ static void add_node_to_stack(
 }
 
 
-// if node at root+offset belongs as part of path, sets node values 
+// if node at root+offset belongs as part of path, sets node values
 //    (eg, weight and link to parent)
 // for node that's diagonal, include weight of 4-connected neighbor required
 //    to reach diagonal node
@@ -169,7 +185,7 @@ static void add_node_to_stack_diag(
    // make sure we're not going off the edge of the map
    int32_t new_x = (int32_t) root_node->pos.x + offset.dx;
    int32_t new_y = (int32_t) root_node->pos.y + offset.dy;
-   if ((new_x < 0) || (new_x >= path_map->size.x) || (new_y < 0) || 
+   if ((new_x < 0) || (new_x >= path_map->size.x) || (new_y < 0) ||
          (new_y >= path_map->size.y)) {
       goto end;
    }
@@ -183,9 +199,9 @@ static void add_node_to_stack_diag(
    }
    // see if there's a way to get to this diagonal node
    // check via vertical and horizontal neighbor
-   uint32_t idx_vert = 
+   uint32_t idx_vert =
          (uint32_t) (root_node->pos.x + new_y * path_map->size.x);
-   uint32_t idx_horiz = 
+   uint32_t idx_horiz =
          (uint32_t) (new_x + root_node->pos.y * path_map->size.x);
    path_map_node_type *vert_child_node = &path_map->nodes[idx_vert];
    path_map_node_type *horiz_child_node = &path_map->nodes[idx_horiz];
@@ -195,7 +211,7 @@ static void add_node_to_stack_diag(
       goto end;
    }
    /////////////////////////////////////////////////////////////////////
-   // point is reachable. check weight. this will be combination of 
+   // point is reachable. check weight. this will be combination of
    //    weight from easiest 4-connected path to get to diagonal node
    //    and of diagonal node itself
    float nbr_penalty = -1.0f;
@@ -251,7 +267,7 @@ static void process_next_stack_node(
    // alternate between 4 and 8-connected
    // sanity check
    assert(path_map->read_idx < path_map->write_idx);
-   assert(path_map->write_idx < 
+   assert(path_map->write_idx <
          (uint32_t) (path_map->size.x * path_map->size.y));
    // add adjacent nodes to stack
    uint32_t stack_idx = path_map->read_idx++;
@@ -265,7 +281,7 @@ static void process_next_stack_node(
    add_node_to_stack(path_map, root_node, root_idx, OFF_W);
    add_node_to_stack(path_map, root_node, root_idx, OFF_N);
    add_node_to_stack(path_map, root_node, root_idx, OFF_S);
-   // add 8-connected nodes if there's a valid 2-step 4-conneced path 
+   // add 8-connected nodes if there's a valid 2-step 4-conneced path
    //    to get there
    add_node_to_stack_diag(path_map, root_node, root_idx, OFF_NE);
    add_node_to_stack_diag(path_map, root_node, root_idx, OFF_NW);
@@ -278,7 +294,7 @@ static void process_next_stack_node(
 // present algorithm is very simple and is based on direction to 'grandparent'
 //    node, approx. 5 'generations' away
 // TODO present implementation gives very poor angular accuracy and misses
-//    turns, potentially aiming it toward land or across shallow water. 
+//    turns, potentially aiming it toward land or across shallow water.
 //    route calculation should compensate for this but it should be fixed
 //    here at the source. build more accurate direction vectors for each
 //    path map node
@@ -308,7 +324,7 @@ static void build_course_vectors(
          // find direction to ancestor
          for (uint32_t gen=0; gen<NUM_ANCESTORS_FOR_DIRECTION; gen++) {
             if (ggp->parent_id.val >= 0) {
-               path_map_node_type *next_ggp = 
+               path_map_node_type *next_ggp =
                      &path_map->nodes[ggp->parent_id.idx];
                if (gen == 0) {
                   // get base direction. this returns bitfield indicating
@@ -321,7 +337,7 @@ static void build_course_vectors(
                   //    direction of next node relative to this one,
                   //    plus adjacent bits. ANDing this to base direction
                   //    will indicate if it's w/in +/-45deg of base
-                  next_direction = 
+                  next_direction =
                         get_offset_mask_wide(next_ggp->pos, ggp->pos);
                   if ((next_direction.mask & base_direction.mask) == 0) {
                      // latest direction is too different from original
@@ -415,7 +431,7 @@ static void add_point_to_path_stack(
 }
 
 // use D* approach to find all routes to destination
-// path traced on existing depth map, using beacons and destination as 
+// path traced on existing depth map, using beacons and destination as
 //    seed locations
 // TODO FIXME This will break when close to north pole, as when w/in 1/2
 //    degree the top of map will shift into opposite hemisphere. this isn't
@@ -433,7 +449,7 @@ void trace_route_simple(
    path_map->read_idx = 0;
    path_map->write_idx = 0;
    // add destination as primary seed with 0 weight
-   // if destination is beyond visible map then it will be filtered and 
+   // if destination is beyond visible map then it will be filtered and
    //    not actually added stack
    calculate_destination_map_position(path_map);
    add_point_to_path_stack(path_map, path_map->dest_pix, 0.0f);
@@ -462,12 +478,12 @@ void trace_route_simple(
          //    logic that determines the best beacon to drive toward, and
          //    which are of lower priority (ie, are closer) while covering
          //    for all terrain variations
-         add_point_to_path_stack(path_map, 
+         add_point_to_path_stack(path_map,
                path_map->beacon_ref[i].pos_in_map, 2.0f * weight);
       }
 //else { printf("  beacon %d has wt=%.1f\n", path_map->beacon_ref[i].index, weight); }
    }
-   // update path weight between nodes until stack is empty 
+   // update path weight between nodes until stack is empty
    uint32_t num_nodes = MAP_LEVEL3_SIZE * MAP_LEVEL3_SIZE;
 //uint32_t cnt = 0;
    while (path_map->read_idx < path_map->write_idx) {
@@ -507,7 +523,7 @@ printf("Rebuild map by vessel offset\n");
       //    center map on vessel
 fprintf(stderr, "Generating offset map, but vessel pix %d,%d in old map has no path info. Vessel at %.4f,%.4f\n", vessel_pix.x, vessel_pix.y, vessel_pos.lon, vessel_pos.lat);
       log_err(log_, "Generating offset map, but vessel pix %d,%d in old "
-            "map has no path info. Vessel at %.4f,%.4f", 
+            "map has no path info. Vessel at %.4f,%.4f",
             vessel_pix.x, vessel_pix.y, vessel_pos.lon, vessel_pos.lat);
       //
 printf("  (no path info)\n");
@@ -515,12 +531,12 @@ printf("  (no path info)\n");
    } else {
       // get direction vessel should be moving and build map based on that
       // direction to head to reach destination
-      degree_type course = { .degrees = 
+      degree_type course = { .degrees =
             (double) node->true_course.angle16 * BAM16_TO_DEG };
       // calc where map center should be, in that direction
-      meter_type dist = 
+      meter_type dist =
             { .meters = VESSEL_OFFSET_FROM_MAP_CENTER_NM * NM_TO_METERS };
-      world_coordinate_type new_center = 
+      world_coordinate_type new_center =
             calc_offset_position(vessel_pos, course, dist);
       // load map
       load_world_5sec_map(new_center, path_map);
@@ -534,7 +550,7 @@ printf("  (no path info)\n");
 }
 
 
-// initial beacon trace for route plus determining appropriate world 
+// initial beacon trace for route plus determining appropriate world
 //    map center
 // performs several traces. first beacons are traced. then trace is
 //    made with vessel at center, then map is moved and trace is made
@@ -547,13 +563,13 @@ int trace_route_initial(
       /* in     */ const world_coordinate_type vessel_pos
       )
 {
-   // TODO either use constants or use size. right now these are 
+   // TODO either use constants or use size. right now these are
    //    unreasonably intermixed
    assert(path_map->size.x == MAP_LEVEL3_SIZE);
    assert(path_map->size.y == MAP_LEVEL3_SIZE);
    ////////////////
    int rc = -1;
-   log_info(log_, "Computing routes from %.5f,%.5f to %.5f,%.5f", 
+   log_info(log_, "Computing routes from %.5f,%.5f to %.5f,%.5f",
          vessel_pos.x_deg, vessel_pos.y_deg, dest.x_deg, dest.y_deg);
    world_coordinate_type destination = dest;
    if (destination.lon < 0.0) {
@@ -584,7 +600,7 @@ printf("Route initial -- map center\n");
    trace_route_simple(path_map, ves_pos);
 //write_depth_map(path_map, "b.pnm");
 //write_path_map(path_map, "b.path.pnm");
-   image_coordinate_type center = 
+   image_coordinate_type center =
          { .x = MAP_LEVEL3_SIZE/2, .y = MAP_LEVEL3_SIZE/2 };
    rebuild_map_by_vessel_offset(path_map, center, ves_pos);
    rc = 0;

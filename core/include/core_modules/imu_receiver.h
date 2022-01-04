@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(IMU_RECEIVER_H)
 #define IMU_RECEIVER_H
 #if !defined(_GNU_SOURCE)
@@ -11,15 +27,15 @@
 #include "sensor_packet.h"
 
 // receives and distributes information from primary gyro-acc-mag source
-// publishes gyr, acc and mag data in ship space (z forward (bow), y up, 
+// publishes gyr, acc and mag data in ship space (z forward (bow), y up,
 //    x left (port))
 // log data is in same form as was reported from sensor, so it can
 //    be re-used as emulated input (ie, to replay an event)
 //
 // gyro drift (low-pass) filter implemented at device level
-// interploated sensor values reported -- data is not otherwise 
+// interploated sensor values reported -- data is not otherwise
 //    filtered or fused
-// 
+//
 
 /**
 IMU receiver logs data as is reported from sensor, so it can be re-used as
@@ -29,7 +45,7 @@ reported values for each sample. The log won't be a literal repeat of
 what was delivered, but it should represent what was used and, other
 than during data outages, it should accurately represent what was delivered
 
-Published gyro data is upsampled 10ms intervals. 
+Published gyro data is upsampled 10ms intervals.
 
 TODO see imu_streams.h for comment about merging att and imu resampling
 
@@ -69,12 +85,12 @@ typedef struct imu_output imu_output_type;
 //    another sample from the same modality is received. e.g., if a MAG
 //    only reports every 50ms, yet data is published every 10ms, the
 //    received MAG signal is repeated every 10ms until another MAG signal
-//    is received. this has an implicit ability to hide data source 
-//    failures, so a timer is needed to let data from a modality disappear 
+//    is received. this has an implicit ability to hide data source
+//    failures, so a timer is needed to let data from a modality disappear
 //    when the sensor is down
 // duration that an old sample is reused
 // acc and mag aren't time critical as they're primarily used as a slow drift
-//    correction for the gyro. don't recycle too long though as 
+//    correction for the gyro. don't recycle too long though as
 //    attitude calculator needs to know when that data is stale
 #define ACC_RECYCLE_DURATION_USEC      150000
 #define MAG_RECYCLE_DURATION_USEC      150000
@@ -99,7 +115,7 @@ struct imu_class {
    matrix_type mag_dev2ship;
    matrix_type gyr_dev2ship;
    // mag offsets for compass correction (to correct for installation bias)
-   // TODO elaborate on concept -- presently bias is assumed to be 
+   // TODO elaborate on concept -- presently bias is assumed to be
    //    circular but that's not a reliable assumption
    double x_mag_bias;
    double z_mag_bias;
@@ -109,7 +125,7 @@ struct imu_class {
    //    output sample (gyr) or for recycling (acc, mag) during upsample
    vector_type recycle_value[NUM_IMU_CHANNELS];
    // duration before acc or mag go stale
-   int32_t recycle_timer_usec[NUM_IMU_CHANNELS];  
+   int32_t recycle_timer_usec[NUM_IMU_CHANNELS];
    microsecond_timestamp_type prev_gyr_data_t;
    // time of previously published sample
    microsecond_timestamp_type prev_publish_t;

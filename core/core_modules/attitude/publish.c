@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 static void write_to_log(
       /* in     */       FILE *logfile,
@@ -63,7 +79,7 @@ static void apply_filter_correction(
 //copy_vector(&att->comp_acc, &att->corrected_acc);
 //copy_vector(&att->comp_mag, &att->corrected_mag);
 //return;
-   // measure difference between measured acc/mag and complementary 
+   // measure difference between measured acc/mag and complementary
    //    filter values
    vector_type acc_err_axis, mag_err_axis;
    degree_type acc_theta, mag_theta;
@@ -89,10 +105,10 @@ static void apply_filter_correction(
 //log_info(log_, "    MAG error   %.4f,%.4f,%.4f   %.3f deg", att->est_error_mag.v[0], att->est_error_mag.v[1], att->est_error_mag.v[2], vector_len(&att->est_error_mag));
    // apply correction to complementary filter
    acc_theta.degrees = vector_len(&att->est_error_acc);
-   rotate_vector_about_axis(&att->est_error_acc, &att->comp_acc, 
+   rotate_vector_about_axis(&att->est_error_acc, &att->comp_acc,
          acc_theta, &att->corrected_acc);
    mag_theta.degrees = vector_len(&att->est_error_mag);
-   rotate_vector_about_axis(&att->est_error_mag, &att->comp_mag, 
+   rotate_vector_about_axis(&att->est_error_mag, &att->comp_mag,
          mag_theta, &att->corrected_mag);
 //log_info(log_, "ACC corr %.5f,%.5f,%.5f -> %.5f,%.5f,%.5f   %.5f", att->comp_acc.v[0], att->comp_acc.v[1], att->comp_acc.v[2], att->corrected_acc.v[0], att->corrected_acc.v[1], att->corrected_acc.v[2], acc_theta.degrees);
 //log_info(log_, "MAG corr %.6f,%.6f,%.6f -> %.6f,%.6f,%.6f   %.5f", att->comp_mag.v[0], att->comp_mag.v[1], att->comp_mag.v[2], att->corrected_mag.v[0], att->corrected_mag.v[1], att->corrected_mag.v[2], mag_theta.degrees);
@@ -112,8 +128,8 @@ static void apply_filter(
 {
 //printf("Applying filter. Reset ms = %f\n", (double) att->reset_ms.msec * 0.001);
    ///////////////////////
-   // filter logic is to apply measured rotation to approximated 
-   //    attitude vector and to do a weighted average between that 
+   // filter logic is to apply measured rotation to approximated
+   //    attitude vector and to do a weighted average between that
    //    and measured acc,mag
    //////////////////
    // normalize input signals, keeping a record of their magnitude
@@ -161,7 +177,7 @@ static void apply_filter(
       //    period goes from full to zero. when tau starts out too high
       //    there's unacceptably high motion (eg, tau starting at 1/5
       //    can yield up to 50dps variation in the first few hundred ms)
-      double k = (double) 
+      double k = (double)
             (0.05 * att->init_timer.seconds / BOOTSTRAP_INTERVAL_SEC);
       k_acc = (1.0 - k) * COMPLEMENTARY_TAU_ACC + k;
       k_mag = (1.0 - k) * COMPLEMENTARY_TAU_MAG + k;
@@ -197,11 +213,11 @@ static void publish_data(
 {
    /////////////////////////////////////////////
    // get data sink
-   const uint32_t idx = 
+   const uint32_t idx =
          (uint32_t) self->elements_produced % self->queue_length;
    const double t = real_from_timestamp(att->next_publish_time);
    self->ts[idx] = t;
-   attitude_output_type *out = (attitude_output_type*) 
+   attitude_output_type *out = (attitude_output_type*)
          dp_get_object_at(self, idx);
    /////////////////////////////////////////////
    // write data to output
@@ -224,12 +240,12 @@ static void publish_data(
    //vector_type z_axis = { .v = { 0.0f, 0.0f, 1.0f } };
    //mult_matrix_vector(&out->ship2world, &z_axis, &world_mag);
    //out->heading.degrees = atan2f(world_mag.v[0], world_mag.v[2]) * R2D;
-   out->mag_heading_reference.degrees = 
+   out->mag_heading_reference.degrees =
          atan2(out->ship2world.m[6], out->ship2world.m[8]) * R2D;
    if (out->mag_heading_reference.degrees < 0.0) {
       out->mag_heading_reference.degrees += 360.0;
    }
-   out->true_heading.degrees = 
+   out->true_heading.degrees =
          out->mag_heading_reference.degrees - declination_.degrees;
    if (out->true_heading.degrees < 0.0) {
       out->true_heading.degrees += 360.0;
@@ -237,7 +253,7 @@ static void publish_data(
    double dt = t - att->heading_sec;
    double dps = 0.0;
    if (dt > 0.0) {
-      double d_heading = 
+      double d_heading =
             out->mag_heading_reference.degrees - att->mag_heading.degrees;
       if (d_heading > 180.0) {
          d_heading -= 360.0;
@@ -250,7 +266,7 @@ static void publish_data(
    // to estimating turn rate and reduce noise, keep running average w/
    //    tau of ~1/2 second
    const double turn_rate_tau = 1.0 / (double) (SAMPLE_FREQ_HZ/2);
-   att->turn_rate.dps = (1.0 - turn_rate_tau) * att->turn_rate.dps + 
+   att->turn_rate.dps = (1.0 - turn_rate_tau) * att->turn_rate.dps +
          turn_rate_tau * dps;
    att->mag_heading = out->mag_heading_reference;
    att->heading_sec = t;
@@ -260,7 +276,7 @@ static void publish_data(
 //printf("MAG    t=%.3f    heading %.2f\n", self->ts[idx], out->heading.degrees);
    // use ship's acc vector to calculate pitch and roll
    // roll -- project acc to XY plane and normalize. roll is asin(x)
-   vector_type roll_vec = { .v = 
+   vector_type roll_vec = { .v =
          { att->corrected_acc.v[0], att->corrected_acc.v[1], 0.0 } };
    unitify(&roll_vec);
    double roll_x = roll_vec.v[0];
@@ -273,7 +289,7 @@ static void publish_data(
    }
    out->roll.degrees = -asin(roll_x) * R2D;
    // pitch -- project acc to YZ plane and normalize. pitch is asin(z)
-   vector_type pitch_vec = { .v = 
+   vector_type pitch_vec = { .v =
          { 0.0, att->corrected_acc.v[1], att->corrected_acc.v[2] } };
    unitify(&pitch_vec);
    double pitch_z = pitch_vec.v[2];
@@ -293,7 +309,7 @@ static void publish_data(
    //    init, everything's a mess so there's not much to be lost for
    //    initial bad data, which is much more likely during first part of init
    if (att->logfile) {
-      write_to_log(att->logfile, 
+      write_to_log(att->logfile,
             real_from_timestamp(att->next_publish_time), out);
    }
    self->elements_produced++;

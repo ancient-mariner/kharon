@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(ROUTE_CONTROL_H)
 #define ROUTE_CONTROL_H
 #include "pin_types.h"
@@ -28,7 +44,7 @@ typedef union path_offset path_offset_type;
 //#define x_ROUTE_INFO_FLAG_SPEED_CHANGE      2
 //#define x_ROUTE_INFO_FLAG_REACHED_DESTINATION  4
 
-// normal flag indicates expected deviations from course or speed. 
+// normal flag indicates expected deviations from course or speed.
 //    unset value for course or speed means the same (for now at least)
 #define ROUTE_INFO_COURSE_NORMAL           0x01  // also 0
 // course change suggested
@@ -49,10 +65,10 @@ typedef union path_offset path_offset_type;
 // stop, as much as able
 #define ROUTE_INFO_SPEED_SUGGEST_CHANGE      0x02
 #define ROUTE_INFO_SPEED_MAKE_CHANGE         0x04
-// stop, as much as able, as we're in a potentially hazardous situation. 
+// stop, as much as able, as we're in a potentially hazardous situation.
 //    full-stop if self-driving, and 'take over'
 //    if a human crew is available
-// TODO when self-driving, this should be over-ridden if sea 
+// TODO when self-driving, this should be over-ridden if sea
 //    conditions do not permit a safe stop
 #define ROUTE_INFO_SPEED_FULL_STOP           0x80
 
@@ -117,11 +133,11 @@ typedef union path_offset path_offset_type;
 struct route_control {
    /////////////////////////////////////////////////////////////////////
    // speed and heading
-   // suggested heading 
+   // suggested heading
    true_heading_type sug_heading;
    double sug_heading_score;
    declination_type declination;
-   // direction of turn. positive is right (to higher degree), negative 
+   // direction of turn. positive is right (to higher degree), negative
    //    is left. for now, only direction of turn is used (ie, + or -).
    //    this should be expanded to include rate of turn (to match name)
    degree_per_second_type turn_rate;
@@ -172,6 +188,6 @@ struct route_control {
    // 'persistent' flags -- once set they persist until explicitly cleared
    uint32_t flags2_persistent;
 };
-typedef struct route_control route_info_type; 
+typedef struct route_control route_info_type;
 
 #endif   // ROUTE_CONTROL_H

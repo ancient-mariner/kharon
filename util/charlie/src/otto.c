@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -9,7 +25,7 @@
 
 
 static void usage(
-      /* in     */ const int argc, 
+      /* in     */ const int argc,
       /* in     */ const char **argv
       )
 {
@@ -56,7 +72,7 @@ static void set_autopilot_state(
    if (resp.request_type == PM_CMD_NULL) {
       printf("%.3f   Postmaster indicated error executing request", t);
    } else {
-      printf("%.3f   Autopilot set to %s\n", t, 
+      printf("%.3f   Autopilot set to %s\n", t,
             on_off == PM_CMD_AUTOPILOT_ON ? "ON" : "OFF");
    }
 end:
@@ -67,7 +83,7 @@ end:
 
 
 static void process_command(
-      /* in     */ const int argc, 
+      /* in     */ const int argc,
       /* in     */ const char **argv,
       /* in     */ const network_id_type *id
       )

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "postmaster.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -92,8 +108,8 @@ int16_t get_postmaster_port(void)
 //    memory. document how data is used and freed, and if it has to
 //    be cached
 static int read_request(
-      /* in     */ const int connfd, 
-      /*    out */       struct pm_request *req, 
+      /* in     */ const int connfd,
+      /*    out */       struct pm_request *req,
       /*    out */       uint8_t **data
       )
 {
@@ -129,7 +145,7 @@ printf("Reading request\n");
    //
    if (req->header_bytes > 0) {
       *data = cache_malloc(pool_, req->header_bytes);
-      if (recv_block(connfd, *data, req->header_bytes) != 
+      if (recv_block(connfd, *data, req->header_bytes) !=
             (int32_t) req->header_bytes) {
          log_err(log_, "Problem reading request data (%d bytes)",
                req->header_bytes);
@@ -146,7 +162,7 @@ err:
 static int send_response(
       /* in     */ const int connfd,
       /* in     */ const struct pm_request *req,
-      /* in     */ const struct pm_response *resp, 
+      /* in     */ const struct pm_response *resp,
       /* in     */ const void * data
       )
 {
@@ -186,7 +202,7 @@ static int send_response(
    }
    //
    if (resp->response_bytes > 0) {
-      if (send_block(connfd, data, resp->response_bytes) != 
+      if (send_block(connfd, data, resp->response_bytes) !=
             (int32_t) resp->response_bytes) {
          log_err(log_, "Problem sending response data (%d bytes)",
                resp->response_bytes);
@@ -201,9 +217,9 @@ err:
 }
 
 static void forward_request(
-      /* in     */ const struct pm_request *req, 
+      /* in     */ const struct pm_request *req,
       /* in     */ const uint8_t *req_data,
-      /* in out */       struct pm_response *resp, 
+      /* in out */       struct pm_response *resp,
       /* in out */       uint8_t **content
       )
 {

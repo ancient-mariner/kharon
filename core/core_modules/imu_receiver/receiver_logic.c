@@ -1,5 +1,19 @@
-// this file is included and not compiled on its own. use the parent
-//    file's #include <...> and don't repeat here
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 static void start_network(
       /* in out */       datap_desc_type *dp
@@ -7,7 +21,7 @@ static void start_network(
 {
    struct imu_class *imu = (struct imu_class*) dp->local;
    while ((dp->run_state & DP_STATE_DONE) == 0) {
-      if ((imu->connfd = 
+      if ((imu->connfd =
             wait_for_connection(imu->sockfd, dp->td->obj_name)) >= 0)
          break; // have connection
       if ((dp->run_state & DP_STATE_DONE) != 0)
@@ -30,14 +44,14 @@ static void load_dev2ship(
    // initialize alignment matrix to identity in case problems occur below
    identity_matrix(mat);
    //
-   FILE *fp = open_config_file_ro2(get_environment(), dev_name, "sensors", 
+   FILE *fp = open_config_file_ro2(get_environment(), dev_name, "sensors",
          config_name, NULL);
    if (!fp) {
       log_err(imu->log, "Unable to open %s for '%s'", config_name, module_name);
       goto end;
    }
    if (config_read_matrix(fp, mat) != 0) {
-      log_err(imu->log, "Unable to read alignment %s for '%s'", 
+      log_err(imu->log, "Unable to read alignment %s for '%s'",
             config_name, module_name);
       goto end;
    }
@@ -70,7 +84,7 @@ static void unpack_data(
       /* in out */       imu_class_type *imu
       )
 {
-   restore_sensor_packet_individual(serial, &data->gyr, &data->acc, 
+   restore_sensor_packet_individual(serial, &data->gyr, &data->acc,
             &data->mag, NULL, &data->temp, NULL, &data->state);
 //log_info(imu->log, "flags: %08x  g:%d  a%d  m%d", data->state.flags, data->state.avail[IMU_GYR], data->state.avail[IMU_ACC], data->state.avail[IMU_MAG]);
    data->timestamp = timestamp;
@@ -119,7 +133,7 @@ static void rotate_and_log(
             "%7.4f %7.4f %7.4f  "
             "%7.4f %7.4f %7.4f  "
             "%7.4f %7.4f %7.4f  "
-            "%5.1f\n", 
+            "%5.1f\n",
             data->timestamp,
             (double) gyr.v[0], (double) gyr.v[1], (double) gyr.v[2],
             (double) acc.v[0], (double) acc.v[1], (double) acc.v[2],
@@ -139,7 +153,7 @@ static void rotate_and_log(
 //         "%6.3f %6.3f %6.3f  "
 //         "%7.3f %7.3f %7.3f  "
 //         "%6.3f %6.3f %6.3f  "
-//         "%6.1f\n", 
+//         "%6.1f\n",
 //         data->timestamp,
 //         (double) data->gyr.v[0], (double) data->gyr.v[1], (double) data->gyr.v[2],
 //         (double) data->acc.v[0], (double) data->acc.v[1], (double) data->acc.v[2],
@@ -186,12 +200,12 @@ static void publish_upsample_no_gyro(
       )
 {
    // next publication time
-   microsecond_timestamp_type next_t = 
+   microsecond_timestamp_type next_t =
          next_imu_publish_time(imu->prev_publish_t);
    // while next publication time is ahead of packet timestamp, create
    //    a record and publish
    uint32_t num_published = 0;
-   // only publish if it's time. the most recently received ACC and MAG 
+   // only publish if it's time. the most recently received ACC and MAG
    //    values are published regardless of when they were received
    //    (assuming they're not stale) so no need to interpolate. that
    //    keeps logic much easier than w/ gyro
@@ -239,9 +253,9 @@ static void publish_upsample_no_gyro(
 // NOTE: there is a variable delay between when data is acquired and
 //    timestampled and when it is published, with the publish timestamp
 //    being on the order of 10ms delayed relative to the acquired data.
-//    6.25ms is from the driver, which publishes the previous 12.5ms 
-//    at the end of the interval, and ~5ms delay from pushing to next 
-//    upsampled publication time. for now this can be compensated for 
+//    6.25ms is from the driver, which publishes the previous 12.5ms
+//    at the end of the interval, and ~5ms delay from pushing to next
+//    upsampled publication time. for now this can be compensated for
 //    by adjusting the image-acquisition delay (whose acquisition delay
 //    error is at least as large)
 // TODO publish with minimal delay by adjusting publication
@@ -259,7 +273,7 @@ static void publish_upsample_gyro(
       )
 {
    // next publication time
-   microsecond_timestamp_type next_t = 
+   microsecond_timestamp_type next_t =
          next_imu_publish_time(imu->prev_publish_t);
 //printf("-------------------------------\n");
 //printf("data at %.3f, next publish at %.3f, last sample at %.3f, last gyro at %.3f\n", (double) data_t.usec * 1.0e-6, (double) next_t.usec * 1.0e-6, (double) imu->prev_publish_t.usec * 1.0e-6, (double) imu->prev_gyr_data_t.usec * 1.0e-6);
@@ -269,13 +283,13 @@ static void publish_upsample_gyro(
       //    more than a sample interval, and a fix should prevent that
       //    from recurring. however, in case of a repeat, move the
       //    record of the timestamp of the previous sample back in
-      //    time to match the new data sample, so there's not a 
+      //    time to match the new data sample, so there's not a
       //    negative dT (this should have the effect of dropping
       //    the present value)
       // log the event first
       log_err(imu->log, "Out-of-order packets detected. Previous was at "
-            "%.3f and present is at %.3f", 
-            (double) imu->prev_gyr_data_t.usec * 1.0e-6, 
+            "%.3f and present is at %.3f",
+            (double) imu->prev_gyr_data_t.usec * 1.0e-6,
             (double) data_t.usec * 1.0e-6);
       imu->prev_gyr_data_t = data_t;
    }
@@ -299,7 +313,7 @@ static void publish_upsample_gyro(
          copy_vector(&packet->acc, &out.modality[IMU_ACC]);
          out.state.avail[IMU_ACC] = 1;
          imu->recycle_timer_usec[IMU_ACC] -= SAMPLE_INTERVAL_US;
-      } 
+      }
       if (imu->recycle_timer_usec[IMU_MAG] > 0) {
          copy_vector(&packet->mag, &out.modality[IMU_MAG]);
          out.state.avail[IMU_MAG] = 1;
@@ -309,7 +323,7 @@ static void publish_upsample_gyro(
       //    (horrible name -- refactor later). rotation should be
       //    added from the previous gyro data time and the sample
       // then publish
-      double k = (double) (next_t.usec - imu->prev_gyr_data_t.usec) 
+      double k = (double) (next_t.usec - imu->prev_gyr_data_t.usec)
             / (double) IMU_PRODUCER_INTERVAL_US;
 //print_vec(&imu->recycle_value[IMU_GYR], "previous rotation");
 //printf("k = %f (%ld - %ld)\n", (double) k, next_t.usec, imu->prev_gyr_data_t.usec);
@@ -338,7 +352,7 @@ static void publish_upsample_gyro(
    // present data is before the next publication time, update
    //    the 'recycle' bucket with the amount of rotation between
    //    the gyro sample and the present timestamp
-   double k = (double) (data_t.usec - imu->prev_gyr_data_t.usec) 
+   double k = (double) (data_t.usec - imu->prev_gyr_data_t.usec)
          / (double) IMU_PRODUCER_INTERVAL_US;
 //printf("last k = %f (%ld - %ld)\n", (double) k, data_t.usec, imu->prev_gyr_data_t.usec);
    for (uint32_t i=0; i<3; i++) {
@@ -355,9 +369,9 @@ static void publish_upsample_gyro(
 
 
 // add sample to queue
-// data from network is expected to be in packet, and if that's not 
+// data from network is expected to be in packet, and if that's not
 //    available then recycled data should be copied to there
-// for publication, fill in data for all previous data samples, whether 
+// for publication, fill in data for all previous data samples, whether
 //    from recycling (acc, mag) or interpolation (gyr)
 // if gyro is prioritized as being available, don't publish until
 //    new gyro data is presented
@@ -406,7 +420,7 @@ void set_imu_priority(
    if (imu_dp == NULL) {
       fprintf(stderr, "NULL source provided to set_imu_priority\n");
       hard_exit(__func__, __LINE__);
-   } 
+   }
    /////////////////////////////////////////////////////////////////////
    imu_class_type *imu = (imu_class_type*) imu_dp->local;
    if (strcmp(imu_dp->td->class_name, IMU_CLASS_NAME) != 0) {
@@ -422,17 +436,17 @@ void set_imu_priority(
    // validate incoming data
    uint32_t err=0;
    if (acc_pri > IMU_PRI_NULL) {
-      log_err(imu->log, "IMU source %s (acc) has invalid priority %d", 
+      log_err(imu->log, "IMU source %s (acc) has invalid priority %d",
             imu_dp->td->obj_name, acc_pri);
       err++;
    }
    if (gyr_pri > IMU_PRI_NULL) {
-      log_err(imu->log, "IMU source %s (gyr) has invalid priority %d", 
+      log_err(imu->log, "IMU source %s (gyr) has invalid priority %d",
             imu_dp->td->obj_name, gyr_pri);
       err++;
    }
    if (mag_pri > IMU_PRI_NULL) {
-      log_err(imu->log, "IMU source %s (mag) has invalid priority %d", 
+      log_err(imu->log, "IMU source %s (mag) has invalid priority %d",
             imu_dp->td->obj_name, mag_pri);
       err++;
    }

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -42,7 +58,7 @@ int main(int argc, char **argv)
    beacon_record_type *record = get_beacon_record(idx);
    akn_position_type apos = { .akn_x = (double) record->akn_x,
       .akn_y = (double) record->akn_y };
-   world_coordinate_type wpos = convert_akn_to_world(apos); 
+   world_coordinate_type wpos = convert_akn_to_world(apos);
    load_world_5sec_map(wpos, path_map);
    load_beacons_into_path_map(path_map);
    write_depth_map(path_map, "x_beacon_map.pnm");

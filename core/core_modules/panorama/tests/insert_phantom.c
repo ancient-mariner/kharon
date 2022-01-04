@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -65,10 +81,10 @@ static void init_panorama_output(
 {
    // put coverage everywhere, with red sky, green water, and alternating
    //    bands with bg coverage
-   memset(out->coverage.radial, 1, 
+   memset(out->coverage.radial, 1,
          NUM_PAN_COVERAGE_RADIALS * sizeof *out->coverage.radial);
    pixel_cam_info_type sky_fg = {
-      .radius=1, .border=0, .cam_num=1, .color.y=180, .color.v=160 
+      .radius=1, .border=0, .cam_num=1, .color.y=180, .color.v=160
    };
    pixel_cam_info_type sky_bg = {
       .radius=1, .border=0, .cam_num=2, .color.y=170, .color.v=150
@@ -77,7 +93,7 @@ static void init_panorama_output(
       .radius=1, .border=0, .cam_num=1, .color.y=110, .color.v=110
    };
    pixel_cam_info_type sea_bg = {
-      .radius=1, .border=0, .cam_num=2, .color.y=100, .color.v=86 
+      .radius=1, .border=0, .cam_num=2, .color.y=100, .color.v=86
    };
    pixel_cam_info_type fg, bg;
    for (uint32_t lev=0; lev<NUM_PYRAMID_LEVELS; lev++) {
@@ -126,7 +142,7 @@ static uint32_t test_init(void)
 }
 
 
-// write excerpt of pan as text. content is meant to be loaded and 
+// write excerpt of pan as text. content is meant to be loaded and
 //    compared in subsequent unit test
 void save_test_data(
       /* in     */ const char *outfile,
@@ -189,7 +205,7 @@ static uint32_t compare_test_data(
          uint32_t fgv = pix->fg.color.v;
          uint32_t bgy = pix->bg.color.y;
          uint32_t bgv = pix->bg.color.v;
-         // 
+         //
          if (get_next_line(fp, line, STR_LEN) == NULL) {
             fprintf(stderr, "Data stream from '%s' ended prematurely\n",
                   infile);
@@ -214,7 +230,7 @@ static uint32_t compare_test_data(
             fprintf(stderr, "Unexpected value for location %d,%d (%d,%d) "
                   "in '%s'\n", x, y, vals[0], vals[1], infile);
             fprintf(stderr, "  Read %d,%d,%d,%d (fg-y, fg-v, bg-y, bg-v), "
-                  "expected %d,%d,%d,%d\n", 
+                  "expected %d,%d,%d,%d\n",
                   vals[2], vals[3], vals[4], vals[5], fgy, fgv, bgy, bgv);
             errs++;
          }
@@ -241,7 +257,7 @@ static uint32_t test_project_phantom(void)
    for (uint32_t i=0; i<11; i++) {
       float offset_x = (float) i * 2.51f;
       float offset_y = (float) i * 0.01f;
-      world_coordinate_type pos = 
+      world_coordinate_type pos =
             { .x_deg=1.5f+offset_x, .y_deg=-1.5f+offset_y };
       {
          pixel_offset_type phantom_offset = get_phantom_offset(pos, phantom);

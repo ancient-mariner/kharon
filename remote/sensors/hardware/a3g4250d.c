@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "s2.h"
 #include <stdio.h>
 #include <stdint.h>
@@ -28,18 +44,18 @@
 
 #define WARMUP_INTERVAL    WARMUP_INTERVAL_BASE
 
-// 
+//
 static int16_t last_[3] = { 0, 0, 0 };
 static int32_t stream_mode_ = 0;
 
 static int32_t write_register(
       /* in out */       sensor_runtime_type *dev,
-      /* in     */ const uint8_t reg, 
+      /* in     */ const uint8_t reg,
       /* in     */ const uint8_t value
       )
 {
    if (i2c_smbus_write_byte_data(dev->hw_device, reg, value) < 0) {
-      fprintf(stderr, "%s: write_register() error. reg=%d, value=%d\n", 
+      fprintf(stderr, "%s: write_register() error. reg=%d, value=%d\n",
             __FILE__, reg, value);
       device_error(dev, __FILE__, __LINE__, reg, dev->flags);
       return -1;
@@ -111,27 +127,27 @@ static int32_t read_gyr_data(
          goto no_data;
       }
       // burst read: Y, Z, X
-//      cmd = 0x80 | OUT_Y_L; 
+//      cmd = 0x80 | OUT_Y_L;
 //      if (i2c_smbus_read_i2c_block_data(hw, cmd, 2, &raw[2]) < 0) {
 //         device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAG_GYRO);
 //         goto no_data;
 //      }
-//      cmd = 0x80 | OUT_Z_L; 
+//      cmd = 0x80 | OUT_Z_L;
 //      if (i2c_smbus_read_i2c_block_data(hw, cmd, 2, &raw[4]) < 0) {
 //         device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAG_GYRO);
 //         goto no_data;
 //      }
-      cmd = 0x80 | OUT_Y_L; 
+      cmd = 0x80 | OUT_Y_L;
       if (i2c_smbus_read_i2c_block_data(hw, cmd, 4, &raw[2]) < 0) {
          device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAG_GYRO);
          goto no_data;
       }
-//      cmd = 0x80 | OUT_Z_L; 
+//      cmd = 0x80 | OUT_Z_L;
 //      if (i2c_smbus_read_i2c_block_data(hw, cmd, 2, &raw[4]) < 0) {
 //         device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAG_GYRO);
 //         goto no_data;
 //      }
-      cmd = 0x80 | OUT_X_L; 
+      cmd = 0x80 | OUT_X_L;
       if (i2c_smbus_read_i2c_block_data(hw, cmd, 2, &raw[0]) < 0) {
          device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAG_GYRO);
          goto no_data;
@@ -149,7 +165,7 @@ static int32_t read_gyr_data(
          accum[0] += data[0];
          accum[1] += data[1];
          accum[2] += data[2];
-//printf("%2d  %4d,%4d,%4d    %7.3f,%7.3f,%7.3f\n", n, 
+//printf("%2d  %4d,%4d,%4d    %7.3f,%7.3f,%7.3f\n", n,
 //      data[0], data[1], data[2],
 //      SIG_GAIN*data[0], SIG_GAIN*data[1], SIG_GAIN*data[2]);
          cnt++;
@@ -162,7 +178,7 @@ static int32_t read_gyr_data(
    } while (n < 0x1f);
    if (cnt == 0) {
       // this is an exceptional case -- only one sample (shouldn't be
-      //    possible) and it matched the previous last sample. put 
+      //    possible) and it matched the previous last sample. put
       //    invalid data in last so we don't accidentally trigger again
       last_[0] = (int16_t) 0x8001;
       last_[1] = (int16_t) 0x7fff;
@@ -177,7 +193,7 @@ static int32_t read_gyr_data(
    for (uint32_t i=0; i<3; i++) {
       // make average of signal (DPS) and return that
       double dtheta = (double) accum[i] / ((double) cnt);
-      gyro->axis_dps.v[i] = dtheta * gyro->gain.v[i] - 
+      gyro->axis_dps.v[i] = dtheta * gyro->gain.v[i] -
             gyro->drift_dps.v[i] * dt;
    }
    return 0;
@@ -212,7 +228,7 @@ static void initialize_device(
    select_device(device, device->gyro.gyro_addr);
    // 200Hz, 25Hz cutoff, xyz enabled
    write_register(device, CTRL_REG1, 0b01011111);
-   // high-pass filter set for 0.02Hz 
+   // high-pass filter set for 0.02Hz
    write_register(device, CTRL_REG2, 0b00101001);
    // CTRL_REG3 no interrupts (default)
    // CTRL_REG4 little endian, no self test (default)
@@ -255,7 +271,7 @@ int32_t a3g4250d_setup(
    initialize_device(dev);
    // set flags last
    dev->flags |= SENSOR_FLAG_GYRO | SENSOR_FLAG_TEMP;
-   // 
+   //
    dev->waketime.tv_sec = 0;
    dev->waketime.tv_nsec = WARMUP_INTERVAL * TIME_ADD_1MS;
    dev->state = 0;

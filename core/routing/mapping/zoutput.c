@@ -1,5 +1,19 @@
-////////////////////////////////////////////////////////////////////////
-// output
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 void write_depth_map(
       /* in     */ const path_map_type *path_map,
@@ -29,7 +43,7 @@ void write_depth_map(
    for (uint32_t y=0; y<path_map->size.y; y++) {
       for (uint32_t x=0; x<path_map->size.x; x++) {
          uint32_t map_idx = x + y * path_map->size.x;
-         int16_t val = 
+         int16_t val =
                (int16_t) (-path_map->feature_nodes[map_idx].depth_meters);
          int beacon_found = 0;
          r = 0;
@@ -52,7 +66,7 @@ void write_depth_map(
                   r = 255;
 if ((dx == 0) && (dy == 0)) {
    const map_beacon_reference_type *ref = &path_map->beacon_ref[i];
-   printf("dm   %4d    %d,%d    (%.4f,%.4f)   %.1f\n", ref->index, 
+   printf("dm   %4d    %d,%d    (%.4f,%.4f)   %.1f\n", ref->index,
          x, y, ref->coords.akn_x, ref->coords.akn_y, (double) ref->path_weight);
 }
 //printf("beacon %d. depth %d\n", i, val);
@@ -113,7 +127,7 @@ void write_path_map(
       for (uint32_t x=0; x<path_map->size.x; x++) {
          uint32_t map_idx = x + y * path_map->size.x;
          float weight = path_map->nodes[map_idx].weight;
-         if ((weight >= 0.0f) && 
+         if ((weight >= 0.0f) &&
                ((min_weight < 0.0f) || (weight < min_weight))) {
             min_weight = weight;
          }
@@ -147,7 +161,7 @@ void write_path_map(
                r = (uint8_t) (255 - val / 2);
                g = (uint8_t) (255 - val / 2);
                b = (uint8_t) val;
-            } else if (val < 1024) { 
+            } else if (val < 1024) {
                val -= 768;
                r = (uint8_t) (128 - val / 2);
                g = 128;
@@ -197,7 +211,7 @@ void write_direction_map(
             double map = (double) node->true_course.angle16 / 32768.0 - 1.0;
             r = (uint8_t) (255.0 * fabs(map));
             g = 128;
-            map = (double) ((uint16_t) 
+            map = (double) ((uint16_t)
                   (16384 + node->true_course.angle16)) / 32768.0 - 1.0;
             b = (uint8_t) (255.0 * fabs(map));
             // encoding    red 255 going north, 0 going south  (blue 127)
@@ -240,7 +254,7 @@ void write_active_direction_map(
             double map = (double) node->active_course.angle16 / 32768.0 - 1.0;
             r = (uint8_t) (255.0 * fabs(map));
             g = 128;
-            map = (double) ((uint16_t) 
+            map = (double) ((uint16_t)
                   (16384 + node->active_course.angle16)) / 32768.0 - 1.0;
             b = (uint8_t) (255.0 * fabs(map));
             // encoding    red 255 going north, 0 going south  (blue 127)

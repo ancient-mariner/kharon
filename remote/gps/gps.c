@@ -1,6 +1,22 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <errno.h>
 #include <unistd.h>
-#include <fcntl.h> 
+#include <fcntl.h>
 #include <string.h>
 #include <termios.h>
 #include <stdio.h>
@@ -16,7 +32,7 @@
 
 // read GPS data over serial line and forward to gps_receiver
 
-// TODO when parsing data, advance to "$" and read until *nn. verify 
+// TODO when parsing data, advance to "$" and read until *nn. verify
 //    checksum and do basic error checking. if it's OK, send to receiver.
 // basic error checking. all chars in [a-Z0-9,.-+]. if encounter '$' then
 //    abort check on first and restart with new '$'
@@ -38,12 +54,12 @@ static log_info_type *log_ = NULL;
 ////////////////////////////////////////////////////////////////////////
 // serial interface
 
-// initial serial communication prototype from 
+// initial serial communication prototype from
 // https://stackoverflow.com/questions/6947413/how-to-open-read-and-write-from-serial-port-in-c/6947758#6947758
 
 static int set_interface_attributes(
-      /* in     */ const int32_t fd, 
-      /* in     */ const speed_t speed, 
+      /* in     */ const int32_t fd,
+      /* in     */ const speed_t speed,
       /* in     */ const uint32_t parity
       )
 {
@@ -84,7 +100,7 @@ static int set_interface_attributes(
 
 
 static void set_blocking(
-      /* in     */ const int fd, 
+      /* in     */ const int fd,
       /* in     */ const int should_block
       )
 {
@@ -109,7 +125,7 @@ static void open_serial_device(void)
       serial_fd_= open (tty_dev_name_, O_RDWR | O_NOCTTY | O_SYNC);
       if (serial_fd_ < 0)
       {
-         fprintf(stderr, "error opening '%s': %s\n", tty_dev_name_, 
+         fprintf(stderr, "error opening '%s': %s\n", tty_dev_name_,
                strerror (errno));
       } else {
          // set to 4800bps, no parity (8n1), blocking
@@ -139,8 +155,8 @@ static uint8_t nmea_checksum(
 
 
 static void handle_sentence(
-      /* in     */ const char *sentence, 
-      /* in     */ const uint32_t sentence_len, 
+      /* in     */ const char *sentence,
+      /* in     */ const uint32_t sentence_len,
       /* in     */ const uint8_t reported_checksum
       )
 {
@@ -184,7 +200,7 @@ static void prepare_parser(void)
    // [a-Z0-9] and "$*,.-+" are considered viable
    // numbers are content, numeric and hex
    for (uint32_t i=0; i<10; i++) {
-      parse_table_['0' + i] = 
+      parse_table_['0' + i] =
             NMEA_CHAR_HEX | NMEA_CHAR_NUMBER | NMEA_CHAR_CONTENT;
    }
    // alpha are content, <='f' are hex
@@ -312,7 +328,7 @@ printf("Fail cksum1\n");
 // content parsing
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-// main 
+// main
 
 static void shutdown_connections(void)
 {
@@ -348,7 +364,7 @@ int main(int argc, const char **argv)
       fprintf(stderr, "Usage: %s <endpoint-name> [tty-device]\n", argv[0]);
       fprintf(stderr, "Endpoint name refers to entry in "
             "/dev/<device>/endpoints/ (or 'test' for no networking)\n");
-      fprintf(stderr, "Likely tty-device is '%s' (default)\n", 
+      fprintf(stderr, "Likely tty-device is '%s' (default)\n",
             DEFAULT_TTY_DEV_NAME);
       fprintf(stderr, "Send SIGUSR1 to exit gracefully\n");
       goto end;

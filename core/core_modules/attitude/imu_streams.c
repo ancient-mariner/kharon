@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "core_modules/support/imu_streams.h"
 #include <stdio.h>
 #include <string.h>
@@ -34,7 +50,7 @@ static void add_first_sample(
       /* in     */ const double t   // sample time, in seconds
       )
 {
-   // find publish time before and after t. add val to sample 
+   // find publish time before and after t. add val to sample
    //    defined by these bounds, setting 'weight' as t-start_t
    uint64_t sample_start_time = (uint64_t) (t * 1.0e6);
    // align to 10ms boundary
@@ -91,7 +107,7 @@ static void advance_read_position(
       /* in out */       resampled_vector_stream_type *stream
       )
 {
-   stream->read_queue_idx = 
+   stream->read_queue_idx =
          (stream->read_queue_idx + 1) & (RESAMPLE_QUEUE_LEN - 1);
    stream->read_sample_time.usec += SAMPLE_DUR_USEC;
    stream->read_sample_sec = (double) stream->read_sample_time.usec * 1.0e-6;
@@ -152,7 +168,7 @@ static void add_sample(
          }
       }
       // sets write_pos_dur to 0.0 and increments write_sample_sec
-      publish_sample(stream); 
+      publish_sample(stream);
    }
    // all complete resampled values are filled. use what's left to
    //    partially fill the write sample
@@ -202,7 +218,7 @@ static double get_next_sample(
    return t;
 }
 
-// 
+//
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 // unit tests
@@ -300,7 +316,7 @@ static uint32_t test_add_sample(void)
          (fabs(a.v[1] - z.v[1]) > 0.0001) ||
          (fabs(a.v[2] - z.v[2]) > 0.0001)) {
       printf("  Sample value is incorrect. Expected "
-            "%.2f,%.2f,%.2f, got %.2f,%.2f,%.2f\n", 
+            "%.2f,%.2f,%.2f, got %.2f,%.2f,%.2f\n",
             a.v[0], a.v[1], a.v[2], z.v[0], z.v[1], z.v[2]);
       errs++;
    }
@@ -321,7 +337,7 @@ static uint32_t test_add_sample(void)
          (fabs(ab.v[1] - z.v[1]) > 0.0001) ||
          (fabs(ab.v[2] - z.v[2]) > 0.0001)) {
       printf("  Sample 2 value is incorrect. Expected "
-            "%.2f,%.2f,%.2f, got %.2f,%.2f,%.2f\n", 
+            "%.2f,%.2f,%.2f, got %.2f,%.2f,%.2f\n",
             ab.v[0], ab.v[1], ab.v[2], z.v[0], z.v[1], z.v[2]);
       errs++;
    }
@@ -338,7 +354,7 @@ static uint32_t test_add_sample(void)
          (fabs(b.v[1] - z.v[1]) > 0.0001) ||
          (fabs(b.v[2] - z.v[2]) > 0.0001)) {
       printf("  Sample 3 value is incorrect. Expected "
-            "%.2f,%.2f,%.2f, got %.2f,%.2f,%.2f\n", 
+            "%.2f,%.2f,%.2f, got %.2f,%.2f,%.2f\n",
             b.v[0], b.v[1], b.v[2], z.v[0], z.v[1], z.v[2]);
       errs++;
    }
@@ -362,19 +378,19 @@ static uint32_t test_simple_stream(void)
    simple_stream_init(&stream, 1);
    update_stream_data(&stream, &a, 100.3456789);
    if (stream.sample.v[0] != a.v[0]) {
-      printf("  Stream value 1 incorrect. Found %.3f, expected %.3f\n", 
+      printf("  Stream value 1 incorrect. Found %.3f, expected %.3f\n",
             (double) stream.sample.v[0], (double) a.v[0]);
       errs++;
    }
    microsecond_type expected = { .usec = 100345678 };
    if (stream.timestamp.usec != expected.usec) {
-      printf("  Stream timestamp incorrect. Found %ld, expected %ld\n", 
+      printf("  Stream timestamp incorrect. Found %ld, expected %ld\n",
             stream.timestamp.usec, expected.usec);
       errs++;
    }
    update_stream_data(&stream, &b, 101.0000000001);
    if (stream.sample.v[0] != b.v[0]) {
-      printf("  Stream value 2 incorrect. Found %.3f, expected %.3f\n", 
+      printf("  Stream value 2 incorrect. Found %.3f, expected %.3f\n",
             (double) stream.sample.v[0], (double) b.v[0]);
       errs++;
    }

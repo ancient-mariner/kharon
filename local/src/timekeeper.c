@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "timekeeper.h" // include this first as it defines _GNU_SOURCE
 #include <stdio.h>
 #include <pthread.h>
@@ -56,7 +72,7 @@ double system_now(void)
    return (double) ts.tv_sec + 1.0e-9 * ((double) (ts.tv_nsec));
 }
 
-// 
+//
 double now(void)
 {
 #if defined(TIMEKEEPER_USE_MUTEX)
@@ -110,7 +126,7 @@ void timekeeper_set_time_f(
    pthread_mutex_unlock(&s_mutex);
 #endif   // USE_MUTEX
 //
-//printf(": delta change = %.4f (%.4f -> %.4f)\n", 
+//printf(": delta change = %.4f (%.4f -> %.4f)\n",
 //      (local_to_master_dt_ - old_dt), old_dt, local_to_master_dt_);
 }
 
@@ -135,8 +151,8 @@ void init_timespec_f(
 
 
 void increment_time(
-      /* in out */       struct timespec *t, 
-      /* in     */ const time_t sec, 
+      /* in out */       struct timespec *t,
+      /* in     */ const time_t sec,
       /* in     */ const long nsec
       )
 {
@@ -149,7 +165,7 @@ void increment_time(
 }
 
 void increment_timef(
-      /* in out */       struct timespec *ts, 
+      /* in out */       struct timespec *ts,
       /* in     */ const double seconds
       )
 {
@@ -166,7 +182,7 @@ void increment_timef(
 }
 
 void print_timespec(
-      /* in     */ const struct timespec t, 
+      /* in     */ const struct timespec t,
       /* in     */ const char *label
       )
 {

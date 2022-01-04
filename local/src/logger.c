@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if defined(TEST_LOGGER)
 #include "../include/logger.h"
 #define ACQUISITION_STORAGE_ROOT    "/tmp/"
@@ -77,7 +93,7 @@ static int32_t create_log_folder(void)
    // check root_dir
    assert(log_root_[0] != 0);
    if (stat(log_root_, &st) != 0) {
-      fprintf(stderr, "Log root directory '%s' doesn't exist: %s", 
+      fprintf(stderr, "Log root directory '%s' doesn't exist: %s",
             log_root_, strerror(errno));
       goto err;
    }
@@ -151,7 +167,7 @@ log_info_type * get_logger(
       /* in     */ const char * name
       )
 {
-   // first see if this log has been created. 
+   // first see if this log has been created.
    // if so, return it. if not, create new
    for (uint32_t i=0; i<num_active_loggers_; i++) {
       log_info_type *log = &loggers_[i];
@@ -172,7 +188,7 @@ log_info_type * get_logger(
          return NULL;
       // advance to next log slot for the requested log creation
       log = &loggers_[++num_active_loggers_];
-   } 
+   }
    // increment log count
    num_active_loggers_++;
    log->level = LOG_LEVEL_DEFAULT;
@@ -378,11 +394,11 @@ void log_err(
    };
 }
 
-const char * get_log_folder_name(void) 
-{ 
+const char * get_log_folder_name(void)
+{
    if (path_ == NULL)
       create_log_folder();
-   return path_;   
+   return path_;
 }
 
 
@@ -445,7 +461,7 @@ int copy_file_to_logging_dir(
    if ((fd_in = open(fname, O_RDONLY)) == -1) {
       log_err(log, "Error opening input '%s': %s", fname, strerror(errno));
       goto end;
-   }    
+   }
    // create output file
    if ((fd_out = creat(dest, 0660)) == -1)
    {

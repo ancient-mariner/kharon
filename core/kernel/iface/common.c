@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(COMMON_C)
 #define COMMON_C
 #include "script_iface.h"
@@ -47,7 +63,7 @@ const int32_t * get_int_array(
    if (lua_istable(L, idx) != 1) {
       fprintf(stderr, "Value supplied to %s was not a table\n", func);
       return NULL;
-   } 
+   }
    size_t len = lua_rawlen(L, idx);
    int32_t *array = malloc(len * sizeof *array);
    for (uint32_t i=0; i<len; i++) {
@@ -64,7 +80,7 @@ const int32_t * get_int_array(
 // out-of-place documentation
 // to see CPU load per thread, run 'top -H -p <pid>'
 // TODO figure out how to map pthread ID to system process ID
-void launch_thread(const char *name, const char *class, 
+void launch_thread(const char *name, const char *class,
       void *(*cb)(void*), void *arg)
 {
    uint32_t num_threads = num_threads_g;
@@ -93,7 +109,7 @@ void launch_thread(const char *name, const char *class,
       if (cnt++ > 2000) {
          fprintf(stderr, "Thread failed to register launch within "
                "timeout window\n");
-         fprintf(stderr, "Offending thread: %s (%s)\n", 
+         fprintf(stderr, "Offending thread: %s (%s)\n",
                thread_table_g[num_threads].obj_name,
                thread_table_g[num_threads].class_name);
          errs_++;
@@ -116,7 +132,7 @@ static uint32_t determine_color_state(
       return 0;
    } else if (strcmp(arg, "color") == 0) {
       return 1;
-   } 
+   }
    // else...
    log_err(get_kernel_log(), "Unrecognized color indicator. "
          "Need 'gray' or 'color'. Got '%s'", arg);
@@ -135,7 +151,7 @@ uint32_t determine_logging_state(
       return 1;
    } else if (strcmp(arg, "no-log") == 0) {
       return 0;
-   } 
+   }
    // else...
    log_err(get_kernel_log(), "Unrecognized logging indicator. "
          "Need 'log' or 'no-log'. Got '%s'", arg);
@@ -298,7 +314,7 @@ static int32_t verify_pyramid_levels(lua_State *L)
    const int num_levels = atoi(str1);
    if (num_levels != NUM_PYRAMID_LEVELS) {
       fprintf(stderr, "Config file calls for %d pyramid levels while core "
-            "was compiled for %d. Fatal error\n", num_levels, 
+            "was compiled for %d. Fatal error\n", num_levels,
             NUM_PYRAMID_LEVELS);
       errs_++;
       return 1;
@@ -406,7 +422,7 @@ static int32_t link_b_to_a(lua_State *L)
       {
          fprintf(stderr, "Error - attempted to link object "
                "to itself\n");
-         fprintf(stderr, "Linkin '%s' to '%s'\n", 
+         fprintf(stderr, "Linkin '%s' to '%s'\n",
                cons->td->obj_name, prod->td->obj_name);
          errs_++;
          return 1;
@@ -414,7 +430,7 @@ static int32_t link_b_to_a(lua_State *L)
       if (cons->add_link == NULL) {
          fprintf(stderr, "Attempted to provide link to module not "
                "expecting one\n");
-         fprintf(stderr, "Linking '%s' to '%s'\n", 
+         fprintf(stderr, "Linking '%s' to '%s'\n",
                cons->td->obj_name, prod->td->obj_name);
          fprintf(stderr, "The former does not have add_link defined\n");
          errs_++;
@@ -462,7 +478,7 @@ static int32_t subscribe_b_to_a(lua_State *L)
       {
          fprintf(stderr, "Error - attempted to subscribe object "
                "to itself\n");
-         fprintf(stderr, "Subscribing '%s' to '%s'\n", 
+         fprintf(stderr, "Subscribing '%s' to '%s'\n",
                cons->td->obj_name, prod->td->obj_name);
          errs_++;
          errs_++;
@@ -470,7 +486,7 @@ static int32_t subscribe_b_to_a(lua_State *L)
       }
       if (prod->add_consumer == NULL) {
          fprintf(stderr, "Attempted to subscribe to a non-producer\n");
-         fprintf(stderr, "Subscribing '%s' to '%s'\n", 
+         fprintf(stderr, "Subscribing '%s' to '%s'\n",
                cons->td->obj_name, prod->td->obj_name);
          fprintf(stderr, "The latter does not have add_consumer defined\n");
          errs_++;
@@ -479,7 +495,7 @@ static int32_t subscribe_b_to_a(lua_State *L)
       }
       if (cons->add_producer == NULL) {
          fprintf(stderr, "Attempted to subscribe a non-consumer\n");
-         fprintf(stderr, "Subscribing '%s' to '%s'\n", 
+         fprintf(stderr, "Subscribing '%s' to '%s'\n",
                cons->td->obj_name, prod->td->obj_name);
          fprintf(stderr, "The former does not have add_producer defined\n");
          errs_++;

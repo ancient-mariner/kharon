@@ -1,5 +1,19 @@
-// sends Y and V channels at 1/4 resolution
-/*
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 Copyright (c) 2018, Raspberry Pi (Trading) Ltd.
 Copyright (c) 2014, DSP Group Ltd.
 Copyright (c) 2014, James Hughes
@@ -250,7 +264,7 @@ static int wait_method_description_size = sizeof(wait_method_description) / size
 //
 // y channel is downsampled before broadcast
 // v channel sent first (u is dropped)
-//    
+//
 
 // thread and sync objects
 static pthread_mutex_t  s_frame_mutex;
@@ -292,7 +306,7 @@ static void push_frame_buffer(uint8_t *buf, int32_t n_bytes)
    // n_bytes is size of acquired image
    if (n_bytes != YUV_BUFFER_SIZE) {
       fprintf(stderr, "Internal error - unexpected frame size\n");
-      fprintf(stderr, "Expected %dx%d=%d -> %d bytes\n", 
+      fprintf(stderr, "Expected %dx%d=%d -> %d bytes\n",
             YUV_Y_COLS, YUV_Y_ROWS, YUV_Y_PIX, YUV_IMAGE_SIZE);
       fprintf(stderr, "Received %d bytes\n", n_bytes);
       hard_exit("camera_vy:push_frame_buffer", 1);
@@ -305,12 +319,12 @@ static void push_frame_buffer(uint8_t *buf, int32_t n_bytes)
    // this should only happen on the first frame
    if (dt < 2.0f * VIDEO_FRAME_INTERVAL) {
       pthread_mutex_lock(&s_frame_mutex);
-      // 
+      //
       if (s_buffer_avail) {
          s_buffer_avail = 0;
-         downsample(buf, s_blur_buffer, s_y_frame_buffer, 
+         downsample(buf, s_blur_buffer, s_y_frame_buffer,
                YUV_Y_COLS, YUV_Y_ROWS, CAM_COLS, CAM_ROWS);
-         copy_image(&buf[YUV_V_OFFSET], s_v_frame_buffer, 
+         copy_image(&buf[YUV_V_OFFSET], s_v_frame_buffer,
                YUV_V_COLS, YUV_V_ROWS, CAM_COLS, CAM_ROWS);
          // signal that buffer is ready to be sent
          pthread_cond_signal(&s_frame_cond);
@@ -360,7 +374,7 @@ static void * communication_main(void * not_used)
    s_y_frame_buffer = malloc(CAM_N_PIX);
    s_v_frame_buffer = malloc(CAM_N_PIX);
    s_blur_buffer = malloc(CAM_N_PIX);
-   // 
+   //
    s_buffer_avail = 1;
    struct sensor_packet_header header;
    //
@@ -394,21 +408,21 @@ double t1 = now();
       }
       // send body, part 1 (ie, V channel)
       if (send_block(s_connfd, s_v_frame_buffer, CAM_N_PIX) < 0) {
-         fprintf(stderr, "Error sending part 1 of VY image frame\n"); 
+         fprintf(stderr, "Error sending part 1 of VY image frame\n");
          s_comm_error = -2;
          s_shutdown = 1;
          break;
       }
       // send Y
       if (send_block(s_connfd, s_y_frame_buffer, CAM_N_PIX) < 0) {
-         fprintf(stderr, "Error sending part 2 of VY image frame\n"); 
+         fprintf(stderr, "Error sending part 2 of VY image frame\n");
          s_comm_error = -3;
          s_shutdown = 1;
          break;
       }
       // signal frame broadcast is complete
       // this doesn't have to be protected by mutex as variable can't
-      //    be altered by another process so long as it's zero, and 
+      //    be altered by another process so long as it's zero, and
       //    this code can't be executed if it's non-zero
       s_buffer_avail = 1;
 double t2 = now();
@@ -786,9 +800,9 @@ static void camera_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buff
 //   if (!MESSAGE_BOARD.acquiring || MESSAGE_BOARD.paused) {
 ////printf("camera buffer callback during pause -- stopping capture\n");
 //      pstate->bCapturing = 0;
-//      mmal_port_parameter_set_boolean(s_camera_video_port, 
+//      mmal_port_parameter_set_boolean(s_camera_video_port,
 //            MMAL_PARAMETER_CAPTURE, pstate->bCapturing);
-//   } else 
+//   } else
    if (s_frame_pending && pData) {
 //printf("camera buffer callback\n");
       int n_bytes = buffer->length;
@@ -1326,7 +1340,7 @@ int main(int argc, const char **argv)
          if (connfd < 0) {
             vcos_log_error("%s: Error opening network connection for "
                   "camera\n", __func__);
-            vcos_log_error("Tried to connect to %s::%d\n", 
+            vcos_log_error("Tried to connect to %s::%d\n",
                   net_id.ip, net_id.port);
             goto error;
          }
@@ -1410,14 +1424,14 @@ int main(int argc, const char **argv)
             {
                if (MESSAGE_BOARD.exit) {
                   state.bCapturing = 0;
-                  mmal_port_parameter_set_boolean(camera_video_port, 
+                  mmal_port_parameter_set_boolean(camera_video_port,
                         MMAL_PARAMETER_CAPTURE, state.bCapturing);
                   break;
                } else if (MESSAGE_BOARD.acquiring || !MESSAGE_BOARD.paused) {
                   state.bCapturing = 1;
                   s_frame_pending = 1;
                   s_frame_start = now();
-                  mmal_port_parameter_set_boolean(camera_video_port, 
+                  mmal_port_parameter_set_boolean(camera_video_port,
                         MMAL_PARAMETER_CAPTURE, state.bCapturing);
                }
 

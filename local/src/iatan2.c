@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -13,7 +29,7 @@
 // a and b represent 360-degree orientation mapped to [0,255]
 // return value on [0,128]
 uint8_t angle_between_vectors(
-      /* in     */ const uint8_t a, 
+      /* in     */ const uint8_t a,
       /* in     */ const uint8_t b
       )
 {
@@ -28,7 +44,7 @@ uint8_t angle_between_vectors(
 // a and b represent 360-degree orientation mapped to [0,255]
 // return value on [0,64)
 uint8_t angle_between_lines(
-      /* in     */ const uint8_t a, 
+      /* in     */ const uint8_t a,
       /* in     */ const uint8_t b)
 {
    // double angle, mirror about Y axis (this makes orthogonal values
@@ -46,7 +62,7 @@ uint8_t angle_between_lines(
 }
 
 
-// to compile test program, either uncomment following line and 
+// to compile test program, either uncomment following line and
 //    recompile or specify -DIATAN2_TEST when compiling
 //#define   IATAN2_TEST
 
@@ -345,7 +361,7 @@ static uint32_t test_rtheta(void)
       float dist = sqrtf((float) (x*x + y*y));
       float delta = fabsf((float) r - dist);
       if (delta > (dist * MAX_DELTA)) {
-         fprintf(stderr, "Radius test failed. At %d,%d, dist=%f, r=%d\n", 
+         fprintf(stderr, "Radius test failed. At %d,%d, dist=%f, r=%d\n",
                x, y, (double) dist, r);
          goto err;
       }

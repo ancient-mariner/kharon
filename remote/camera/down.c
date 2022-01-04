@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 
@@ -9,7 +25,7 @@ static void blur_image(
       )
 {
    // perform 3x3 blurring kernel to image before pushing to accumulator
-   const uint32_t kern[3][3] = 
+   const uint32_t kern[3][3] =
          {{ 1, 2, 1},
           { 2, 4, 2},
           { 1, 2, 1}};
@@ -32,7 +48,7 @@ static void blur_image(
          sum = (uint32_t) (sum + src[idx] * kern[2][0]);
          sum = (uint32_t) (sum + src[idx+1] * kern[2][1]);
          sum = (uint32_t) (sum + src[idx+2] * kern[2][2]);
-         // 
+         //
          dest[idx_0 + x + 1 + width] = (uint8_t) (sum / 16);
       }
    }
@@ -58,11 +74,11 @@ static void downsample_nonblur(
       uint32_t src_idx_top = 2 * y * local_src_w;
       uint32_t src_idx_bottom = src_idx_top + local_src_w;
       for (uint32_t x=0; x<local_dest_w; x++) {
-         uint32_t tot = (uint32_t) (src[src_idx_top] + 
+         uint32_t tot = (uint32_t) (src[src_idx_top] +
                                     src[src_idx_top+1] +
-                                    src[src_idx_bottom] + 
+                                    src[src_idx_bottom] +
                                     src[src_idx_bottom+1]);
-         src_idx_top += 2; 
+         src_idx_top += 2;
          src_idx_bottom += 2;
          *dest_buf++ = (uint8_t) ((tot + 2) / 4);
       }
@@ -121,7 +137,7 @@ const uint8_t expected[] = {
   33,   33,   64,    1,
    1,    1,   64,   65,
    1,  128,   49,   33,
-   0,    1,   33,    1 
+   0,    1,   33,    1
 };
 
 

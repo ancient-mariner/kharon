@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(OPTICAL_UP_H)
 #define OPTICAL_UP_H
 #include "pinet.h"
@@ -6,14 +22,14 @@
 #include "image.h"
 
 
-// 'flattens' and rotates acquired images from single camera so top 
+// 'flattens' and rotates acquired images from single camera so top
 //    projects to correct part of visual space. performs edge detection
 
 // FIXME process doesn't appear to do edge detection. update docs
 
 // (actually de-flattens by pulling image back onto sphere)
 //
-// takes 
+// takes
 //    attitude data for image alignment
 //    vy image (one image, max resolution)
 //
@@ -30,7 +46,7 @@
 //#define VY_N_ROWS_BASE   VY_ROWS_NET_IMG
 //#define VY_N_COLS_BASE   VY_COLS_NET_IMG
 //
-//// diagonal based on 62x49 degree FOV, at 10 pix/deg. we need ~794 pix. 
+//// diagonal based on 62x49 degree FOV, at 10 pix/deg. we need ~794 pix.
 //// safety buffer of a couple of pix (to avoid writing outside of array)
 ////    pushes this to ~800. the same buffer on higher pyramid levels means
 ////    we need a bit more than 800. make it a multiple of 8
@@ -44,11 +60,11 @@
 struct optical_up_output {
    // camera direction relative to world coordinate frame
    sphere_coordinate32_type world_center;
-   // ship's attitude and heading at time this image was taken 
+   // ship's attitude and heading at time this image was taken
    //    (included here for downstream processing)
    matrix_type ship2world;
    degree_type heading;
-   // 
+   //
    image_size_type size[NUM_PYRAMID_LEVELS];
    // buffer that stores all pyramid levels. frame (below) has pointers
    //    into this buffer

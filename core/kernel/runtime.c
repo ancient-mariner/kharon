@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
@@ -78,7 +94,7 @@ static void sanity_check_env(void)
    snprintf(path, STR_LEN, "%s", env);
    struct stat buf;
    if (stat(path, &buf) != 0) {
-      log_err(get_kernel_log(), "Failed to stat path '%s': %s", path, 
+      log_err(get_kernel_log(), "Failed to stat path '%s': %s", path,
             strerror(errno));
       hard_exit(__FILE__, __LINE__);
    }
@@ -103,7 +119,7 @@ static void sanity_check_dev(void)
    snprintf(path, STR_LEN, "%s", dev);
    struct stat buf;
    if (stat(path, &buf) != 0) {
-      log_err(get_kernel_log(), "Failed to stat path '%s': %s", path, 
+      log_err(get_kernel_log(), "Failed to stat path '%s': %s", path,
             strerror(errno));
       hard_exit(__FILE__, __LINE__);
    }
@@ -127,7 +143,7 @@ static void sanity_check_log(void)
    snprintf(path, STR_LEN, "%s", log);
    struct stat buf;
    if (stat(path, &buf) != 0) {
-      log_err(get_kernel_log(), "Failed to stat path '%s': %s", path, 
+      log_err(get_kernel_log(), "Failed to stat path '%s': %s", path,
             strerror(errno));
       hard_exit(__FILE__, __LINE__);
    }
@@ -212,7 +228,7 @@ static void report_errors(void)
 
 int main(int argc, char **argv)
 {
-   printf("version\n  bob: %s\n  lib: %s\n", 
+   printf("version\n  bob: %s\n  lib: %s\n",
          KERNEL_BUILD_VERSION, LIB_BUILD_VERSION);
    if (argc != 2) {
       fprintf(stderr, "Usage: %s <config.lua>\n", argv[0]);
@@ -245,7 +261,7 @@ fprintf(stderr, "Logging data to %s\n", get_log_folder_name());
    // create producer objects and threads via script input
    // all created threads will block once initialized
    if (configure_environment(argv[1]) != 0) {
-      log_err(get_kernel_log(), 
+      log_err(get_kernel_log(),
             "Failed to configure environment. Shutting down");
       goto shutdown;
    }
@@ -266,7 +282,7 @@ shutdown:
    clean_up_globals();
    // pipe error log to stdout
    report_errors();
-   // 
+   //
    return 0;
 }
 

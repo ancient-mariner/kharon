@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -37,9 +53,9 @@ static void prepare_level2_maps(
          map_level1_square_type *square = &level1_map_->grid[global_idx];
 //printf("%d,%d   range %d -> %d\n", x, y, square->low, square->high);
          // depth threshold is positive to represent depth
-         // level1 map squares represent elevation, not depth. so 
+         // level1 map squares represent elevation, not depth. so
          //    negative is required in comparison
-         if ((square->low < 0) && 
+         if ((square->low < 0) &&
                (square->high > -SUBMAP_DEPTH_THRESHOLD_METERS)) {
             // mark this square has having a level2 map
             square->flags = (uint16_t) (square->flags | MAP_FLAG_LEVEL_2);

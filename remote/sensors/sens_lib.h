@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(SENS_LIB_H)
 #define  SENS_LIB_H
 #include "pin_types.h"
@@ -36,7 +52,7 @@ int32_t enable_device(
 // handle device error
 // reason for error is unknown, as is severity. disable the modality
 //    where the error occurred, and inactivate the sensor if there
-//    are no active modalities. the sensor driver will shutdown 
+//    are no active modalities. the sensor driver will shutdown
 //    when it has insufficient sensors running. perhaps an app
 //    restart will fix the problem
 // TODO develop protocol to induce hard-reboot of device. that may be
@@ -156,13 +172,13 @@ void update_gyr(
       /* in out */       sensor_runtime_type *sensor_stack,
       /*    out */       consensus_sensor_type *consensus
       );
- 
-// 
+
+//
 void update_temp(
       /* in out */       sensor_runtime_type *sensor_stack,
       /*    out */       consensus_sensor_type *consensus
       );
- 
+
 //void update_attitude_by_gyro(
 //      /*    out */       consensus_sensor_type *consensus,
 //      /* in     */ const double gyro_init
@@ -178,7 +194,7 @@ void update_gyro_drift(
 ////////////////////////////////////////////////////////////////////////
 // utility functions
 
-// applies gain 
+// applies gain
 void apply_gain(
       /* in     */ const int16_t raw[3],
       /* in     */ const vector_type *gain,

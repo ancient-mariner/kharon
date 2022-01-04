@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -21,7 +37,7 @@ static const vector_type y_axis = { .v = { 0.0, 1.0, 0.0 } };
 //const static vector_type z_axis = { .v = { 0.0f, 0.0f, 1.0f } };
 
 static void _copy_vector(
-      /* in     */ const vector_type *v, 
+      /* in     */ const vector_type *v,
       /*    out */ vector_type *dup)
 {
    memcpy(dup->v, v->v, 3*sizeof dup->v[0]);
@@ -53,8 +69,8 @@ static void _mult_matrix_vector(
 }
 
 static void _mult_matrix(
-      /* in     */ const matrix_type *mat_1, 
-      /* in     */ const matrix_type *mat_2, 
+      /* in     */ const matrix_type *mat_1,
+      /* in     */ const matrix_type *mat_2,
       /*    out */ matrix_type *res)
 {
    // below operation is for m2 * m1 -- transpose instead of rewriting
@@ -89,7 +105,7 @@ static double _unitify(
 }
 
 static void _unit_vector(
-      /* in     */ const vector_type *vec, 
+      /* in     */ const vector_type *vec,
       /*    out */ vector_type *unit)
 {
    const double * restrict v = vec->v;
@@ -115,7 +131,7 @@ static void swap(double *a, double *b)
 
 // project vector_type A onto B and returns length of resultant
 static double _dot_product(
-      /* in     */ const vector_type *a, 
+      /* in     */ const vector_type *a,
       /* in     */ const vector_type *b)
 {
    const double * restrict av = a->v;
@@ -130,8 +146,8 @@ static double _dot_product(
 
 // computes cross product of a and b and returns it in cross
 static void _cross_product(
-      /* in     */ const vector_type *vec_a, 
-      /* in     */ const vector_type *vec_b, 
+      /* in     */ const vector_type *vec_a,
+      /* in     */ const vector_type *vec_b,
       /*    out */       vector_type *vec_cross)
 {
    const double * restrict a = vec_a->v;
@@ -145,7 +161,7 @@ static void _cross_product(
 // project vector_type A onto B and returns length of resultant
 // both a and b must be unit vectors
 static double _dot_product_unit(
-      /* in     */ const vector_type *a, 
+      /* in     */ const vector_type *a,
       /* in     */ const vector_type *b)
 {
    const double * restrict av = a->v;
@@ -156,8 +172,8 @@ static double _dot_product_unit(
 // project vector onto the plane defined by the vector_type normal
 // NOTE: it's safe if vector and projection point to the same structure
 static void _project_onto_plane(
-      /* in     */ const vector_type *normal, 
-      /* in     */ const vector_type *vector, 
+      /* in     */ const vector_type *normal,
+      /* in     */ const vector_type *vector,
       /*    out */ vector_type *projection)
 {
    // project vector onto normal and subtract the result from vector
@@ -176,7 +192,7 @@ static void _project_onto_plane(
 // stores gyro representation in rot
 static void _measure_rotation(
       /* in     */ const vector_type *a,
-      /* in     */ const vector_type *b, 
+      /* in     */ const vector_type *b,
       /*    out */       vector_type *axis,
       /*    out */       degree_type *theta
       )
@@ -189,9 +205,9 @@ static void _measure_rotation(
 }
 
 static void _rotate_vector_about_axis(
-      /* in     */ const vector_type *axis, 
-      /* in     */ const vector_type *vec, 
-      /* in     */ const degree_type theta, 
+      /* in     */ const vector_type *axis,
+      /* in     */ const vector_type *vec,
+      /* in     */ const degree_type theta,
       /*    out */ vector_type *res)
 {
 #if 1 == 1
@@ -224,7 +240,7 @@ static void _rotate_vector_about_axis(
    result[0] = x*( a2-b2-c2+r2) + 2*a*(b*y+c*z) + 2*r*(b*z-c*y);
    result[1] = y*(-a2+b2-c2+r2) + 2*b*(a*x+c*z) + 2*r*(c*x-a*z);
    result[2] = z*(-a2-b2+c2+r2) + 2*c*(a*x+b*y) + 2*r*(a*y-b*x);
-   // NOTE Rodrigues approach appears to fail when a 
+   // NOTE Rodrigues approach appears to fail when a
 #else
 #warning "Rodrigues approach appears to have gimbal lock problems"
    // Rodrigues approach
@@ -400,7 +416,7 @@ int close_enough_absolute(double x, double y) {
 int close_enough_debug(double x, double y) {
    double delta = fabs(x - y);
    double window = 0.001;
-   printf("x=%.4g, y=%.4f, delta=%.4g, window=%.4g :: %.4g <= %.4g = %d\n", 
+   printf("x=%.4g, y=%.4f, delta=%.4g, window=%.4g :: %.4g <= %.4g = %d\n",
          (double) x, (double) y, (double) delta, (double) window,
          (double) delta, (double) window, (delta<=window));
    return delta <= window;
@@ -428,15 +444,15 @@ void mult_matrix_vector(
 }
 
 void mult_matrix(
-      /* in     */ const matrix_type *mat_1, 
-      /* in     */ const matrix_type *mat_2, 
+      /* in     */ const matrix_type *mat_1,
+      /* in     */ const matrix_type *mat_2,
       /*    out */ matrix_type *res)
 {
    _mult_matrix(mat_1, mat_2, res);
 }
 
 void square_matrix(
-      /* in     */ const matrix_type *mat, 
+      /* in     */ const matrix_type *mat,
       /*    out */ matrix_type *res)
 {
    _mult_matrix(mat, mat, res);
@@ -444,8 +460,8 @@ void square_matrix(
 
 // performs a = a + s*b
 void add_weighted_vector(
-      /* in out */       vector_type *a, 
-      /* in     */ const vector_type *b, 
+      /* in out */       vector_type *a,
+      /* in     */ const vector_type *b,
       /* in     */ const double s
       )
 {
@@ -458,7 +474,7 @@ void add_weighted_vector(
 // building matrices
 
 void build_orthogonal_matrix_xy(
-      /* in      */ const vector_type *primary, 
+      /* in      */ const vector_type *primary,
       /* in      */ const vector_type *secondary,
       /*     out */       matrix_type *mat)
 {
@@ -477,7 +493,7 @@ void build_orthogonal_matrix_xy(
 }
 
 void build_orthogonal_matrix_yx(
-      /* in      */ const vector_type *primary, 
+      /* in      */ const vector_type *primary,
       /* in      */ const vector_type *secondary,
       /*     out */       matrix_type *mat)
 {
@@ -494,7 +510,7 @@ void build_orthogonal_matrix_yx(
 }
 
 void build_orthogonal_matrix_yz(
-      /* in      */ const vector_type *primary, 
+      /* in      */ const vector_type *primary,
       /* in      */ const vector_type *secondary,
       /*     out */       matrix_type *mat)
 {
@@ -512,7 +528,7 @@ void build_orthogonal_matrix_yz(
 
 // FIXME algorithm will fail if up vector is at or below horizontal plane
 void build_upright_matrix(
-      /* in      */ const vector_type *up, 
+      /* in      */ const vector_type *up,
       /*     out */       matrix_type *mat)
 {
    // find axis-angle representation of rotation, then convert to matrix
@@ -565,7 +581,7 @@ double unitify(
 }
 
 void unit_vector(
-      /* in     */ const vector_type *vec, 
+      /* in     */ const vector_type *vec,
       /*    out */ vector_type *unit)
 {
    _unit_vector(vec, unit);
@@ -573,7 +589,7 @@ void unit_vector(
 
 void measure_rotation(
       /* in     */ const vector_type *a,
-      /* in     */ const vector_type *b, 
+      /* in     */ const vector_type *b,
       /*    out */       vector_type *axis,
       /*    out */       degree_type *theta
       )
@@ -646,9 +662,9 @@ void measure_rotation(
 //}
 
 void rotate_vector_about_axis(
-      /* in     */ const vector_type *axis, 
-      /* in     */ const vector_type *vec, 
-      /* in     */ const degree_type theta, 
+      /* in     */ const vector_type *axis,
+      /* in     */ const vector_type *vec,
+      /* in     */ const degree_type theta,
       /*    out */ vector_type *res)
 {
    _rotate_vector_about_axis(axis, vec, theta, res);
@@ -678,7 +694,7 @@ void matrix_transpose(
 }
 
 void copy_matrix(
-      /* in     */ const matrix_type *mat, 
+      /* in     */ const matrix_type *mat,
       /*    out */       matrix_type *dup)
 {
    memcpy(dup->m, mat->m, 9*sizeof(mat->m[0]));
@@ -720,14 +736,14 @@ void reset_vector(
 }
 
 void copy_vector(
-      /* in     */ const vector_type *v, 
+      /* in     */ const vector_type *v,
       /*    out */ vector_type *dup)
 {
    _copy_vector(v, dup);
 }
 
 void copy_vector_unitify(
-      /* in     */ const vector_type *v, 
+      /* in     */ const vector_type *v,
       /*    out */ vector_type *dup)
 {
    memcpy(dup->v, v->v, 3*sizeof *dup->v);
@@ -753,7 +769,7 @@ double vector_len(const vector_type *vec)
 // project vector_type A onto B and returns length of resultant
 // a must be a unit vector
 double dot_product(
-      /* in     */ const vector_type *a, 
+      /* in     */ const vector_type *a,
       /* in     */ const vector_type *b)
 {
    return _dot_product(a, b);
@@ -762,7 +778,7 @@ double dot_product(
 // project vector_type A onto B and returns length of resultant
 // both a and b must be unit vectors
 double dot_product_unit(
-      /* in     */ const vector_type *a, 
+      /* in     */ const vector_type *a,
       /* in     */ const vector_type *b)
 {
    return _dot_product_unit(a, b);
@@ -770,8 +786,8 @@ double dot_product_unit(
 
 // computes cross product of a and b and returns it in cross
 void cross_product(
-      /* in     */ const vector_type *vec_a, 
-      /* in     */ const vector_type *vec_b, 
+      /* in     */ const vector_type *vec_a,
+      /* in     */ const vector_type *vec_b,
       /*    out */       vector_type *vec_cross)
 {
    _cross_product(vec_a, vec_b, vec_cross);
@@ -780,8 +796,8 @@ void cross_product(
 //// computes cross product of a and b and returns it in cross
 //// scales a and b to unit length
 //double unit_cross_product(
-//      /* in     */ const vector_type *vec_a, 
-//      /* in     */ const vector_type *vec_b, 
+//      /* in     */ const vector_type *vec_a,
+//      /* in     */ const vector_type *vec_b,
 //      /*    out */       vector_type *vec_cross)
 //{
 //   const double len = vector_len(vec_a) * vector_len(vec_b);
@@ -798,10 +814,10 @@ void cross_product(
 
 void identity_matrix(matrix_type *mat)
 {
-   static const double eye[9] = { 
-         1.0f, 0.0f, 0.0f, 
-         0.0f, 1.0f, 0.0f, 
-         0.0f, 0.0f, 1.0f 
+   static const double eye[9] = {
+         1.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 1.0f
    };
    memcpy(mat, eye, sizeof eye);
 }
@@ -809,8 +825,8 @@ void identity_matrix(matrix_type *mat)
 
 // apply rotation matrix_type r to v. mathematically, this is r * v'
 void rotate_vector(
-      /* in     */ const vector_type *vec, 
-      /* in     */ const matrix_type *rot, 
+      /* in     */ const vector_type *vec,
+      /* in     */ const matrix_type *rot,
       /*    out */ vector_type *res)
 {
    const double * restrict v = vec->v;
@@ -824,8 +840,8 @@ void rotate_vector(
 // project vector onto the plane defined by the vector_type normal
 // NOTE: it's safe if vector and projection point to the same structure
 void project_onto_plane(
-      /* in     */ const vector_type *normal, 
-      /* in     */ const vector_type *vector, 
+      /* in     */ const vector_type *normal,
+      /* in     */ const vector_type *vector,
       /*    out */ vector_type *projection)
 {
    _project_onto_plane(normal, vector, projection);
@@ -836,7 +852,7 @@ void project_onto_plane(
 //
 // rotation axis is equivalent to vector formed by gyro representation
 void gyro_vector_to_rotation_axis(
-      /* in     */ const vector_type *gyro, 
+      /* in     */ const vector_type *gyro,
       /*    out */       vector_type *axis,
       /*    out */       degree_type *theta)
 {
@@ -851,7 +867,7 @@ void gyro_vector_to_rotation_axis(
 // unit rotation axis is equivalent to unit of gyro representation
 // gyro must be scaled by theta
 void rotation_axis_to_gyro_vector(
-      /* in     */ const vector_type *axis, 
+      /* in     */ const vector_type *axis,
       /* in     */ const degree_type theta,
       /*    out */ vector_type *gyro)
 {
@@ -870,8 +886,8 @@ void rotation_axis_to_gyro_vector(
 }
 
 void rotate_vector_about_axis_2(
-      /* in     */ const vector_type *axis, 
-      /* in     */ const vector_type *vec, 
+      /* in     */ const vector_type *axis,
+      /* in     */ const vector_type *vec,
       /* in     */ const double sn,
       /* in     */ const double cs,
       /*    out */ vector_type *res)
@@ -900,7 +916,7 @@ void rotate_vector_by_gyro(
 }
 
 void rotate_vector_by_gyro_in_place(
-      /* in     */ const vector_type *gyro, 
+      /* in     */ const vector_type *gyro,
       /* in out */ vector_type *vec)
 {
    vector_type res;
@@ -912,25 +928,25 @@ void rotate_vector_by_gyro_in_place(
 ////////////////////////////////////////////////////////////////////////
 
 void print_vec_cont(
-      /* in     */ const vector_type *v, 
+      /* in     */ const vector_type *v,
       /* in     */ const char *label)
 {
-   printf("%s %7.3f%7.3f%7.3f    ", label, 
+   printf("%s %7.3f%7.3f%7.3f    ", label,
          (double) (v->v[0]), (double) (v->v[1]), (double) (v->v[2]));
 }
 
 void print_vec(
-      /* in     */ const vector_type *v, 
+      /* in     */ const vector_type *v,
       /* in     */ const char* label)
 {
    printf("---------  %s = ", label);
-   printf("[%9.4f,%9.4f,%9.4f ]\n", 
-   //printf("%9.4f%9.4f%9.4f\n", 
+   printf("[%9.4f,%9.4f,%9.4f ]\n",
+   //printf("%9.4f%9.4f%9.4f\n",
          (double) (v->v[0]), (double) (v->v[1]), (double) (v->v[2]));
 }
 
 void print_mat(
-      /* in     */ const matrix_type *m, 
+      /* in     */ const matrix_type *m,
       /* in     */ const char* label)
 {
    int i;
@@ -946,7 +962,7 @@ void print_mat(
          printf("],\n ");
    }
 }
-      
+
 //void eye3(double m[9])
 //{
 //   m[0] = 1.0;
@@ -976,7 +992,7 @@ void print_mat(
 //}
 //
 //// mathematically, this is r * v'
-//void rotate_vector(const double v[3], const double r[9], 
+//void rotate_vector(const double v[3], const double r[9],
 //      double out[3])
 //{
 //   out[0] = v[0]*r[0] + v[1]*r[1] + v[2]*r[2];
@@ -984,7 +1000,7 @@ void print_mat(
 //   out[2] = v[0]*r[6] + v[1]*r[7] + v[2]*r[8];
 //}
 //
-//void vec_sincos(const double vec[3], double s[3], 
+//void vec_sincos(const double vec[3], double s[3],
 //      double c[3])
 //{
 //   sincos(vec[0] * M_PI / 180.0, &s[0], &c[0]);
@@ -1027,7 +1043,7 @@ void print_mat(
 
 
 //// project vector_type onto the plane defined by the vector_type normal
-//void project_onto_plane(const double normal[3], 
+//void project_onto_plane(const double normal[3],
 //      const double vector_type[3], double projection[3])
 //{
 //   // project vector_type onto normal and subtract the result from vector_type
@@ -1045,8 +1061,8 @@ void print_mat(
 //    to validate algorithm there
 
 static void _construct_rotation_zyx(
-      vector_type *vec_s, 
-      vector_type *vec_c, 
+      vector_type *vec_s,
+      vector_type *vec_c,
       matrix_type *rot)
 {
    double * restrict r = rot->m;
@@ -1080,8 +1096,8 @@ len_err:
 //    rotation on all axes
 // a more efficient approach is to use quaternions. optimize later
 void slow_rotate(
-      /* in     */ const vector_type *vec, 
-      /* in     */ const vector_type *gyro, 
+      /* in     */ const vector_type *vec,
+      /* in     */ const vector_type *gyro,
       /*    out */ vector_type *out)
 {
    const double MAX_DTHETA = 0.25;
@@ -1108,8 +1124,8 @@ void slow_rotate(
 }
 
 //// like slow_rotate(), but processes two vectors at same time
-//void slow_rotate2(const double vec1[3], const double vec2[3], 
-//      const double dtheta[3], 
+//void slow_rotate2(const double vec1[3], const double vec2[3],
+//      const double dtheta[3],
 //      double out1[3], double out2[3])
 //{
 //   const double MAX_DTHETA = 0.25;
@@ -1221,17 +1237,17 @@ static uint32_t test_rotate_vector_about_axis()
    theta.degrees = -45.0;
    rotate_vector_about_axis(&neg_z, &b, theta, &a);
    if (fabs(a.v[0]) > 0.01) {
-      fprintf(stderr, "X=Y rotated -45deg about -Y should have X=1, not %f\n", 
+      fprintf(stderr, "X=Y rotated -45deg about -Y should have X=1, not %f\n",
             a.v[0]);
       errs++;
    }
    if (fabs(a.v[1] - 1.0) > 0.001) {
-      fprintf(stderr, "X=Y rotated -45deg about -Y should have Y=1, not %f\n", 
+      fprintf(stderr, "X=Y rotated -45deg about -Y should have Y=1, not %f\n",
             a.v[1]);
       errs++;
    }
    if (fabs(a.v[2]) > 0.01) {
-      fprintf(stderr, "X=Y rotated -45deg about -Y should have Z=0, not %f\n", 
+      fprintf(stderr, "X=Y rotated -45deg about -Y should have Z=0, not %f\n",
             a.v[2]);
       errs++;
    }
@@ -1269,28 +1285,28 @@ static uint32_t test_add_weighted_vector()
    return errs;
 }
 
-//static uint32_t check_heading(vector_type *mag, degree_type dir) 
+//static uint32_t check_heading(vector_type *mag, degree_type dir)
 //{
 //   degree_type heading = get_heading(&y_axis, mag);
 //   degree_type delta = _angle_between(heading, dir);
 //   // test values are from uncorrected sensor, so leave a margin
 //   //    of error. make sure we at least have the octant right
 //   if (delta.degrees > 3.0f) {
-//      printf("    Failed -- heading is %f, not %f\n", 
+//      printf("    Failed -- heading is %f, not %f\n",
 //            (double) dir.degrees, (double) heading.degrees);
 //      return 1;
 //   }
 //   return 0;
 //}
 //
-//static uint32_t check_north(vector_type *mag, degree_type nor) 
+//static uint32_t check_north(vector_type *mag, degree_type nor)
 //{
 //   degree_type north = get_north(&y_axis, mag);
 //   degree_type delta = _angle_between(north, nor);
 //   // test values are from uncorrected sensor, so leave a margin
 //   //    of error. make sure we at least have the octant right
 //   if (delta.degrees > 3.0f) {
-//      printf("    Failed -- north is %f, not %f\n", 
+//      printf("    Failed -- north is %f, not %f\n",
 //            (double) nor.degrees, (double) north.degrees);
 //      return 1;
 //   }
@@ -1365,7 +1381,7 @@ static uint32_t test_add_weighted_vector()
 //   heading = get_heading(&y_axis, &mag);
 //   delta = _angle_between(heading, north);
 //   if (delta.degrees > 0.001f) {
-//      printf("    Failed -- flat northward heading is %f, not 0.0\n", 
+//      printf("    Failed -- flat northward heading is %f, not 0.0\n",
 //            (double) heading.degrees);
 //      errs++;
 //   }
@@ -1377,7 +1393,7 @@ static uint32_t test_add_weighted_vector()
 //   heading = get_heading(&y_axis, &sensor_mag);
 //   delta = _angle_between(heading, expected);
 //   if (fabs(delta.degrees - 30.0f) > 0.01f) {
-//      printf("    Failed -- north at -30 deg has heading %f, not 30.0\n", 
+//      printf("    Failed -- north at -30 deg has heading %f, not 30.0\n",
 //            (double) heading.degrees);
 //      errs++;
 //   }
@@ -1390,7 +1406,7 @@ static uint32_t test_add_weighted_vector()
 //   heading = get_heading(&sensor_acc, &sensor_mag);
 //   delta = _angle_between(heading, expected);
 //   if (fabs(delta.degrees) > 0.001f) {
-//      printf("    Failed -- north with 30 roll has heading %f, not 0.0\n", 
+//      printf("    Failed -- north with 30 roll has heading %f, not 0.0\n",
 //            (double) heading.degrees);
 //      errs++;
 //   }
@@ -1427,14 +1443,14 @@ static uint32_t test_add_weighted_vector()
 //   //////////////////
 //   roll = get_roll(&y_axis);
 //   if (fabs(roll.degrees) > 0.001) {
-//      printf("    Failed -- vertical acc has roll %f, not 0.0\n", 
+//      printf("    Failed -- vertical acc has roll %f, not 0.0\n",
 //            (double) roll.degrees);
 //      errs++;
 //   }
 //   //////////////////
 //   roll = get_roll(&z_axis);
 //   if (fabs(roll.degrees) > 0.001) {
-//      printf("    Failed -- nose up has roll %f, not 0.0\n", 
+//      printf("    Failed -- nose up has roll %f, not 0.0\n",
 //            (double) roll.degrees);
 //      errs++;
 //   }
@@ -1442,7 +1458,7 @@ static uint32_t test_add_weighted_vector()
 //   // acc reads X axis, meaning that left side of boat is pointing up
 //   roll = get_roll(&x_axis);
 //   if (fabs(roll.degrees - 90.0) > 0.1) {
-//      printf("    Failed -- right ear in water has roll %f, not 90.0\n", 
+//      printf("    Failed -- right ear in water has roll %f, not 90.0\n",
 //            (double) roll.degrees);
 //      errs++;
 //   }
@@ -1451,7 +1467,7 @@ static uint32_t test_add_weighted_vector()
 //   unitify(&a);
 //   roll = get_roll(&a);
 //   if (fabs(roll.degrees + 45.0f) > 0.1f) {
-//      printf("    Failed -- left ear down 45 deg has roll %f, not -45.0\n", 
+//      printf("    Failed -- left ear down 45 deg has roll %f, not -45.0\n",
 //            (double) roll.degrees);
 //      errs++;
 //   }
@@ -1467,7 +1483,7 @@ static uint32_t test_add_weighted_vector()
 //   //////////////////
 //   pitch = get_pitch(&y_axis);
 //   if (fabs(pitch.degrees) > 0.001f) {
-//      printf("    Failed -- vertical acc has pitch %f, not 0.0\n", 
+//      printf("    Failed -- vertical acc has pitch %f, not 0.0\n",
 //            (double) pitch.degrees);
 //      errs++;
 //   }
@@ -1475,7 +1491,7 @@ static uint32_t test_add_weighted_vector()
 //   // acc reads +z axis, meaing nose is pointing up
 //   pitch = get_pitch(&z_axis);
 //   if (fabs(pitch.degrees - 90.0f) > 0.1f) {
-//      printf("    Failed -- nose up has pitch %f, not 90.0\n", 
+//      printf("    Failed -- nose up has pitch %f, not 90.0\n",
 //            (double) pitch.degrees);
 //      errs++;
 //   }
@@ -1483,7 +1499,7 @@ static uint32_t test_add_weighted_vector()
 //   // acc reads +x axis, meaning left side is facing up
 //   pitch = get_pitch(&x_axis);
 //   if (fabs(pitch.degrees) > 0.001f) {
-//      printf("    Failed -- right ear in water has pitch %f, not 0.0\n", 
+//      printf("    Failed -- right ear in water has pitch %f, not 0.0\n",
 //            (double) pitch.degrees);
 //      errs++;
 //   }
@@ -1492,7 +1508,7 @@ static uint32_t test_add_weighted_vector()
 //   unitify(&a);
 //   pitch = get_pitch(&a);
 //   if (fabs(pitch.degrees + 45.0f) > 0.1f) {
-//      printf("    Failed -- nose down 45 deg has pitch %f, not -45.0\n", 
+//      printf("    Failed -- nose down 45 deg has pitch %f, not -45.0\n",
 //            (double) pitch.degrees);
 //      errs++;
 //   }
@@ -1528,7 +1544,7 @@ static uint32_t test_measure_rotation()
    vector_type a = { .v = { 0.866025, 0.5, 0.0 } };
    measure_rotation(&a, &y_axis, &rot, &theta);
    if (fabs(theta.degrees - 60.0) > 0.01) {
-      printf("    Failed -- A -> Y degrees = %f, not 60.0\n", 
+      printf("    Failed -- A -> Y degrees = %f, not 60.0\n",
             (double) theta.degrees);
       errs++;
    }
@@ -1566,7 +1582,7 @@ static uint32_t test_close_enough()
    double a, b;
    a = 0.999; b = 1.0;
    if (!close_enough(a, b)) {
-      fprintf(stderr, "  Fail: %f is close enough to %f\n", 
+      fprintf(stderr, "  Fail: %f is close enough to %f\n",
             (double) a, (double) b);
       printf("%f  \t%f\n", fabs(a-b), 0.001 * fabs(a)+fabs(b));
       errs++;
@@ -1745,7 +1761,7 @@ static uint32_t test_mult_vector_matrix(void)
    vector_type res;
    // results calculated through octave
    mult_vector_matrix(&vec, &m, &res);
-   if (!CE(res.v[0], 0.64334) || !CE(res.v[1], 0.01374) || 
+   if (!CE(res.v[0], 0.64334) || !CE(res.v[1], 0.01374) ||
          !CE(res.v[2], -0.29316)) {
       fprintf(stderr, "  Failed. Expected [0.643, 0.014, -0.293]\n");
       print_vec(&res, "actual result");
@@ -1766,7 +1782,7 @@ static uint32_t test_mult_matrix_vector(void)
    vector_type res;
    // results calculated through octave
    mult_matrix_vector(&m, &vec, &res);
-   if (!CE(res.v[0], 0.49193) || !CE(res.v[1], 0.28577) || 
+   if (!CE(res.v[0], 0.49193) || !CE(res.v[1], 0.28577) ||
          !CE(res.v[2], -0.41992)) {
       fprintf(stderr, "  Failed. Expected [0.492, 0.286, -0.420]\n");
       print_vec(&res, "actual result");

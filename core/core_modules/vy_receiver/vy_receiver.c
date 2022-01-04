@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pinet.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,7 +44,7 @@
  *    channels are 1/2 the resolution of the primary channel, so
  *    the primary channel is downsampled to match color channel
  *    resolution. only Y and V channels are sent (V is mostly a
- *    red/green channel). 
+ *    red/green channel).
  *
  * Timing is effectively broken on the camera, but it is sufficient
  *    for testing purposes. Attemtps were made to synchronize the
@@ -64,21 +80,21 @@ static void vy_class_pre_run(
    // setup networking
    // get socket port
    char port_str[STR_LEN];
-   FILE *fp = open_config_file_ro2(NULL, NULL, "endpoints", 
+   FILE *fp = open_config_file_ro2(NULL, NULL, "endpoints",
          dp->td->obj_name, NULL);
    if (!fp) {
-      log_err(vy->log, "Unable to open endpoint file for '%s'", 
+      log_err(vy->log, "Unable to open endpoint file for '%s'",
             dp->td->obj_name);
       goto err;
    }
    if (config_read_string(fp, port_str, STR_LEN) != 0) {
-      log_err(vy->log, "Unable to determine listening port for '%s'", 
+      log_err(vy->log, "Unable to determine listening port for '%s'",
             dp->td->obj_name);
       goto err;
    }
    uint32_t port = (uint32_t) atoi(port_str);
    if (c_assert(port <= 0x00007fff)) {
-      log_err(vy->log, 
+      log_err(vy->log,
             "Configuration error: port size greater than int16 (%d)", port);
       goto err;
    }
@@ -103,7 +119,7 @@ static void vy_class_pre_run(
       tot_pix += n_pix;
    }
    for (uint32_t i=0; i<VY_QUEUE_LEN; i++) {
-      vy_receiver_output_type *out = (vy_receiver_output_type*) 
+      vy_receiver_output_type *out = (vy_receiver_output_type*)
             dp_get_object_at(dp, i);
       for (uint32_t lev=0; lev<NUM_PYRAMID_LEVELS; lev++) {
          out->chan_offset[lev] = offsets[lev];
@@ -145,7 +161,7 @@ static void vy_abort(struct datap_desc *dp)
    log_info(vy->log, "Abort");
    if (vy->connfd >= 0) {
       if (shutdown(vy->connfd, SHUT_RDWR) != 0) {
-         log_err(vy->log, "Error shutting down connection (%s)", 
+         log_err(vy->log, "Error shutting down connection (%s)",
                strerror(errno));
       }
       vy->connfd = -1;
@@ -180,9 +196,9 @@ static void * vy_class_get_object_at(
       /* in     */ const datap_desc_type *dp,
       /* in     */ const uint32_t idx
       )
-{  
+{
    return &dp->void_queue[idx * sizeof(vy_receiver_output_type)];
-} 
+}
 
 ////////////////////////////////////////////////////////////////////////
 void * vy_class_init(void *vy_setup)
@@ -230,7 +246,7 @@ void * vy_class_init(void *vy_setup)
 //      vy->logfile = fopen(buf, "w");
 //      if (vy->logfile == NULL) {
 //         // non-fatal error. we just loose logging
-//         log_err(vy->log, "Unable to create data logfile for %s (%s)", 
+//         log_err(vy->log, "Unable to create data logfile for %s (%s)",
 //               dp->td->obj_name, buf);
 //      } else {
 //         log_info(vy->log, "%s logging data to %s", dp->td->obj_name, buf);

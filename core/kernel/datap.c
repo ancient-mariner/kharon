@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 ﻿#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -23,13 +39,13 @@ void dp_execute(
       /* in out */       datap_desc_type *dp
       )
 {
-   // thread ready to go -- store 
+   // thread ready to go -- store
    thread_desc_type *td = &thread_table_g[num_threads_g];
    td->dp = dp;
    num_threads_g++;
    dp->run_state |= DP_STATE_INITIALIZED;
    // wait for all other threads to start
-   // number of threads unknown during initialization, so barrier 
+   // number of threads unknown during initialization, so barrier
    //    cannot be initialized yet. use each thread's condition wait
    //    on a global mutex to unbounded achieve barrier
    // once all threads are ready, count is known so threads can be
@@ -58,7 +74,7 @@ void dp_execute(
 }
 
 static void default_add_producer(
-      /* in     */       datap_desc_type *self, 
+      /* in     */       datap_desc_type *self,
       /* in     */       datap_desc_type *x
       )
 {
@@ -69,7 +85,7 @@ static void default_add_producer(
 }
 
 static void default_add_link(
-      /* in     */       datap_desc_type *self, 
+      /* in     */       datap_desc_type *self,
       /* in     */       datap_desc_type *x
       )
 {
@@ -80,7 +96,7 @@ static void default_add_link(
 }
 
 void default_add_consumer(
-      datap_desc_type *self, 
+      datap_desc_type *self,
       datap_desc_type *cons
       )
 {
@@ -94,7 +110,7 @@ void default_add_consumer(
 }
 
 void default_add_consumer_prohibited(
-      /* in     */       datap_desc_type *self, 
+      /* in     */       datap_desc_type *self,
       /* in     */       datap_desc_type *x
       )
 {
@@ -105,7 +121,7 @@ void default_add_consumer_prohibited(
 }
 
 static void * default_get_object_at(
-      /* in     */ const datap_desc_type *self, 
+      /* in     */ const datap_desc_type *self,
       /* in     */ const uint32_t idx
       )
 {
@@ -124,7 +140,7 @@ static void default_reload_config(
 }
 
 
-// allocate space for new datap structure, associate it with 
+// allocate space for new datap structure, associate it with
 //    already defined thread description, initialize fields
 //    and set default values
 datap_desc_type * dp_create()
@@ -137,19 +153,19 @@ datap_desc_type * dp_create()
    //    and associate self with it
    thread_desc_type *td = &thread_table_g[num_threads_g];
    dp->run_state = DP_STATE_CREATED;
-   // num threads is incremented after create() -- the present value is 
+   // num threads is incremented after create() -- the present value is
    //    is this thread's ID (index)
    dp->thread_desc_idx = (uint16_t) num_threads_g;
    dp->td = td;
    td->thread_id = pthread_self();
    pthread_cond_init(&td->condition, NULL);
    pthread_mutex_init(&td->mutex, NULL);
-   // 
+   //
    dp->num_attached_consumers = 0;
-   memset(dp->consumer_list, 0, 
+   memset(dp->consumer_list, 0,
          MAX_ATTACHED_CONSUMERS * sizeof(dp->consumer_list[0]));
    dp->num_attached_producers = 0;
-   memset(dp->producer_list, 0, 
+   memset(dp->producer_list, 0,
          MAX_ATTACHED_PRODUCERS * sizeof(dp->producer_list[0]));
    //
    dp->update_ctr = 0;
@@ -248,7 +264,7 @@ void dp_reload_config(
 }
 
 object_time_type dp_get_object_and_time_at(
-      /* in     */ const datap_desc_type *dp, 
+      /* in     */ const datap_desc_type *dp,
       /* in     */ const uint32_t idx
       )
 {
@@ -277,7 +293,7 @@ void request_config_reload(void)
 }
 
 ////////////////////////////////////////////////////////////////////////
-// 
+//
 
 void report_thread_id_by_name(
       /* in     */ const char *label,

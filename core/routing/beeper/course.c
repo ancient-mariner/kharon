@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 // on suggested change, make beep notification every 30 seconds
 // on requested change, make klaxon notification every 10 seconds
@@ -9,17 +25,17 @@ static void examine_course_data_heading(
 {
    const route_info_type *route = &driver_out->route;
 //   if (route->flags_course & ROUTE_INFO_COURSE_EVASION) {
-//      log_info(beeper_->log, "Evasion indicated (0x%04x)", 
+//      log_info(beeper_->log, "Evasion indicated (0x%04x)",
 //            route->flags_course);
 //      requests_.klaxon_alarm = 1;
-//   } else 
+//   } else
    if (route->flags_course & ROUTE_INFO_COURSE_MAKE_CHANGE) {
       // get time of most previous alert
       double dt = t - beeper_->last_change_alert;
       if (dt > BEEPER_MAKE_CHANGE_INTERVAL) {
          log_info(beeper_->log, "Requesting change. Turn %.1f to "
-               "%02.0f  %.1f", 
-               (double) route->turn_rate.dps, 
+               "%02.0f  %.1f",
+               (double) route->turn_rate.dps,
                (double) route->sug_heading.tru.angle32 * BAM32_TO_DEG,
                (double) route->true_path_heading.angle16 * BAM16_TO_DEG);
          // turn in suggested direction
@@ -36,7 +52,7 @@ static void examine_course_data_heading(
       double dt = t - beeper_->last_change_alert;
       if (dt > BEEPER_SUGGEST_CHANGE_INTERVAL) {
          log_info(beeper_->log, "Suggesting change. Turn %.1f to "
-               "%02.0f  %.1f", 
+               "%02.0f  %.1f",
                (double) route->sug_heading.tru.angle32 * BAM32_TO_DEG,
                (double) route->true_path_heading.angle16 * BAM16_TO_DEG);
          // turn in suggested direction

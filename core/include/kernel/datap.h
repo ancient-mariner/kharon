@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 ﻿#if !defined(DATAP_H)
 #define   DATAP_H
 #if !defined(_GNU_SOURCE)
@@ -67,7 +83,7 @@ void dp_execute(
 //    using dp_destroy
 struct datap_desc {
    // list of connected producers and consumers
-   // objects can maintain different lists for reading different 
+   // objects can maintain different lists for reading different
    //    data types
    struct datap_desc *consumer_list[MAX_ATTACHED_CONSUMERS];
    struct producer_record producer_list[MAX_ATTACHED_PRODUCERS];
@@ -105,7 +121,7 @@ struct datap_desc {
    int16_t run_state;
    // flag to signal reload of config
    // reload is done before exiting dp_wait()
-   int16_t reload_flag; 
+   int16_t reload_flag;
    // control how often subscribers are notified that data is available.
    //   eg, notify when 1ms worth of data is ready
    // update counter counts how many samples since the last signal sent
@@ -142,7 +158,7 @@ void dp_wake(datap_desc_type *dp);
 void dp_abort(datap_desc_type *dp);
 void dp_quit(datap_desc_type *dp);
 
-// returns pointer to object in data processor's output queue at 
+// returns pointer to object in data processor's output queue at
 //    specified index, cast as void*
 void *dp_get_object_at(
       /* in     */ const datap_desc_type *dp,
@@ -157,7 +173,7 @@ struct object_time {
 };
 typedef struct object_time object_time_type;
 
-// returns pointer to object in data processor's output queue at 
+// returns pointer to object in data processor's output queue at
 //    specified index, cast as void*, and the timestamp of that object
 object_time_type dp_get_object_and_time_at(
       /* in     */ const datap_desc_type *dp,
@@ -177,13 +193,13 @@ void request_config_reload(void);
 //    still call this default one unless there's a clear reason not
 //    to, which should be documented
 void default_add_consumer(
-      datap_desc_type *self, 
+      datap_desc_type *self,
       datap_desc_type *cons
       );
 
 // if consumers are not supported, this can be used
 void default_add_consumer_prohibited(
-      datap_desc_type *self, 
+      datap_desc_type *self,
       datap_desc_type *cons
       );
 

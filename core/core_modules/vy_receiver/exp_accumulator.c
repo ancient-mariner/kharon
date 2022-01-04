@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "exp_accumulator.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,9 +27,9 @@
 #define R2D ((float) (180.0 / M_PI))
 #endif // R2D
 
-/* 
+/*
 Defines accumulators for remapping 'undistorted' camera images to
-perspective views. One accumulator is used to produce an output 
+perspective views. One accumulator is used to produce an output
 image for each channel (intensity + color). Source images from each
 channel have different resultions, resulting in much duplicated code.
 
@@ -57,7 +73,7 @@ static void update_element(
    element->w = (uint16_t) (element->w + w);
 }
 
-// push top or bottom row of image to accumulator, setting border flag 
+// push top or bottom row of image to accumulator, setting border flag
 //    for nw,ne,sw,se elements
 static void push_border_row(
       /* in     */ const uint8_t *buf,
@@ -92,7 +108,7 @@ static void push_border_row(
    }
 }
 
-// push non-border row of image to accumulator, setting border flag 
+// push non-border row of image to accumulator, setting border flag
 //    for nw,ne,sw,se elements
 static void push_row(
       /* in     */ const uint8_t *buf,
@@ -172,7 +188,7 @@ static void blur_image(
    // perform 3x3 blurring kernel to image before pushing to accumulator
    // TODO WHY blur here? blurring should be done after push to accum to
    //    ensure uniform blur
-   const uint32_t kern[3][3] = 
+   const uint32_t kern[3][3] =
          {{ 1, 2, 1},
           { 2, 4, 2},
           { 1, 2, 1}};
@@ -195,7 +211,7 @@ static void blur_image(
          sum = (uint32_t) (sum + buf[idx] * kern[2][0]);
          sum = (uint32_t) (sum + buf[idx+1] * kern[2][1]);
          sum = (uint32_t) (sum + buf[idx+2] * kern[2][2]);
-         // 
+         //
          blurred_img_[idx_0 + x + 1 + VY_COLS] = (uint8_t) (sum / 16);
       }
    }
@@ -315,13 +331,13 @@ static void get_perspective_pix(
    const float j = sqrtf(k*k + centered_x*centered_x + centered_y*centered_y);
 //printf("j: %f\n", (double) j);
    // vertical adjustment
-   const float y_pos = PERSP_HEIGHT / 2.0f + 
+   const float y_pos = PERSP_HEIGHT / 2.0f +
          R2D * asinf(centered_y / j) * PERSP_HEIGHT / fov_height_full;
-   const float x_pos = PERSP_WIDTH / 2.0f + 
+   const float x_pos = PERSP_WIDTH / 2.0f +
          R2D * asinf(centered_x / j) * PERSP_WIDTH / fov_width_full;
 //printf("xpos: %f\n", (double) x_pos);
 //printf("ypos: %f\n", (double) y_pos);
-   // values are based on left/top edge of pixel, and ne/nw/se/sw 
+   // values are based on left/top edge of pixel, and ne/nw/se/sw
    //    interpolation is based on this, so rounding to nearest
    //    integer value is not appropriate
    pos->x = (uint16_t) x_pos;

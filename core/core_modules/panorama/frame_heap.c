@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -14,7 +30,7 @@
 //    older images. for example, the first several images are stored
 //    sequentially, wherafter for the next several images every other
 //    image is stored, then every 4th, then every 8th, etc.
-// this logarithmic approach allows a long history to be stored relative 
+// this logarithmic approach allows a long history to be stored relative
 //    to the memory footprint
 //
 // list alteration is done by a single process, while other processes
@@ -39,7 +55,7 @@
 //    .next is read after the change occurs, the subsequent page will be
 //    read
 // deleted pages are put into a queue where they remain for several
-//    frame updates (e.g., 2 seconds). the deleted page's .next field 
+//    frame updates (e.g., 2 seconds). the deleted page's .next field
 //    will remain unchanged,
 //    as will image data. this allows any process using a deleted
 //    frame to continue processing it. when processing is completed,
@@ -54,11 +70,11 @@
 //    page allocation thus never fails
 //
 // the heap manages 2 lists -- one for the active frames, stored as
-//    .frames, and a list for elements in the queue, managed through 
-//    .available_head and .available_tail (and ._next in the frame 
+//    .frames, and a list for elements in the queue, managed through
+//    .available_head and .available_tail (and ._next in the frame
 //    page itself)
-//    
-//    
+//
+//
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -123,7 +139,7 @@ static frame_page_type * allocate_page(frame_page_heap_type *heap)
       free_page(heap, page);
    }
    // now there's content available. grab the next page from the head
-   //    of the list. 
+   //    of the list.
    if (heap->available > 0) {
       page = heap->available_head;
       heap->available_head = page->_next;
@@ -143,7 +159,7 @@ static frame_page_type * allocate_page(frame_page_heap_type *heap)
    return page;
 }
 
-// 
+//
 static void add_to_frames(frame_page_heap_type *heap, frame_page_type *page)
 {
    page->next = heap->frames;
@@ -173,7 +189,7 @@ static void add_to_frames(frame_page_heap_type *heap, frame_page_type *page)
 // delete the 4th element in the list and return the page that
 //    was after it
 static frame_page_type * delete_fourth(
-      /* in out */       frame_page_heap_type *heap, 
+      /* in out */       frame_page_heap_type *heap,
       /* in out */       frame_page_type *page
       )
 {

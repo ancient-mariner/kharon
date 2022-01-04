@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -98,7 +114,7 @@ usage:
    printf("Lists beacons in specified rows, showing neighbors and "
          "path distances\n");
    printf("\n");
-   printf("Usage: %s [-f <map folder>] [-r <start row>] [-e <last row>] \n", 
+   printf("Usage: %s [-f <map folder>] [-r <start row>] [-e <last row>] \n",
          argv[0]);
    printf("\n");
    printf("where:\n");
@@ -137,8 +153,8 @@ printf("  start %d  num %d\n", start_idx, num_beacons);
             beacon_neighbor_type nbr = beacon->neighbors[b];
             beacon_record_type *neighbor = get_beacon_record(nbr.nbr_index);
             if (nbr.path_weight > 0.0f) {
-               printf("    %.4f,%.4f (%d)  dist %.1f\n", 
-                     (double) neighbor->akn_x, (double) neighbor->akn_y, 
+               printf("    %.4f,%.4f (%d)  dist %.1f\n",
+                     (double) neighbor->akn_x, (double) neighbor->akn_y,
                      nbr.nbr_index, (double) nbr.path_weight);
             }
          }

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pin_types.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +40,7 @@
 ////////////////////////////////////////////////////////////////////////
 
 static void optical_up_add_producer(
-      /* in     */       struct datap_desc *self, 
+      /* in     */       struct datap_desc *self,
       /* in     */       struct datap_desc *prod
       )
 {
@@ -57,13 +73,13 @@ static void optical_up_add_producer(
       //    (data pulled only when it's needed, not when it's available)
       optical_up->attitude_producer = prod;
    } else {
-      log_err(optical_up->log, 
+      log_err(optical_up->log,
             "Attempted to subscribe to incompatible producer\n");
       log_err(optical_up->log, "Consumer: %s\n", self->td->obj_name);
-      log_err(optical_up->log, "Producer: %s (%s)\n", 
+      log_err(optical_up->log, "Producer: %s (%s)\n",
             prod->td->obj_name, prod->td->class_name);
       hard_exit(__func__, __LINE__);
-   } 
+   }
 }
 
 
@@ -75,18 +91,18 @@ static void optical_up_class_pre_run(struct datap_desc *self)
 //   // sanity checks
 //   if ((c_assert(VY_FOV_HORIZ_DEG == 62.2f) != 0) ||
 //         (c_assert(VY_FOV_VERT_DEG == 48.8f) != 0)) {
-//      log_err(optical_up->log, 
+//      log_err(optical_up->log,
 //            "Internal config error: FOV change -> readjust constants");
 //   }
-//   const uint32_t pyramid_offset[NUM_PYRAMID_LEVELS] = { 
-//      0, 
+//   const uint32_t pyramid_offset[NUM_PYRAMID_LEVELS] = {
+//      0,
 //      SZ0 * SZ0
 ////      SZ0 * SZ0 + SZ1 * SZ1
 //   };
-      datap_desc_type *vy_prod = 
+      datap_desc_type *vy_prod =
             self->producer_list[OPTICAL_UP_IMG_PRODUCER_IDX].producer;
       vy_class_type *vy = (vy_class_type*) vy_prod->local;
-   // allocate and initialize storage 
+   // allocate and initialize storage
    // accumulators
    for (uint32_t lev=0; lev<NUM_PYRAMID_LEVELS; lev++) {
       // accumulator size is output size
@@ -154,7 +170,7 @@ static void optical_up_class_pre_run(struct datap_desc *self)
    //    for its input
    uint32_t errs = 0;
    if (optical_up->attitude_producer == NULL) {
-      log_err(optical_up->log, "Process %s is does not have attitude input", 
+      log_err(optical_up->log, "Process %s is does not have attitude input",
             self->td->obj_name);
       errs++;
    }
@@ -171,7 +187,7 @@ static void optical_up_class_run(
       /* in out */       datap_desc_type *self
       )
 {
-   struct producer_record *img_pr = 
+   struct producer_record *img_pr =
          &self->producer_list[OPTICAL_UP_IMG_PRODUCER_IDX];
    datap_desc_type *img_producer = img_pr->producer;
    vy_class_type *vy = (vy_class_type*) img_producer->local;
@@ -182,7 +198,7 @@ static void optical_up_class_run(
 //      log_info(optical_up->log, "Waiting for data");
       dp_wait(self);   // wait for data to become available
       while (img_pr->consumed_elements < img_producer->elements_produced) {
-//         log_info(optical_up->log, "Consuming %ld of %ld", 
+//         log_info(optical_up->log, "Consuming %ld of %ld",
 //               img_pr->consumed_elements, img_producer->elements_produced);
          ///////////////////////////////
          // get data source
@@ -196,8 +212,8 @@ static void optical_up_class_run(
          //    frame is delivered relative to IMU report
          const double FRAME_DELAY = 0.030;
          enum attitude_query_state status = NA;
-         get_attitude(optical_up->attitude_producer, optical_up->log, 
-               t-FRAME_DELAY, &status, &att_out, 
+         get_attitude(optical_up->attitude_producer, optical_up->log,
+               t-FRAME_DELAY, &status, &att_out,
                &optical_up->last_attitude_idx);
          if (status == PENDING) {
             // timestamp not yet available. wait and reprocess this frame
@@ -211,7 +227,7 @@ static void optical_up_class_run(
          }
          ///////////////////////////////
          // get data sink
-         const uint32_t idx = (uint32_t) 
+         const uint32_t idx = (uint32_t)
                (self->elements_produced % self->queue_length);
          self->ts[idx] = t;
          optical_up_output_type *output = (optical_up_output_type *)
@@ -223,8 +239,8 @@ static void optical_up_class_run(
          // TODO if inverting latitude, explain why (image is upside down, but why)
          output->world_center.latitude.sangle32 =
                -output->world_center.latitude.sangle32;
-         log_info(optical_up->log, 
-               "  (%.3f)  image center at: lat=%f, lon=%f", t, 
+         log_info(optical_up->log,
+               "  (%.3f)  image center at: lat=%f, lon=%f", t,
                (double) output->world_center.lat.sangle32 * BAM32_TO_DEG,
                (double) output->world_center.lon.angle32 * BAM32_TO_DEG);
 //printf("%.3f   %s image center at: lat=%f, lon=%f\n", t, self->td->obj_name, (double) output->world_center.lat, (double) output->world_center.lon);
@@ -264,9 +280,9 @@ static void * optical_up_get_object_at(
       /* in     */ const datap_desc_type *self,
       /* in     */ const uint32_t idx
       )
-{  
+{
    return &self->void_queue[idx * sizeof(optical_up_output_type)];
-} 
+}
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -278,7 +294,7 @@ static void optical_up_reload_config(
    producer_record_type *pr = &self->producer_list[0];
    datap_desc_type *producer = pr->producer;
    optical_up_class_type *upright = (optical_up_class_type*) self->local;
-   module_config_load_cam_to_ship(upright->log, upright->camera_host, 
+   module_config_load_cam_to_ship(upright->log, upright->camera_host,
          producer->td->obj_name, &upright->cam2ship);
 }
 
@@ -313,7 +329,7 @@ void * optical_up_class_init(
          free(upright->data_folder);
          upright->data_folder = NULL;
       } else {
-         log_info(upright->log, "Created output directory %s", 
+         log_info(upright->log, "Created output directory %s",
                upright->data_folder);
       }
    } else {

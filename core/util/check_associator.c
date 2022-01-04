@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -67,7 +83,7 @@ struct target_stream {
    uint32_t num_targets;
    // number of targets read
    uint32_t num_read;
-   // 
+   //
    uint32_t output_chan;
    // name
    char label[LABEL_LEN];
@@ -112,7 +128,7 @@ static char * read_target_id(
       c = *buf;
    }
    int32_t val = 0;
-   while (((c >= '0') && (c <= '9')) || 
+   while (((c >= '0') && (c <= '9')) ||
          (c == ',') || (c == '-') || (c == ' ')) {
       if (c == '-') {
          target->target_id = (uint32_t) val;
@@ -240,7 +256,7 @@ depleted:
 }
 
 
-// load 
+// load
 static void load_next_set_head(
       /* in out */       target_stream_type *stream
       )
@@ -258,13 +274,13 @@ static void load_next_set_head(
    char *head = buf;
    stream->t = strtod(head, &head);
    if (errno != 0) {
-      fprintf(stderr, "Unable to parse timestamp '%s' in %s: %s\n", buf, 
+      fprintf(stderr, "Unable to parse timestamp '%s' in %s: %s\n", buf,
             stream->label, strerror(errno));
       goto depleted;
    }
    stream->num_targets = (uint32_t) strtol(head, &head, 10);
    if (errno != 0) {
-      fprintf(stderr, "Unable to parse num targets '%s' in %s: %s\n", buf, 
+      fprintf(stderr, "Unable to parse num targets '%s' in %s: %s\n", buf,
             stream->label, strerror(errno));
       goto depleted;
    }
@@ -328,9 +344,9 @@ static void draw_box(
       // unwrap if target is split by pole
       right += pan_in_->size.width;
    }
-   uint32_t top = (uint32_t) 
+   uint32_t top = (uint32_t)
          ((PAN_DEGS_ABOVE_HORIZON - target->top) * ppd_ + 0.5);
-   uint32_t bottom = (uint32_t) 
+   uint32_t bottom = (uint32_t)
          ((PAN_DEGS_ABOVE_HORIZON - target->bottom) * ppd_ + 0.5);
 //printf("LR %.1f %.1f  (%d %d) TB %.1f %.1f (%d %d)\n", target->left, target->right, left, right, target->top, target->bottom, top, bottom);
    uint8_t r = target->rgba[0];
@@ -530,7 +546,7 @@ printf("  Loading %s\n", fname);
       ppd_ = (double) pan_in_->size.width / 360.0;
    }
    /////////////////////////////
-   // if this is the first pass, create output images  
+   // if this is the first pass, create output images
    if (pan_out_[0] == NULL) {
       for (uint32_t i=0; i<NUM_STREAMS; i++) {
          pan_out_[i] = raw_create_image(pan_in_->size);

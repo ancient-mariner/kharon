@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -237,7 +253,7 @@ static int load_next_imu_sample(
    char orig_line[STR_LEN];
    if (getline(&lineptr, &ptr_size, fp) <= 0) {
       return -1;
-   } 
+   }
    size_t len = sizeof orig_line;
    strncpy(orig_line, lineptr, len-1);
    orig_line[len-1] = 0;
@@ -305,10 +321,10 @@ static void convert_file(
             "%7.4f, %7.4f, %7.4f,  "
             "%7.4f, %7.4f, %7.4f,  "
             "%7.4f, %7.4f, %7.4f,  "
-            "%5.1f\n", 
+            "%5.1f\n",
             (double) gyr.v[0], (double) gyr.v[1], (double) gyr.v[2],
             (double) acc.v[0], (double) acc.v[1], (double) acc.v[2],
-            (double) new_mag.v[0], (double) new_mag.v[1], 
+            (double) new_mag.v[0], (double) new_mag.v[1],
             (double) new_mag.v[2], temp);
    }
 end:

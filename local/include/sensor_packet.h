@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(SENSOR_PACKET_H)
 #define SENSOR_PACKET_H
 #include "pinet.h"
@@ -39,7 +55,7 @@ void print_sensor_data2(
 
 // converts sensor packet into text, for network transport
 void serialize_sensor_packet(
-      /* in     */ const struct imu_sensor_packet *s, 
+      /* in     */ const struct imu_sensor_packet *s,
       /*    out */       char serial[SP_SERIAL_LENGTH]
       );
 
@@ -54,8 +70,8 @@ void restore_sensor_packet(
 // if data is not desired for a particular channel, provide NULL
 void restore_sensor_packet_individual(
       /* in     */ const char serial[SP_SERIAL_LENGTH],
-      /*    out */       struct vector_type *gyr, 
-      /*    out */       struct vector_type *acc, 
+      /*    out */       struct vector_type *gyr,
+      /*    out */       struct vector_type *acc,
       /*    out */       struct vector_type *mag,
       /*    out */       struct vector_type *gps,
       /*    out */       double * temp,

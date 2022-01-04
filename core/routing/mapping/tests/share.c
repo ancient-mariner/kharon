@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pin_types.h"
 #include <stdio.h>
 #include <stdint.h>
@@ -34,19 +50,19 @@ static uint32_t test_calc_meter_offset(void)
    expected_x_met = 0.0;
    expected_y_met = METERS_PER_DEG_LAT;
    calc_meter_offset(a, b, &dx, &dy, __func__);
-   if ((fabs(dx.meters - expected_x_met) > 0.1) || 
+   if ((fabs(dx.meters - expected_x_met) > 0.1) ||
          (fabs(dy.meters - expected_y_met) > 0.1)) {
       fprintf(stderr, "A %.3f,%.3f -> %.3f,%.3f should have delta %.3f,%.3f, "
-            "got %.3f,%.3f\n", a.lon, a.lat, b.lon, b.lat, 
+            "got %.3f,%.3f\n", a.lon, a.lat, b.lon, b.lat,
             expected_x_met, expected_y_met, dx.meters, dy.meters);
       errs++;
    }
    expected_y_met = -METERS_PER_DEG_LAT;
    calc_meter_offset(b, a, &dx, &dy, __func__);
-   if ((fabs(dx.meters - expected_x_met) > 0.1) || 
+   if ((fabs(dx.meters - expected_x_met) > 0.1) ||
          (fabs(dy.meters - expected_y_met) > 0.1)) {
       fprintf(stderr, "B %.3f,%.3f -> %.3f,%.3f should have delta %.3f,%.3f, "
-            "got %.3f,%.3f\n", b.lon, b.lat, a.lon, a.lat, 
+            "got %.3f,%.3f\n", b.lon, b.lat, a.lon, a.lat,
             expected_x_met, expected_y_met, dx.meters, dy.meters);
       errs++;
    }
@@ -58,19 +74,19 @@ static uint32_t test_calc_meter_offset(void)
    expected_x_met = METERS_PER_DEG_LAT;
    expected_y_met = 0.0;
    calc_meter_offset(a, b, &dx, &dy, __func__);
-   if ((fabs(dx.meters - expected_x_met) > 0.1) || 
+   if ((fabs(dx.meters - expected_x_met) > 0.1) ||
          (fabs(dy.meters - expected_y_met) > 0.1)) {
       fprintf(stderr, "C %.3f,%.3f -> %.3f,%.3f should have delta %.3f,%.3f, "
-            "got %.3f,%.3f\n", a.lon, a.lat, b.lon, b.lat, 
+            "got %.3f,%.3f\n", a.lon, a.lat, b.lon, b.lat,
             expected_x_met, expected_y_met, dx.meters, dy.meters);
       errs++;
    }
    expected_x_met = -METERS_PER_DEG_LAT;
    calc_meter_offset(b, a, &dx, &dy, __func__);
-   if ((fabs(dx.meters - expected_x_met) > 0.1) || 
+   if ((fabs(dx.meters - expected_x_met) > 0.1) ||
          (fabs(dy.meters - expected_y_met) > 0.1)) {
       fprintf(stderr, "D %.3f,%.3f -> %.3f,%.3f should have delta %.3f,%.3f, "
-            "got %.3f,%.3f\n", b.lon, b.lat, a.lon, a.lat, 
+            "got %.3f,%.3f\n", b.lon, b.lat, a.lon, a.lat,
             expected_x_met, expected_y_met, dx.meters, dy.meters);
       errs++;
    }
@@ -82,10 +98,10 @@ static uint32_t test_calc_meter_offset(void)
    expected_x_met = 0.5 * METERS_PER_DEG_LAT;
    expected_y_met = 0.2 * METERS_PER_DEG_LAT;
    calc_meter_offset(a, b, &dx, &dy, __func__);
-   if ((fabs(dx.meters - expected_x_met) > 0.1) || 
+   if ((fabs(dx.meters - expected_x_met) > 0.1) ||
          (fabs(dy.meters - expected_y_met) > 0.1)) {
       fprintf(stderr, "E %.3f,%.3f -> %.3f,%.3f should have delta %.3f,%.3f, "
-            "got %.3f,%.3f\n", a.lon, a.lat, b.lon, b.lat, 
+            "got %.3f,%.3f\n", a.lon, a.lat, b.lon, b.lat,
             expected_x_met, expected_y_met, dx.meters, dy.meters);
       errs++;
    }
@@ -227,7 +243,7 @@ static uint32_t check_offset_mask(
       pixel_offset_bitfield_type field = get_offset_mask_wide(a, b);
       if ((base.mask & field.mask) == 0) {
          fprintf(stderr, "Left bitmask for offset %d,%d (%d,%d) "
-               "doesn't overlap base: 0x%02x vs 0x%02x\n", 
+               "doesn't overlap base: 0x%02x vs 0x%02x\n",
                base_dir.dx, base_dir.dy, left.dx, left.dy,
                base.mask, field.mask);
          errs++;
@@ -239,7 +255,7 @@ static uint32_t check_offset_mask(
       pixel_offset_bitfield_type field = get_offset_mask_wide(a, b);
       if ((base.mask & field.mask) == 0) {
          fprintf(stderr, "Right bitmask for offset %d,%d (%d,%d) "
-               "doesn't overlap base: 0x%02x vs 0x%02x\n", 
+               "doesn't overlap base: 0x%02x vs 0x%02x\n",
                base_dir.dx, base_dir.dy, right.dx, right.dy,
                base.mask, field.mask);
          errs++;
@@ -251,7 +267,7 @@ static uint32_t check_offset_mask(
       pixel_offset_bitfield_type field = get_offset_mask_wide(a, b);
       if ((base.mask & field.mask) != 0) {
          fprintf(stderr, "Far-left bitmask for offset %d,%d (%d,%d) "
-               "overlaps base: 0x%02x vs 0x%02x\n", 
+               "overlaps base: 0x%02x vs 0x%02x\n",
                base_dir.dx, base_dir.dy, far_left.dx, far_left.dy,
                base.mask, field.mask);
          errs++;
@@ -263,7 +279,7 @@ static uint32_t check_offset_mask(
       pixel_offset_bitfield_type field = get_offset_mask_wide(a, b);
       if ((base.mask & field.mask) != 0) {
          fprintf(stderr, "Far-right bitmask for offset %d,%d (%d,%d) "
-               "overlaps base: 0x%02x vs 0x%02x\n", 
+               "overlaps base: 0x%02x vs 0x%02x\n",
                base_dir.dx, base_dir.dy, far_right.dx, far_right.dy,
                base.mask, field.mask);
 printf("far right %d,%d -> %d,%d   0x%02x\n", a.x, a.y, b.x, b.y, field.mask);

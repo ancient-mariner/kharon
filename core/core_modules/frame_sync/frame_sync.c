@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pin_types.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,7 +39,7 @@
 struct frame_time {
    optical_up_output_type  *frame;
    double t;
-}; 
+};
 typedef struct frame_time frame_time_type;
 
 
@@ -38,7 +54,7 @@ typedef struct frame_set frame_set_type;
 // width of interval that frames should fall within. this should be
 //    approximately the hardware frame interval -- expand that by
 //    small %age to provide a comfortable margin
-#define FRAME_WINDOW    (1.330 / (double) HARDWARE_FRAME_RATE) 
+#define FRAME_WINDOW    (1.330 / (double) HARDWARE_FRAME_RATE)
 
 static int32_t get_next_earliest_frame(
       /* in out */       datap_desc_type *self,
@@ -56,12 +72,12 @@ static int32_t get_next_earliest_frame(
       const datap_desc_type *producer = pr->producer;
       if (pr->consumed_elements < producer->elements_produced) {
          // data available from this producer -- evaluate when
-         const uint32_t idx = (uint32_t) 
+         const uint32_t idx = (uint32_t)
                (pr->consumed_elements % producer->queue_length);
          const double t = producer->ts[idx];
          if (t < frame->t) {
-            frame->frame = 
-                  (optical_up_output_type *) dp_get_object_at(producer, idx); 
+            frame->frame =
+                  (optical_up_output_type *) dp_get_object_at(producer, idx);
             frame->t = t;
             early_idx = (int32_t) i;
          }
@@ -72,7 +88,7 @@ static int32_t get_next_earliest_frame(
       self->producer_list[early_idx].consumed_elements++;
    }
    return early_idx;
-} 
+}
 
 
 void log_frame_set(
@@ -113,7 +129,7 @@ static void add_frame_to_set(
    set->frame_time[cam_num] = t;
    if (t < set->set_time)
       set->set_time = t;
-} 
+}
 
 
 static void clear_frame_set(
@@ -160,7 +176,7 @@ static void init_frame_set(
 ////////////////////////////////////////////////////////////////////////
 
 static void frame_sync_add_producer(
-      /* in     */       struct datap_desc *self, 
+      /* in     */       struct datap_desc *self,
       /* in     */       struct datap_desc *prod
       )
 {
@@ -172,10 +188,10 @@ static void frame_sync_add_producer(
          // if more cameras are needed, it should be OK to adjust the
          //    max-camera constant and recompile (that might not be
          //    the case in downstream image stitching modules)
-         log_err(sync->log, "Too many subscriptions (max of %d)\n", 
+         log_err(sync->log, "Too many subscriptions (max of %d)\n",
                MAX_NUM_CAMERAS);
          log_err(sync->log, "Consumer: %s\n", self->td->obj_name);
-         log_err(sync->log, "Producer: %s (%s)\n", prod->td->obj_name, 
+         log_err(sync->log, "Producer: %s (%s)\n", prod->td->obj_name,
                prod->td->class_name);
          hard_exit(__func__, __LINE__);
       }
@@ -183,10 +199,10 @@ static void frame_sync_add_producer(
       optical_up_class_type *up = (optical_up_class_type*) prod->local;
       uint8_t cam_num = up->camera_num;
       if (cam_num >= MAX_NUM_CAMERAS) {
-         log_err(sync->log, "Producer's camera number outside of bounds (%d)", 
+         log_err(sync->log, "Producer's camera number outside of bounds (%d)",
                cam_num);
          log_err(sync->log, "Consumer: %s\n", self->td->obj_name);
-         log_err(sync->log, "Producer: %s (%s)\n", prod->td->obj_name, 
+         log_err(sync->log, "Producer: %s (%s)\n", prod->td->obj_name,
                prod->td->class_name);
          hard_exit(__func__, __LINE__);
       }
@@ -195,10 +211,10 @@ static void frame_sync_add_producer(
    } else {
       log_err(sync->log, "Attempted to subscribe to incompatible producer\n");
       log_err(sync->log, "Consumer: %s\n", self->td->obj_name);
-      log_err(sync->log, "Producer: %s (%s)\n", prod->td->obj_name, 
+      log_err(sync->log, "Producer: %s (%s)\n", prod->td->obj_name,
             prod->td->class_name);
       hard_exit(__func__, __LINE__);
-   } 
+   }
 }
 
 
@@ -237,7 +253,7 @@ static void frame_sync_class_run(
    frame_set_type *set1 = &b;
    //
    frame_time_type   next = { .frame=NULL, .t=0.0   };
-   // 
+   //
    while ((self->run_state & DP_STATE_DONE) == 0) {
 //log_info(sync->log, "Entering wait()");
       dp_wait(self);   // wait for data to become available
@@ -265,7 +281,7 @@ static void frame_sync_class_run(
 //log_info(sync->log, "Add frame at t=%.3f to set 1", next.t);
             add_frame_to_set(set1, &next, cam_num);
          } else {
-            // the next frame is in the following set. close out 
+            // the next frame is in the following set. close out
             //    set0, publish it, and shift the buffers down
             // on initialization this branch is followed. check for t>0
             //    and publish if so (during init, t=0)
@@ -312,9 +328,9 @@ static void * frame_sync_get_object_at(
       /* in     */ const datap_desc_type *self,
       /* in     */ const uint32_t idx
       )
-{  
+{
    return &self->void_queue[idx * sizeof(frame_sync_output_type)];
-} 
+}
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -334,17 +350,17 @@ void * frame_sync_class_init(
 //   frame_sync_setup_type *setup = (frame_sync_setup_type*) module_setup;
    sync->log = get_logger(self->td->obj_name);
    report_thread_id(self, sync->log);
-   // 
+   //
 //   if (setup->logging != 0) {
 //      // open logfile
 //      char buf[STR_LEN];
 //      // construct path
-//      snprintf(buf, STR_LEN, "%s%s", get_log_folder_name(), 
+//      snprintf(buf, STR_LEN, "%s%s", get_log_folder_name(),
 //            self->td->obj_name);
 //      sync->logfile = fopen(buf, "w");
 //      if (sync->logfile == NULL) {
 //         // non-fatal error. we just loose logging
-//         log_err("Unable to create logfile for %s (%s)", 
+//         log_err("Unable to create logfile for %s (%s)",
 //               self->td->obj_name, buf);
 //      } else {
 //         log_info("%s logging data to %s", self->td->obj_name, buf);

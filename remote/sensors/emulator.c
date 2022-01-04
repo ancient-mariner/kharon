@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pin_types.h"
 #include <stdio.h>
 #include <assert.h>
@@ -201,11 +217,11 @@ static void print_consensus(
    const vector_type *gyr = &cons->gyr_axis;
    const vector_type *acc = &cons->acc;
    const vector_type *mag = &cons->mag;
-   printf("%6.2f,%6.2f,%6.2f,  ", 
+   printf("%6.2f,%6.2f,%6.2f,  ",
          (double) gyr->v[0], (double) gyr->v[1], (double) gyr->v[2]);
-   printf("%7.3f,%7.3f,%7.3f,  ", 
+   printf("%7.3f,%7.3f,%7.3f,  ",
          (double) acc->v[0], (double) acc->v[1], (double) acc->v[2]);
-   printf("%6.2f,%6.2f,%6.2f,  ", 
+   printf("%6.2f,%6.2f,%6.2f,  ",
          (double) mag->v[0], (double) mag->v[1], (double) mag->v[2]);
    printf("%6.2f\n", (double) cons->temp);
 }
@@ -357,7 +373,7 @@ static double load_next_image_frame(void)
       if (getline(&lineptr, &ptr_size, fp) <= 0) {
          printf("End of image stream (%s)\n", device_name_);
          goto err;   // error or end of file -- either way we're done
-      } 
+      }
       char *str = trim_whitespace(lineptr);
       if (str == NULL) {
          fprintf(stderr, "Encountered empty line in input image file\n");
@@ -401,7 +417,7 @@ static int32_t send_image(double t)
    uint32_t n_pix = (uint32_t) (frame_image_->size.x * frame_image_->size.y);
    if (CAM_N_PIX != n_pix/2) {
       fprintf(stderr, "Input image of unexpected size\n");
-      fprintf(stderr, "Got %d,%d. Expected %d,%d\n", frame_image_->size.x, 
+      fprintf(stderr, "Got %d,%d. Expected %d,%d\n", frame_image_->size.x,
             frame_image_->size.y, CAM_COLS, CAM_ROWS);
       goto err;
    }
@@ -417,12 +433,12 @@ static int32_t send_image(double t)
    }
    // send V channel -- this should be first 1/2 of buffer
    if (send_block(cam_sock_fd_, frame_image_->gray, n_pix/2) < 0) {
-      fprintf(stderr, "Error sending part 1 of VY image frame\n"); 
+      fprintf(stderr, "Error sending part 1 of VY image frame\n");
       goto err;
    }
    // send Y channel -- this should be 2nd half of buffer
    if (send_block(cam_sock_fd_, &frame_image_->gray[n_pix/2], n_pix/2) < 0) {
-      fprintf(stderr, "Error sending part 2 of VY image frame\n"); 
+      fprintf(stderr, "Error sending part 2 of VY image frame\n");
       goto err;
    }
    rc = 0;
@@ -729,7 +745,7 @@ static int32_t acquisition_loop(void)
          wake_time = system_now() + 0.1;
       }
       //////////////////////////////////////////////////////////////////
-      // 
+      //
       struct timespec t;
       double_to_timespec(wake_time, &t);
       while (clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL) != 0) {

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pin_types.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,7 +50,7 @@ static const char phantom_config_file_[STR_LEN] = { 0 };
 ////////////////////////////////////////////////////////////////////////
 
 static void panorama_add_producer(
-      /* in     */       struct datap_desc *self, 
+      /* in     */       struct datap_desc *self,
       /* in     */       struct datap_desc *prod
       )
 {
@@ -48,10 +64,10 @@ static void panorama_add_producer(
    } else {
       log_err(pan->log, "Attempted to subscribe to incompatible producer\n");
       log_err(pan->log, "Consumer: %s\n", self->td->obj_name);
-      log_err(pan->log, "Producer: %s (%s)\n", prod->td->obj_name, 
+      log_err(pan->log, "Producer: %s (%s)\n", prod->td->obj_name,
             prod->td->class_name);
       hard_exit(__func__, __LINE__);
-   } 
+   }
    self->producer_list[self->num_attached_producers].producer = prod;
    self->producer_list[self->num_attached_producers].consumed_elements = 0;
    self->num_attached_producers++;
@@ -59,7 +75,7 @@ static void panorama_add_producer(
       log_err(pan->log, "Panorama can have only one producer "
             "(either frame-sync or replay-pan)\n");
       log_err(pan->log, "Consumer: %s\n", self->td->obj_name);
-      log_err(pan->log, "Producer: %s (%s)\n", prod->td->obj_name, 
+      log_err(pan->log, "Producer: %s (%s)\n", prod->td->obj_name,
             prod->td->class_name);
       hard_exit(__func__, __LINE__);
    }
@@ -69,8 +85,8 @@ static void panorama_add_producer(
 ////////////////////////////////////////////////////////////////////////
 static void panorama_pre_run(struct datap_desc *self)
 {
-   const uint32_t pyramid_offset[NUM_PYRAMID_LEVELS] = { 
-      0, 
+   const uint32_t pyramid_offset[NUM_PYRAMID_LEVELS] = {
+      0,
       WORLD_WIDTH_PIX[0] * WORLD_HEIGHT_PIX[0]
 //      WORLD_C0 * WORLD_R0 + WORLD_C1 * WORLD_R1
    };
@@ -103,7 +119,7 @@ static void panorama_pre_run(struct datap_desc *self)
 //   /////////////////////////////////////////////
 //   // color grid
 //   init_color_grid(&pan->master_color_grid);
-//   pan->color_grid_heap = 
+//   pan->color_grid_heap =
 //         malloc(PANORAMA_QUEUE_LEN * sizeof *pan->color_grid_heap);
 //   for (uint32_t i=0; i<PANORAMA_QUEUE_LEN; i++) {
 //      init_color_grid(&pan->color_grid_heap[i]);
@@ -114,10 +130,10 @@ static void panorama_pre_run(struct datap_desc *self)
    //    as all pyrs can be stored there
    // format:
    //    11111111...112222...2333...34...4
-   uint32_t n_pix = (uint32_t) 
+   uint32_t n_pix = (uint32_t)
          (3 * WORLD_HEIGHT_PIX[0] * WORLD_WIDTH_PIX[0] / 2);
    for (uint32_t i=0; i<PANORAMA_QUEUE_LEN; i++) {
-      panorama_output_type *out = 
+      panorama_output_type *out =
             &((panorama_output_type*) self->void_queue)[i];
       out->pyramid_ = malloc(n_pix * sizeof *out->pyramid_);
 //      out->color_grid = &pan->color_grid_heap[i];
@@ -141,7 +157,7 @@ static void panorama_run(
    producer_record_type *prod_rec = &self->producer_list[0];
    datap_desc_type *prod = prod_rec->producer;
    panorama_class_type *pan = (panorama_class_type *) self->local;
-//   uint32_t n_grid_units = (uint32_t) (pan->master_color_grid.size.y * 
+//   uint32_t n_grid_units = (uint32_t) (pan->master_color_grid.size.y *
 //         pan->master_color_grid.size.x);
    // this is redundant w/ elements produced and is used for auto-compaction
    //    of frame list. keep it distinct for to clearly separate logic
@@ -152,7 +168,7 @@ static void panorama_run(
 //      log_info(pan->log, "Waiting for data");
       dp_wait(self);   // wait for data to become available
       while (prod_rec->consumed_elements < prod->elements_produced) {
-//         log_info(pan->log, "Consuming %ld of %ld", 
+//         log_info(pan->log, "Consuming %ld of %ld",
 //               prod_rec->consumed_elements, prod->elements_produced);
          ///////////////////////////////////////////////////////////////
          // get data source
@@ -161,7 +177,7 @@ static void panorama_run(
          const double t = prod->ts[p_idx];
          ///////////////////////////////////////////////////////////////
          // get data sink
-         const uint32_t idx = (uint32_t) 
+         const uint32_t idx = (uint32_t)
                (self->elements_produced % self->queue_length);
          frame_page_type *page= allocate_page(pan->frame_heap);
          self->ts[idx] = t;
@@ -190,7 +206,7 @@ static void panorama_run(
                //    if it's available
                if (frame != NULL) {
                   active_frames++;
-                  project_frame_to_panorama(frame, frame->size[lev], 
+                  project_frame_to_panorama(frame, frame->size[lev],
                         page->frame, out_sz, lev);
                }
             }
@@ -214,9 +230,9 @@ static void panorama_run(
 //         build_output_color_dist(pan, out_grid);
          ///////////////////////////////////////////////////////////////
          prod_rec->consumed_elements++;   // total elements processed
-         // if there were no active frames then this view is empty. 
+         // if there were no active frames then this view is empty.
          //    don't publish it
-//         log_info(pan->log,"Pan has %d frames", active_frames); 
+//         log_info(pan->log,"Pan has %d frames", active_frames);
          if (active_frames == 0) {
             continue;
          }
@@ -246,7 +262,7 @@ static void panorama_run(
          // even though dta is read differently from other processors,
          //    use std mechanism to report that data is available
          self->elements_produced++;
-//         log_info(pan->log, "Signaling data available (sample %ld)", 
+//         log_info(pan->log, "Signaling data available (sample %ld)",
 //               self->elements_produced);
          dp_signal_data_available(self);
          //
@@ -281,9 +297,9 @@ static void * panorama_get_object_at(
       /* in     */ const datap_desc_type *self,
       /* in     */ const uint32_t idx
       )
-{  
+{
    return &self->void_queue[idx * sizeof(panorama_output_type)];
-} 
+}
 
 
 ////////////////////////////////////////////////////////////////////////

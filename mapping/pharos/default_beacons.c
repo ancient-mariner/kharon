@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
@@ -36,7 +52,7 @@ err:
 }
 
 
-// 
+//
 static void generate_beacons(void)
 {
    // generate default beacons for each band
@@ -45,7 +61,7 @@ static void generate_beacons(void)
    pos.akn_y = DEFAULT_LAT_OFFSET_DEG;
    while (pos.akn_y < DEFAULT_LAT_SOUTHERN_BOUNDS_AKN) {
       // circumference correction for latitude
-      double circum_scale = sin(D2R * pos.akn_y);   
+      double circum_scale = sin(D2R * pos.akn_y);
       double circum_met = circum_scale * 360.0 * DEG_TO_METER;
       // how many beacons and how far between them, in this row
       double steps = ceil(circum_met / DEFAULT_LON_STEP_MET);
@@ -69,11 +85,11 @@ printf("akn-lat %.2f  circum %.2fm  scale %.4f  steps %.2f, step size %.2fm\n", 
          }
 //printf("Keeping %.4f,%.4f with positive depth (low=%d)\n", pos.akn_x, pos.akn_y, square->low);
          ///////////////////////////////////////
-         // check magnetic inclination. if too near a magnetic pole, 
+         // check magnetic inclination. if too near a magnetic pole,
          //    don't create a beacon
          world_coordinate_type latlon = convert_akn_to_world(pos);
          double declination, inclination;
-         load_declination(declination_file_, latlon, 
+         load_declination(declination_file_, latlon,
                &declination, &inclination);
          if (fabs(inclination) > BEACON_INCLINATION_LIMIT) {
 //printf("Skipping %.4f,%.4f due inclination %.3f\n", pos.akn_x, pos.akn_y, inclination);

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "s2.h"
 #include <stdio.h>
 #include <stdint.h>
@@ -27,12 +43,12 @@
 
 static int32_t write_register(
       /* in out */       sensor_runtime_type *dev,
-      /* in     */ const uint8_t reg, 
+      /* in     */ const uint8_t reg,
       /* in     */ const uint8_t value
       )
 {
    if (i2c_smbus_write_byte_data(dev->hw_device, reg, value) < 0) {
-      fprintf(stderr, "%s: write_register() error. reg=%d, value=%d\n", 
+      fprintf(stderr, "%s: write_register() error. reg=%d, value=%d\n",
             __FILE__, reg, value);
       device_error(dev, __FILE__, __LINE__, reg, dev->flags);
       return -1;
@@ -49,7 +65,7 @@ static void mag_data_available(
 {
    uint8_t cmd = 0x80 | STATUS_REG;
    int hw = dev->hw_device;
-   if (i2c_smbus_read_i2c_block_data(hw, cmd, 1, data) < 0) 
+   if (i2c_smbus_read_i2c_block_data(hw, cmd, 1, data) < 0)
    {
       device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAGS_MAG_TEMP);
    }
@@ -78,7 +94,7 @@ static int32_t read_mag_data(
    data[2] = (int16_t) (raw[4] | raw[5] << 8);
    data[3] = (int16_t) (raw[6] | raw[7] << 8);
    apply_gain(data, &dev->mag.gain, &dev->mag.mag);
-//   apply_gain_scale_offset(data, &dev->mag.gain, 
+//   apply_gain_scale_offset(data, &dev->mag.gain,
 //         &dev->mag.scale, &dev->mag.offset, &dev->mag.mag);
    dev->temp.celcius = 25.0 + dev->temp.gain * ((double) data[3]);
 //printf("TEMP %04x  (%.3f  %.3f)  gain: %.3f\n", (uint16_t) data[3], dev->temp.celcius, (double) data[3], dev->temp.gain);
@@ -151,7 +167,7 @@ int32_t lis3mdl_check_whoami(
    uint8_t cmd = 0x80 | WHO_AM_I;
    int hw = dev->hw_device;
    uint8_t data;
-   if (i2c_smbus_read_i2c_block_data(hw, cmd, 1, &data) < 0) 
+   if (i2c_smbus_read_i2c_block_data(hw, cmd, 1, &data) < 0)
    {
       device_error(dev, __FILE__, __LINE__, cmd, SENSOR_FLAGS_MAG_TEMP);
       goto err;
@@ -180,7 +196,7 @@ void lis3mdl_update(
       // pull data
       read_mag_data(dev);
       *data_available = 1;
-   } 
+   }
    timeadd(&dev->waketime, 0, UPDATE_INTERVAL_US * TIME_ADD_1US);
 }
 

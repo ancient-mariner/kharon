@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(SCRIPT_IFACE_H)
 #define SCRIPT_IFACE_H
 #include <stdint.h>
@@ -6,7 +22,7 @@
 
 #define LUA_PATH "/pinet/ext/bin/"
 
-// run lua scripts to create and customize producers and consumers, 
+// run lua scripts to create and customize producers and consumers,
 //   and link them together
 int32_t configure_environment(const char* config);
 
@@ -31,7 +47,7 @@ uint32_t determine_logging_state(
 // out-of-place documentation
 // to see CPU load per thread, run 'top -H -p <pid>'
 // TODO figure out how to map pthread ID to system process ID
-void launch_thread(const char *name, const char *class, 
+void launch_thread(const char *name, const char *class,
       void *(*cb)(void*), void *arg);
 
 // reads from an int-filled array (table) at stack index idx

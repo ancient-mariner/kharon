@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <math.h>
 #include <stdint.h>
@@ -11,7 +27,7 @@
 // IMPORTANT gebco files are _not_ useful for navigation. the values in
 //    each 15-second grid appear to be the _average_ depth over that
 //    grid, and _not_ the minimum depth. grid squares have been observed
-//    that show a modest depth (eg, 10m) where in reality there are 
+//    that show a modest depth (eg, 10m) where in reality there are
 //    rocks that break the surface. a known island is also not identified
 //    on the maps (observations based on PNW/San Juan Islands area)
 
@@ -21,7 +37,7 @@
 #define ASCII_COLS   21600
 #define ASCII_ROWS   21600
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
    int rc = -1;
    if (argc != 2) {

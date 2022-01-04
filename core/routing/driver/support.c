@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 
 // set position somewhere in deep water, far from land. this is the
@@ -32,7 +48,7 @@ static void handle_set_autotracking(
       if (autotracking_ == 0) {
          log_info(driver_->log, "Autotracking is now ON");
          // set to 2 on init. forces course packet to be sent now
-         autotracking_ = 2;   
+         autotracking_ = 2;
       }
    }
 }
@@ -65,7 +81,7 @@ static void handle_set_destination(
       )
 {
    log_info(driver_->log, "Setting new destination: lat=%.5f lon=%.5f, "
-         "rad=%.1fm", destination.y_deg, destination.x_deg, 
+         "rad=%.1fm", destination.y_deg, destination.x_deg,
          (double) radius.meters);
    driver_->route.destination = destination;
    if (driver_->route.destination.x_deg < 0.0) {
@@ -166,7 +182,7 @@ meter_type dx,dy;
 world_coordinate_type start = { .lon=237.49571, .lat=48.74896 };
 calc_meter_offset(driver_->vessel.position, start, &dx, &dy, __func__);
 log_debug(log_, "Position %f,%f   pix %d,%d  delta(m) %.1f,%.1f", driver_->vessel.position.x_deg, driver_->vessel.position.y_deg, path_map->vessel_start_pix.x, path_map->vessel_start_pix.y, pres_pix.x, pres_pix.y, dx.meters, dy.meters);
-   // we can skip a sqrt (and skip floating point) for the comparison 
+   // we can skip a sqrt (and skip floating point) for the comparison
    //    if we square threshold limit
    int32_t mvmt_dist2 = mvmt_dx*mvmt_dx + mvmt_dy*mvmt_dy;
    int32_t mvmt_limit2 = VESSEL_MOTION_PIX_FOR_MAP_REBUILD
@@ -183,12 +199,12 @@ log_debug(log_, "Position %f,%f   pix %d,%d  delta(m) %.1f,%.1f", driver_->vesse
    // not rebuilding will avoid edge case of map being rebuilt with vessel
    //    and destination in same pixel. some logic paths (at least in
    //    the past) depended on this not happening
-   double dest_dx = 
+   double dest_dx =
          (double) (path_map->dest_pix.x - path_map->vessel_start_pix.x);
-   double dest_dy = 
+   double dest_dy =
          (double) (path_map->dest_pix.y - path_map->vessel_start_pix.y);
    double dest_dist2 = dest_dx*dest_dx + dest_dy*dest_dy;
-   double dest_limit2 = (double) (PIX_DIST_AVOID_MAP_REBUILD * 
+   double dest_limit2 = (double) (PIX_DIST_AVOID_MAP_REBUILD *
          PIX_DIST_AVOID_MAP_REBUILD);
    if (dest_dist2 < dest_limit2) {
       // destination is pretty close -- skip the rebuild
@@ -211,9 +227,9 @@ static void reload_map(void)
 static int ctr = 0;
    // [re]load map. requires current-ish position data
    uint32_t flags = driver_->route.flags2_persistent;
-   if ((driver_->map_current == 0) && 
+   if ((driver_->map_current == 0) &&
          ((flags & ROUTE_INFO_HAVE_POSITION) != 0)) {
-      // if destination hasn't changed than we can do a map update, 
+      // if destination hasn't changed than we can do a map update,
       //    otherwise we need a full initialization
       if (driver_->destination_current == 0) {
 log_err(log_, "Loading map for fresh destination");
@@ -222,7 +238,7 @@ log_err(log_, "Loading map for fresh destination");
          world_coordinate_type dest = driver_->route.destination;
          // if position and/or destination not set then map is not valid,
          //    so set destination equal to position
-         if ((flags & ROUTE_INFO_HAVE_POS_DEST_MASK) != 
+         if ((flags & ROUTE_INFO_HAVE_POS_DEST_MASK) !=
                ROUTE_INFO_HAVE_POS_DEST_MASK) {
             dest = driver_->vessel.position;
          }
@@ -250,7 +266,7 @@ log_err(log_, "Updating map");
          // update map
          image_coordinate_type pres_pix = get_pix_position_in_map(
                driver_->path_map, driver_->vessel.position);
-         rebuild_map_by_vessel_offset(driver_->path_map, pres_pix, 
+         rebuild_map_by_vessel_offset(driver_->path_map, pres_pix,
                driver_->vessel.position);
       }
       // if course override indicated, propagate that into map
@@ -317,7 +333,7 @@ static void plot_course(
       case 2:     // position only
 //log_info(driver_->log, "Plotting course, no target data");
 //printf("### Plotting course, no target data %.3f %.3f\n", t, driver_->associator_sec);
-         plot_route(driver_->path_map, driver_->route_map, NULL, 
+         plot_route(driver_->path_map, driver_->route_map, NULL,
                &driver_->route, &driver_->vessel, t);
          break;
       case 3:     // tracking and position
@@ -327,14 +343,14 @@ static void plot_course(
    }
    if (driver_->route.flags_state & ROUTE_INFO_STATE_PATH_LOCAL_MINIMUM) {
       log_err(log_, "Reached local path minimum at %.4f,%.4f. Deleting "
-            "beacon", driver_->vessel.position.lon, 
+            "beacon", driver_->vessel.position.lon,
             driver_->vessel.position.lat);
 
 assert(1 == 0);
    }
-   // pass in driver_ values separately as unit tests rely on 
+   // pass in driver_ values separately as unit tests rely on
    //    passing in independent values
-   decide_course_change(t, driver_->last_course_request_sec, 
+   decide_course_change(t, driver_->last_course_request_sec,
          &driver_->route, &driver_->vessel);
 }
 
@@ -367,7 +383,7 @@ static void check_course(
       //    is set explicitly. when autotracking is off, tracking computations
       //    are still performed. have them be based on present heading
       driver_->route.autopilot_course = driver_->route.measured_heading;
-      driver_->route.autopilot_course_score = 
+      driver_->route.autopilot_course_score =
             driver_->route.measured_heading_score;
       // else, otto packet was recent -- don't send another
    } else if (autotracking_ == 2) {
@@ -377,7 +393,7 @@ static void check_course(
       autotracking_ = 1;
       send_info = 1;
       driver_->last_course_request_sec = t;
-      heading_data_.course = (uint16_t) 
+      heading_data_.course = (uint16_t)
             (driver_->route.sug_heading.tru.angle32 * BAM32_TO_DEG);
       driver_->route.autopilot_course = driver_->route.sug_heading;
       driver_->route.autopilot_course_score = driver_->route.sug_heading_score;
@@ -387,9 +403,9 @@ printf("Checking course -- autotracking on\n");
 //log_info(driver_->log, "Checking course -- autotracking on");
       if (driver_->route.flags_course & ROUTE_INFO_COURSE_CHANGE_MASK) {
          // course change decided
-         log_info(driver_->log, "   course %d, should be %.0f,  severity %d", 
+         log_info(driver_->log, "   course %d, should be %.0f,  severity %d",
                heading_data_.course,
-               (double) driver_->route.sug_heading.tru.angle32 * BAM32_TO_DEG, 
+               (double) driver_->route.sug_heading.tru.angle32 * BAM32_TO_DEG,
                driver_->route.flags_course);
          heading_data_.course = (uint16_t)
                (driver_->route.sug_heading.tru.angle32 * BAM32_TO_DEG);
@@ -410,7 +426,7 @@ printf("  set pres course (path changed)\n");
          log_info(driver_->log, "   new course %d", heading_data_.course);
          send_info = 1;
          driver_->last_course_request_sec = t;
-      } else if ((t - driver_->last_otto_command_sec) > 
+      } else if ((t - driver_->last_otto_command_sec) >
             OTTO_COMMAND_INTERVAL_SEC) {
 //log_info(driver_->log, "Checking course -- update heading");
          // it's been a while since the last sent packet. resend course data
@@ -425,7 +441,7 @@ printf("  set pres course (path changed)\n");
 //log_info(driver_->log, "  Sending info");
 //printf("Sending DPS %.3f\n", driver_->turn_rate.dps);
       heading_data_.dps = (float) driver_->turn_rate.dps;
-      heading_data_.heading = (uint16_t) 
+      heading_data_.heading = (uint16_t)
             (driver_->attitude_latest.true_heading.degrees + 0.5);
       heading_data_available_ = 1;
    }
@@ -466,7 +482,7 @@ static int32_t get_latest_attitude_data(void)
    //    breaks then it's still the best guess of heading that we have
    CVT_DEG_TO_BAM32(driver_->attitude_latest.true_heading.degrees,
          driver_->vessel.true_heading.tru);
-//   driver_->vessel.true_heading.tru.angle32 = (uint32_t) 
+//   driver_->vessel.true_heading.tru.angle32 = (uint32_t)
 //         (driver_->attitude_latest.true_heading.degrees * DEG_TO_BAM32);
    // FIXME redundant set -- since PS became optional, heading
    //    is no longer set via set_vessel_position() below so needs
@@ -485,7 +501,7 @@ static void get_latest_gps_data(
    if (driver_->gps != NULL) {
       producer_record_type *pr = driver_->gps;
       datap_desc_type *prod = pr->producer;
-//      if ((pr->consumed_elements != prod->elements_produced) && 
+//      if ((pr->consumed_elements != prod->elements_produced) &&
 //            (prod->elements_produced > 0)) {
       if (pr->consumed_elements != prod->elements_produced) {
          // GPS packets can be mixed. to get most recent data, read all
@@ -494,7 +510,7 @@ static void get_latest_gps_data(
          memset(&combined, 0, sizeof combined);
          double gps_time = 0.0;
          while (pr->consumed_elements < prod->elements_produced) {
-            const uint32_t p_idx = 
+            const uint32_t p_idx =
                   (uint32_t) pr->consumed_elements % prod->queue_length;
             gps_receiver_output_type *out = (gps_receiver_output_type*)
                   dp_get_object_at(prod, p_idx);
@@ -522,7 +538,7 @@ static void get_latest_gps_data(
          }
          // if GPS has provided data, make sure it's enough to push into
          //    stream
-         if ((combined.available & GPS_REC_MIN_DATA_FOR_PUBLISH) == 
+         if ((combined.available & GPS_REC_MIN_DATA_FOR_PUBLISH) ==
                GPS_REC_MIN_DATA_FOR_PUBLISH) {
 //printf("DRIVER  gps %d  pos %.4f,%.4f\n", p_idx, out->pos.x_deg, out->pos.y_deg);
             if (combined.pos.x_deg < 0.0) {
@@ -546,18 +562,18 @@ static void get_latest_gps_data(
             }
 //else { fprintf(stderr, "SPEED NOT AVAILABLE\n"); }
             set_vessel_position(&driver_->vessel, &driver_->route,
-                  driver_->position_latest.pos, driver_->route.present_speed, 
+                  driver_->position_latest.pos, driver_->route.present_speed,
                   driver_->vessel.true_heading, driver_->position_sec);
             driver_->route.last_known_position = driver_->position_latest.pos;
          } else {
             // no new position data to use. just update heading
-            update_vessel_heading(&driver_->vessel, 
+            update_vessel_heading(&driver_->vessel,
                   driver_->vessel.true_heading, driver_->route.present_speed);
          }
       } else if (pr->consumed_elements > 0) {
          // we already have the most recently measured position.
          //    update heading
-         update_vessel_heading(&driver_->vessel, 
+         update_vessel_heading(&driver_->vessel,
                driver_->vessel.true_heading, driver_->route.present_speed);
       }
       // check for currency of data
@@ -571,7 +587,7 @@ static void get_latest_gps_data(
                // position is newly acquired
                // set position flag
                driver_->route.flags2_persistent = (uint32_t)
-                     (driver_->route.flags2_persistent | 
+                     (driver_->route.flags2_persistent |
                      ROUTE_INFO_HAVE_POSITION);
                // set flag to recalculate route map
                driver_->map_current = 0;
@@ -580,7 +596,7 @@ static void get_latest_gps_data(
             // position data is stale
             if ((flags & ROUTE_INFO_HAVE_POSITION) != 0) {
                // flags still indicate position data is available. change that
-               // TODO  override active course in map to suggested 
+               // TODO  override active course in map to suggested
                //    heading so we at least maintain present course
                // TODO  enable some form of dead reckoning to infer position
                driver_->route.flags2_persistent = (uint32_t)
@@ -653,7 +669,7 @@ static int32_t get_latest_target_data(
          //    future, that means that the associator didn't produce
          //    anything since this sample, so this sample will still
          //    be the most current
-         const associator_output_type *c_out = 
+         const associator_output_type *c_out =
                (associator_output_type*) dp_get_object_at(prod, p_idx);
          memcpy(&driver_->associator_out, c_out, sizeof *c_out);
          driver_->associator_sec = prod->ts[p_idx];

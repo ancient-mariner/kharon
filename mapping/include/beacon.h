@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(BEACON_H)
 #define BEACON_H
 #include "world_map.h"
@@ -75,7 +91,7 @@ struct beacon_record {
 };
 typedef struct beacon_record beacon_record_type;
 #define BEACON_BIN_RECORD_SIZE_BYTES      (80)
-_Static_assert(sizeof(beacon_record_type) == BEACON_BIN_RECORD_SIZE_BYTES, 
+_Static_assert(sizeof(beacon_record_type) == BEACON_BIN_RECORD_SIZE_BYTES,
       "Beacon record size is wrong. Reading beacon.bin should fail");
 
 #define BEACON_STACK_SIZE        16384
@@ -90,8 +106,8 @@ struct beacon_index_record {
 };
 typedef struct beacon_index_record beacon_index_record_type;
 #define BEACON_IDX_RECORD_SIZE_BYTES      (8)
-_Static_assert(sizeof(beacon_index_record_type) == 
-      BEACON_IDX_RECORD_SIZE_BYTES, 
+_Static_assert(sizeof(beacon_index_record_type) ==
+      BEACON_IDX_RECORD_SIZE_BYTES,
       "Beacon idx record size is wrong. Reading beacon.idx should fail");
 
 ////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
@@ -37,9 +53,9 @@ printf("*** signal_exit\n"); fflush(stdout);
          dp_quit(thread_table_g[i].dp);
 //   }
 //   shutdown_endpoints();
-//   // 
+//   //
 //   if (processor_list_ != NULL) {
-      // wait for threads to finish what they're doing 
+      // wait for threads to finish what they're doing
       // duration should be >> worst case scenario, to avoid deadlock
       // TODO have each thread report that it's done processing.
       //    wait for all threads to report in before continuing, or
@@ -73,8 +89,8 @@ int32_t module_onoff(
       /* in     */ const int32_t on_off
       )
 {
-   if (processor_list_ != NULL) {   
-      // set each thread's quit flag          
+   if (processor_list_ != NULL) {
+      // set each thread's quit flag
       for (uint32_t i=0; i<num_threads_g; i++) {
          datap_desc_type *dp = thread_table_g[i].dp;
          if (strcmp(dp->td->obj_name, module_name) == 0) {
@@ -114,7 +130,7 @@ void set_acquisition_state(uint32_t on_off)
 //    services are managed by hard-coded ports in dev/ tree
 //
 // Each service is bound to a port locally
-// When an endpoint request comes in (via the postmaster), the postmaster 
+// When an endpoint request comes in (via the postmaster), the postmaster
 //    claims and enpdpoint and returns the port number to the calling process.
 //    That port will be marked as claimed until the service releases it,
 //    which should happen if the client disconnects.
@@ -137,9 +153,9 @@ int16_t register_service(
    int16_t port_num = 0;
    if (num_assigned_services_ == 0) {
       memset(service_ports_, 0, MAX_NETWORK_SERVICES * sizeof *service_ports_);
-   } 
+   }
    if (num_assigned_services_ < MAX_NETWORK_SERVICES) {
-      port_num = (int16_t) (get_postmaster_port() + 1 + 
+      port_num = (int16_t) (get_postmaster_port() + 1 +
             (int16_t) num_assigned_services_);
 printf("Service %d has port %d\n", service_id, port_num);
 printf("postmaster port: %d\n", get_postmaster_port());
@@ -149,7 +165,7 @@ printf("# assigned: %d\n", num_assigned_services_);
       service_ports_[num_assigned_services_].port_num = port_num;
       num_assigned_services_++;
    } else {
-      log_err(get_kernel_log(), 
+      log_err(get_kernel_log(),
             "Too many services registered -- cannot create new one. Max=%d",
             MAX_NETWORK_SERVICES);
    }
@@ -197,7 +213,7 @@ void claim_endpoint(
          return;
       }
    }
-   log_info(get_kernel_log(), 
+   log_info(get_kernel_log(),
          "Failed to claim endpoint -- port %d not available", port_num);
 }
 
@@ -214,7 +230,7 @@ void release_endpoint(
          return;
       }
    }
-   log_info(get_kernel_log(), 
+   log_info(get_kernel_log(),
          "Failed to release endpoint -- port %d not bound", port_num);
 }
 #endif   // 0

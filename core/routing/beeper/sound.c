@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 // flags for sounds to be played
 // to request a sound, set the flag for a given sound to non-zero
@@ -40,7 +56,7 @@ typedef union stereo_buffer stereo_buffer_type;
 //    appropriate sound files
 #define BEEPER_SAMPLING_RATE   44100
 
-// keep rate as variable as BEEPER_SAMPLING_RATE is only a request -- the 
+// keep rate as variable as BEEPER_SAMPLING_RATE is only a request -- the
 //    actual rate may be different
 static uint32_t rate_ = BEEPER_SAMPLING_RATE;
 
@@ -56,7 +72,7 @@ static snd_pcm_t *pcm_handle_ = NULL;
 // number of periods
 const uint32_t periods_ = 4;
 // number of frames (samples) in a period
-const snd_pcm_uframes_t frames_per_period_ = FRAMES_PER_PERIOD; 
+const snd_pcm_uframes_t frames_per_period_ = FRAMES_PER_PERIOD;
 
 const uint32_t PERIOD_BYTES = FRAMES_PER_PERIOD * sizeof(stereo_sample_type);
 
@@ -166,7 +182,7 @@ static void init_klaxon_twotone(
       )
 {
    assert(n_transitions & 1);     // make sure it's odd
-   // 
+   //
    int16_t left_base = (int16_t) left_mag;
    int16_t right_base = (int16_t) right_mag;
    uint32_t f[8] = { 0 };
@@ -225,7 +241,7 @@ static void init_klaxon(
       )
 {
    assert((n_transitions & 1) == 0);     // make sure it's even
-   // 
+   //
    int16_t left_base = (int16_t) left_mag;
    int16_t right_base = (int16_t) right_mag;
    uint32_t f[4] = { 0 };
@@ -349,14 +365,14 @@ static void init_klaxon_fullstop(void)
          2 * BEEPER_SAMPLING_RATE / 4,    3 * BEEPER_SAMPLING_RATE / 4,
          4 * BEEPER_SAMPLING_RATE / 4
    };
-   init_klaxon_twotone(&klaxon_fullstop_, transition, 
+   init_klaxon_twotone(&klaxon_fullstop_, transition,
          NUM_KLAXON_FULLSTOP_TRANSITIONS, KLAXON_ALARM_MAX, KLAXON_ALARM_MAX);
 }
 
 // one long falling klaxon
 static void init_klaxon_autopilot_error(void)
 {
-   init_klaxon_falling(&klaxon_autopilot_error_, 
+   init_klaxon_falling(&klaxon_autopilot_error_,
          KLAXON_ALARM_MAX, KLAXON_ALARM_MAX);
 }
 
@@ -411,7 +427,7 @@ static int32_t establish_sound_interface(void)
    snd_pcm_hw_params_t *hwparams;
    snd_pcm_hw_params_alloca(&hwparams);
    // name of the PCM device
-   // names like plughw:0,0 (referenced in many tutorials) seem 
+   // names like plughw:0,0 (referenced in many tutorials) seem
    //    obsolete or rarely used, as using those requires additional
    //    configuration. 'default' seems to be a solid choice
    const char *pcm_name = "default";
@@ -420,9 +436,9 @@ static int32_t establish_sound_interface(void)
    // establish PCM connection to sound card. the final '0' param
    //    sets writes to be blocking. other options include non-blocking
    //    and async
-   if ((rc = snd_pcm_open(&pcm_handle_, pcm_name, 
+   if ((rc = snd_pcm_open(&pcm_handle_, pcm_name,
             SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
-      fprintf(stderr, "Error opening device '%s': %s\n", pcm_name, 
+      fprintf(stderr, "Error opening device '%s': %s\n", pcm_name,
             snd_strerror(rc));
       goto end;
    }
@@ -434,23 +450,23 @@ static int32_t establish_sound_interface(void)
    }
    //////////////////////////////
    // set access type
-   if ((rc =snd_pcm_hw_params_set_access(pcm_handle_, hwparams, 
+   if ((rc =snd_pcm_hw_params_set_access(pcm_handle_, hwparams,
          SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
       fprintf(stderr, "Error setting access: %s\n", snd_strerror(rc));
       goto end;
    }
    //////////////////////////////
    // set sample format
-   if ((rc = snd_pcm_hw_params_set_format(pcm_handle_, hwparams, 
+   if ((rc = snd_pcm_hw_params_set_format(pcm_handle_, hwparams,
          SND_PCM_FORMAT_S16_LE)) < 0) {
       fprintf(stderr, "Error setting format: %s\n", snd_strerror(rc));
       goto end;
    }
    //////////////////////////////
    // set sampling rate
-   // if the requested rate is not available, the nearest possible 
+   // if the requested rate is not available, the nearest possible
    //    rate will be selected
-   if ((rc = snd_pcm_hw_params_set_rate_near(pcm_handle_, hwparams, 
+   if ((rc = snd_pcm_hw_params_set_rate_near(pcm_handle_, hwparams,
          &rate_, 0)) < 0) {
       fprintf(stderr, "Error setting rate: %s\n", snd_strerror(rc));
       goto end;
@@ -472,14 +488,14 @@ static int32_t establish_sound_interface(void)
    }
    //////////////////////////////
    // set number of periods
-   if ((rc = snd_pcm_hw_params_set_periods(pcm_handle_, hwparams, 
+   if ((rc = snd_pcm_hw_params_set_periods(pcm_handle_, hwparams,
          periods_, 0)) < 0) {
       fprintf(stderr, "Error setting periods: %s.\n", snd_strerror(rc));
       goto end;
    }
    //////////////////////////////
    // set buffer size
-   // buffer size is in frames. in theory, this should equal 
+   // buffer size is in frames. in theory, this should equal
    //    periods * period_size, which works, and with periods=4, four
    //    periods are loaded into internal buffers quickly, whereafter
    //    the refill rate equals the frame time. this seems like expected
@@ -487,11 +503,11 @@ static int32_t establish_sound_interface(void)
    // however, it's possible to set the buffer to be smaller, effectively
    //    reducing the period size (which fails if it's set to 2)
    // experiments show that this can be reduced by 4 and it still runs
-   //    well, with one period being buffered. 
+   //    well, with one period being buffered.
    // 'noisy' should use a larger buffer to account for possible
    //    processing delays
    const uint32_t num_samples = (uint32_t) frames_per_period_ * periods_ / 2;
-   if ((rc = snd_pcm_hw_params_set_buffer_size(pcm_handle_, hwparams, 
+   if ((rc = snd_pcm_hw_params_set_buffer_size(pcm_handle_, hwparams,
          num_samples)) < 0) {
       fprintf(stderr, "Error setting buffersize: %s\n", snd_strerror(rc));
       goto end;
@@ -522,7 +538,7 @@ static void push_sound_data(
    uint32_t idx = 0;
    while (idx < BEEPER_SAMPLING_RATE) {
 //printf("Writing data from %d  (%d,%d)\n", idx, sound->samples[idx].left, sound->samples[idx].right);
-      if ((rc = (int32_t) snd_pcm_writei(pcm_handle_, &sound->bytes[4*idx], 
+      if ((rc = (int32_t) snd_pcm_writei(pcm_handle_, &sound->bytes[4*idx],
                FRAMES_PER_PERIOD)) < 0) {
          fprintf(stderr, "Error: %s\n", snd_strerror(rc));
          snd_pcm_reset(pcm_handle_);

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -51,7 +67,7 @@ int device_;
 ////////////////////////////////////////////////////////////////////////
 
 static void write_register(
-      /* in     */ const uint8_t reg, 
+      /* in     */ const uint8_t reg,
       /* in     */ const uint8_t value
       )
 {
@@ -82,7 +98,7 @@ void check_whoami(uint8_t addr, uint8_t expected)
    // check WHO_AM_I
    uint8_t cmd = 0x80 | addr;
    uint8_t data;
-   if (i2c_smbus_read_i2c_block_data(device_, cmd, 1, &data) < 0) 
+   if (i2c_smbus_read_i2c_block_data(device_, cmd, 1, &data) < 0)
    {
       fprintf(stderr, "Error reading WHOAMI data\n");
       exit(1);
@@ -102,7 +118,7 @@ static void initialize_device(void)
    write_register(CTRL_REG2, 0b00101001);
    // REG3 -- no interrupts (default)
    // REG4 -- little endian, no self test (default)
-   // fifo enable, high-pass filter enable, 
+   // fifo enable, high-pass filter enable,
    write_register(CTRL_REG5, 0b01010001);
    // stream mode, watermark at 1
    write_register(FIFO_CTRL_REG, 0b01000001);
@@ -147,17 +163,17 @@ static int32_t read_data(void)
          goto no_data;
       }
       // burst read: Y, Z, X
-      cmd = 0x80 | OUT_Y_L; 
+      cmd = 0x80 | OUT_Y_L;
       if (i2c_smbus_read_i2c_block_data(device_, cmd, 2, &raw[2]) < 0) {
          fprintf(stderr, "Error reading Y\n");
          goto no_data;
       }
-      cmd = 0x80 | OUT_Z_L; 
+      cmd = 0x80 | OUT_Z_L;
       if (i2c_smbus_read_i2c_block_data(device_, cmd, 2, &raw[4]) < 0) {
          fprintf(stderr, "Error reading Z\n");
          goto no_data;
       }
-      cmd = 0x80 | OUT_X_L; 
+      cmd = 0x80 | OUT_X_L;
       if (i2c_smbus_read_i2c_block_data(device_, cmd, 2, &raw[0]) < 0) {
          fprintf(stderr, "Error reading X\n");
          goto no_data;
@@ -175,7 +191,7 @@ static int32_t read_data(void)
          accum[0] += data[0];
          accum[1] += data[1];
          accum[2] += data[2];
-//printf("%2d  %4d,%4d,%4d    %7.3f,%7.3f,%7.3f\n", n, 
+//printf("%2d  %4d,%4d,%4d    %7.3f,%7.3f,%7.3f\n", n,
 //      data[0], data[1], data[2],
 //      SIG_GAIN*data[0], SIG_GAIN*data[1], SIG_GAIN*data[2]);
          cnt++;
@@ -186,7 +202,7 @@ static int32_t read_data(void)
    } while (--n < 0x1f);
    if (cnt == 0) {
       // this is an exceptional case -- only one sample (shouldn't be
-      //    possible) and it matched the previous last sample. put 
+      //    possible) and it matched the previous last sample. put
       //    invalid data in last so we don't accidentally trigger again
       last_[0] = 0x8001;
       last_[1] = 0x7fff;
@@ -200,7 +216,7 @@ static int32_t read_data(void)
    for (i=0; i<3; i++) {
       // make average of signal (DPS) and return that
       output_[i] = (double) accum[i] * SIG_GAIN / ((double) cnt);
-//      gyro->axis_dps.v[i] = (int32_t) (dtheta * gyro->gain.v[i] - 
+//      gyro->axis_dps.v[i] = (int32_t) (dtheta * gyro->gain.v[i] -
 //            gyro->drift_dps.v[i] * dt);
    }
    //

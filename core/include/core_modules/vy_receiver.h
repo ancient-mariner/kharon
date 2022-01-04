@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #if !defined(VY_RECEIVER_H)
 #define VY_RECEIVER_H
 #if !defined(_GNU_SOURCE)
@@ -25,7 +41,7 @@
 // calculating perspective view on RPi takes >125ms for individual frame
 //    at 2MP resolution, using trig algorithm (spherical approach from
 //    optical up might be faster). however, perspective calculation is
-//    presently deferred until time of spherical projection, to save 
+//    presently deferred until time of spherical projection, to save
 //    information and avoid doing calculation twice
 
 // the values CAM_ROWS, CAM_COLS, and CAM_N_PIX are defined in pin_types.h
@@ -58,7 +74,7 @@ typedef struct vy_receiver_output vy_receiver_output_type;
 // 4 seconds should be enough. if system bogs down for longer than this,
 //   older data will be stale (and there's also something seriously
 //   wrong)
-#define VY_QUEUE_LEN   24  
+#define VY_QUEUE_LEN   24
 
 
 ////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -12,7 +28,7 @@
 // input is text file with each line starting with file name to
 //    load. all files should be checked with noaa/read_gz to verify
 //    format of file. file's header should either be 'survery_id,lat,...'
-//    or #,#,#. In the first case, columns 1,2,3 are used for 
+//    or #,#,#. In the first case, columns 1,2,3 are used for
 //    lat,lon,depth, and in the later case, cols 2,1,3 are used for the
 //    same
 // ideally files listed in file will have some goegraphic order but
@@ -92,7 +108,7 @@ static void parse_headered_line(
       return;
    }
    // depth in meters. for headered files, this should be >= 0, although
-   //    some negative values are present (4 of 5 occur in area of shallow 
+   //    some negative values are present (4 of 5 occur in area of shallow
    //    bays)
    *depth_met = strtof(depth_str, NULL);
    if (errno != 0) {
@@ -175,7 +191,7 @@ if ((abs(elev) > 10000) || (code == 254)) {
          map_level2_square_type *square2 = get_square2(grid_pos, sub_pos);
          if ((square2 != NULL) && (square2->min_depth < code)) {
             square2->min_depth = code;
-            uint32_t world_idx = 
+            uint32_t world_idx =
                   (uint32_t) (grid_pos.akn_x + grid_pos.akn_y * 360);
             level2_modified_[world_idx] = 1;
          }
@@ -231,7 +247,7 @@ int main(int argc, char **argv)
    FILE *cat_fp = NULL;  // for catalog file
    // allocate for entire world. US maps shouldn't take enough
    //    space to overwhelm memory. if there's a problem add logic to
-   //    add from only a specific region, or just # of files processed 
+   //    add from only a specific region, or just # of files processed
    //    at once
    uint32_t n_squares = 360u * 180u;
    level2_maps_ = calloc(n_squares, sizeof *level2_maps_);
