@@ -82,6 +82,7 @@ assert(cnt < FRAME_NODE_HEAP_SIZE);
    }
 }
 
+
 // search for next time where there is a full set of temporally
 //    overlapping frames. if no full overlap, returns -1.0
 static double find_next_full_set(
@@ -109,8 +110,6 @@ static double find_next_full_set(
       }
       if (count == sync->num_input_cams) {
          // we've a fully overlapping set. get middle time and return it
-//         set_time = trailing_node->t +
-//               (leading_node->t - trailing_node->t) / 2.0;
          set_time = (trailing_node->t + leading_node->t) / 2.0;
          goto end;
       }
@@ -131,8 +130,6 @@ static double find_next_set(
       /* in     */ const double ival_end_sec
       )
 {
-//printf("* Check next set  %.3f-%.3f\n", ival_start_sec, ival_end_sec);
-//print_frames(sync);
    frame_node_type* node = sync->active_frame_list_head;
    double best_set_time = -1.0;
    if (node == NULL) {
@@ -149,22 +146,18 @@ static double find_next_set(
    best_set_time = -1.0;
    while (node) {
       if (node->t < ival_start_sec) {
-//printf("   %.3f is too early\n", node->t);
          // node is before interval start. advance to next node
          node = node->next;
          continue;
       } else if (node->t > ival_end_sec) {
-//printf("   %.3f is too late\n", node->t);
          // node is beyond interval end. we're done
          break;
       } else if (trailing_node == NULL) {
-//printf("   setting trailing node at %.3f\n", node->t);
          trailing_node = node;
       }
       // advance head
       leading_node = node;
       count++;
-//printf("*   ival %.3f - %.3f  count %d\n", trailing_node->t, leading_node->t, count);
       // advance tail
       while (trailing_node->t < (leading_node->t - FRAME_ALIGN_SECS)) {
          trailing_node = trailing_node->next;
@@ -208,11 +201,9 @@ static void add_frame_to_list(
       sync->active_frame_list_head = new_frame;
 
    } else {
-//printf("*  frame list head at t=%.3f\n", node->t);
       while (node) {
          if (new_frame->t < node->t) {
             // frame is earlier than this node. insert it into list here
-//printf("*    adding %.3f before %.3f\n", new_frame->t, node->t);
             new_frame->next = node;
             new_frame->prev = node->prev;
             if (node->prev == NULL) {
@@ -224,7 +215,6 @@ static void add_frame_to_list(
             node->prev = new_frame;
             break;
          } else if (node->next == NULL) {
-//printf("*    adding %.3f after %.3f\n", new_frame->t, node->t);
             // reached end of list. add frame here
             node->next = new_frame;
             new_frame->prev = node;
@@ -233,7 +223,6 @@ static void add_frame_to_list(
          node = node->next;
       }
    }
-//print_frames(sync);
 }
 
 
@@ -243,7 +232,6 @@ static void purge_old_frames(
       /* in     */ const double t
       )
 {
-//printf("* Purging frames before %.3f\n", t);
    frame_node_type* node = sync->active_frame_list_head;
    while (node) {
       if (node->t > t) {
@@ -276,18 +264,15 @@ static double check_for_frame_set(
       /* in     */ const double frame_time
       )
 {
-//printf("* Check for frame set at %.3f  (%.3f)\n", frame_time, sync->last_sync_time);
    // look for full set of frames
    double publish_time = -1.0;
    double dt_sec = frame_time - sync->last_sync_time;
    if (dt_sec > STREAM_DUMP_INTERVAL_SEC) {
-//printf("*   stream dump\n");
       // too much time has elapsed between this frame and the previous
       //    sync time. ignore unpublished data and reset clock to now.
       sync->last_sync_time = frame_time - CAMERA_FRAME_INTERVAL_SEC;
       purge_old_frames(sync, sync->last_sync_time);
    } else if (dt_sec > MISSED_FRAME_INTERVAL_SEC) {
-//printf("*   missed frame\n");
       // if we might have missed a frame set, look for it
       // search window here should be large enough so that there
       //    is no 'blind' time that frames can occur but aren't considered
@@ -307,7 +292,6 @@ static double check_for_frame_set(
          purge_old_frames(sync, sync->last_sync_time);
       }
    } else {
-//printf("*   check full\n");
       // we're no longer overdue for a frame. check to see if a full set
       //    has been delivered
       publish_time = find_next_full_set(sync);
@@ -357,6 +341,7 @@ static uint32_t build_frame_set(
    }
    return count;
 }
+
 
 // cycle through all producers and return time of earliest available
 //    frame
