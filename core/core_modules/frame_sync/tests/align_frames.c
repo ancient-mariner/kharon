@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -134,7 +150,7 @@ uint32_t test_full_sets(void)
                errs++;
                break;
             }
-            purge_old_frames(frame_sync_, 
+            purge_old_frames(frame_sync_,
                   publish_time + CAMERA_FRAME_INTERVAL_SEC);
             published_frames++;
          }
@@ -219,7 +235,7 @@ uint32_t test_partial_sets(void)
                errs++;
                goto end;
             }
-            purge_old_frames(frame_sync_, 
+            purge_old_frames(frame_sync_,
                   publish_time + HARDWARE_INTERFRAME_INTERVAL_SEC);
             published_frames++;
          }
@@ -252,10 +268,10 @@ uint32_t test_missing_frame(void)
    /////////////////////////////////////////////////////////////
    reset_sync();
    double frame_times[] = {
-         10.010, 10.015, 10.005, 
+         10.010, 10.015, 10.005,
          10.170, 10.165, 10.175, 10.185,
-         10.360, 10.370, 10.360, 
-         10.500, 10.500, 10.500, 
+         10.360, 10.370, 10.360,
+         10.500, 10.500, 10.500,
          10.675, 10.680, 10.680, 10.675,
          10.825, 10.820, 10.835, 10.840,
          11.500, 11.500, 11.500,    // partial set won't complete
@@ -307,7 +323,7 @@ uint32_t test_missing_frame(void)
                errs++;
                goto end;
             }
-            purge_old_frames(frame_sync_, 
+            purge_old_frames(frame_sync_,
                   publish_time + HARDWARE_INTERFRAME_INTERVAL_SEC);
             published_frames++;
          }
@@ -387,7 +403,7 @@ uint32_t test_misalign(void)
                errs++;
                goto end;
             }
-            purge_old_frames(frame_sync_, 
+            purge_old_frames(frame_sync_,
                   publish_time + HARDWARE_INTERFRAME_INTERVAL_SEC);
             published_frames++;
          }
@@ -461,9 +477,9 @@ uint32_t test_alloc(void)
    errs += verify_heap_size(FRAME_NODE_HEAP_SIZE);
    for (uint32_t i=0; i<FRAME_NODE_HEAP_SIZE; i++) {
       for (uint32_t j=0; j<i; j++) {
-         frame_time_type ft = { 
-               .frame = NULL, 
-               .t = (double) i + 0.001 * (double) j 
+         frame_time_type ft = {
+               .frame = NULL,
+               .t = (double) i + 0.001 * (double) j
          };
          add_frame_to_list(frame_sync_, &ft, 0);
       }

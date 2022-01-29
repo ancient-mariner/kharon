@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 
 // the goal here is to generate a set of camera frames that produces
 //    a full panorama, or as close to that as possible. frames must
@@ -93,7 +109,7 @@ static double find_next_full_set(
       }
       if (count == sync->num_input_cams) {
          // we've a fully overlapping set. get middle time and return it
-//         set_time = trailing_node->t + 
+//         set_time = trailing_node->t +
 //               (leading_node->t - trailing_node->t) / 2.0;
          set_time = (trailing_node->t + leading_node->t) / 2.0;
          goto end;
@@ -125,9 +141,9 @@ static double find_next_set(
    // rememember front and back nodes of time-overlapping section
    frame_node_type* trailing_node = NULL;
    frame_node_type* leading_node = NULL;
-   // count is number of nodes that overlap. this starts at 1 because 
+   // count is number of nodes that overlap. this starts at 1 because
    //    we're starting w/ 1 node
-   // use float for score 
+   // use float for score
    uint32_t count = 0;
    uint32_t best_count = 0;
    best_set_time = -1.0;
@@ -190,7 +206,7 @@ static void add_frame_to_list(
    if (node == NULL) {
       // list is empty. put node at head of list
       sync->active_frame_list_head = new_frame;
-      
+
    } else {
 //printf("*  frame list head at t=%.3f\n", node->t);
       while (node) {
@@ -235,7 +251,7 @@ static void purge_old_frames(
          //    nothing more to do
          break;
       }
-      // this node head of list and it's too old. purge from list. reset 
+      // this node head of list and it's too old. purge from list. reset
       //    list head to next node
       sync->active_frame_list_head = node->next;
       if (node->next) {
@@ -276,7 +292,7 @@ static double check_for_frame_set(
       // search window here should be large enough so that there
       //    is no 'blind' time that frames can occur but aren't considered
       //    for being included in a set (to account for pathological async
-      //    edge cases). slightly larger than the frame capture interval 
+      //    edge cases). slightly larger than the frame capture interval
       //    should be fine
       double target_sec = sync->last_sync_time + CAMERA_FRAME_INTERVAL_SEC;
       double ival_start_sec = target_sec - 0.51 * CAMERA_FRAME_INTERVAL_SEC;
@@ -301,7 +317,7 @@ static double check_for_frame_set(
 
 
 // write next frame set to output
-// there must be one or more frames near 't' 
+// there must be one or more frames near 't'
 // returns number of frames in set
 static uint32_t build_frame_set(
       /* in out */       frame_sync_type* sync,
@@ -358,12 +374,12 @@ static int32_t get_next_earliest_frame(
       const datap_desc_type *producer = pr->producer;
       if (pr->consumed_elements < producer->elements_produced) {
          // data available from this producer -- evaluate when
-         const uint32_t idx = (uint32_t) 
+         const uint32_t idx = (uint32_t)
                (pr->consumed_elements % producer->queue_length);
          const double t = producer->ts[idx];
          if (t < frame->t) {
-            frame->frame = 
-                  (optical_up_output_type *) dp_get_object_at(producer, idx); 
+            frame->frame =
+                  (optical_up_output_type *) dp_get_object_at(producer, idx);
             frame->t = t;
             early_idx = (int32_t) i;
          }
@@ -374,5 +390,5 @@ static int32_t get_next_earliest_frame(
       self->producer_list[early_idx].consumed_elements++;
    }
    return early_idx;
-} 
+}
 

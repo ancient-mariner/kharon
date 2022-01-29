@@ -1,3 +1,19 @@
+/***********************************************************************
+* This file is part of kharon <https://github.com/ancient-mariner/kharon>.
+* Copyright (C) 2019-2022 Keith Godfrey
+*
+* kharon is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, version 3.
+*
+* kharon is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with kharon.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
 #include "pin_types.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,7 +35,7 @@
 struct frame_time {
    optical_up_output_type  *frame;
    double t;
-}; 
+};
 typedef struct frame_time frame_time_type;
 
 #include "align_frames.c"
@@ -29,7 +45,7 @@ typedef struct frame_time frame_time_type;
 ////////////////////////////////////////////////////////////////////////
 
 static void frame_sync_add_producer(
-      /* in     */       struct datap_desc *self, 
+      /* in     */       struct datap_desc *self,
       /* in     */       struct datap_desc *prod
       )
 {
@@ -44,10 +60,10 @@ static void frame_sync_add_producer(
          // if more cameras are needed, it should be OK to adjust the
          //    max-camera constant and recompile (that might not be
          //    the case in downstream image stitching modules)
-         log_err(sync->log, "Too many subscriptions (max of %d)\n", 
+         log_err(sync->log, "Too many subscriptions (max of %d)\n",
                MAX_NUM_CAMERAS);
          log_err(sync->log, "Consumer: %s\n", self->td->obj_name);
-         log_err(sync->log, "Producer: %s (%s)\n", prod->td->obj_name, 
+         log_err(sync->log, "Producer: %s (%s)\n", prod->td->obj_name,
                prod->td->class_name);
          hard_exit(__func__, __LINE__);
       }
@@ -55,10 +71,10 @@ static void frame_sync_add_producer(
       optical_up_class_type *up = (optical_up_class_type*) prod->local;
       uint8_t cam_num = up->camera_num;
       if (cam_num >= MAX_NUM_CAMERAS) {
-         log_err(sync->log, "Producer's camera number outside of bounds (%d)", 
+         log_err(sync->log, "Producer's camera number outside of bounds (%d)",
                cam_num);
          log_err(sync->log, "Consumer: %s\n", self->td->obj_name);
-         log_err(sync->log, "Producer: %s (%s)\n", prod->td->obj_name, 
+         log_err(sync->log, "Producer: %s (%s)\n", prod->td->obj_name,
                prod->td->class_name);
          hard_exit(__func__, __LINE__);
       }
@@ -67,10 +83,10 @@ static void frame_sync_add_producer(
    } else {
       log_err(sync->log, "Attempted to subscribe to incompatible producer\n");
       log_err(sync->log, "Consumer: %s\n", self->td->obj_name);
-      log_err(sync->log, "Producer: %s (%s)\n", prod->td->obj_name, 
+      log_err(sync->log, "Producer: %s (%s)\n", prod->td->obj_name,
             prod->td->class_name);
       hard_exit(__func__, __LINE__);
-   } 
+   }
 }
 
 
@@ -85,7 +101,7 @@ static void frame_sync_class_pre_run(struct datap_desc *self)
    self->void_queue = calloc(1, FRAME_SYNC_QUEUE_LEN * self->element_size);
    //
    frame_sync_class_type *sync = (frame_sync_class_type *) self->local;
-   sync->frame_node_heap = 
+   sync->frame_node_heap =
          calloc(FRAME_NODE_HEAP_SIZE, sizeof *sync->frame_node_heap);
    frame_node_type* prev = NULL;
    for (uint32_t i=0; i<FRAME_NODE_HEAP_SIZE; i++) {
@@ -112,7 +128,7 @@ static void frame_sync_class_run(
    frame_sync_class_type *sync = (frame_sync_class_type *) self->local;
    log_info(sync->log, "Entering run()");
    // publish sets of frames that were taken at approximately the same time
-   // 
+   //
    while ((self->run_state & DP_STATE_DONE) == 0) {
       dp_wait(self);   // wait for data to become available
       // loop while there's data to read
@@ -136,7 +152,7 @@ static void frame_sync_class_run(
             publish_time = check_for_frame_set(sync, next.t);
             if (publish_time > 0.0) {
                // get storage for output
-               uint32_t idx = (uint32_t) 
+               uint32_t idx = (uint32_t)
                      (self->elements_produced % self->queue_length);
                frame_sync_output_type *out = (frame_sync_output_type*)
                      dp_get_object_at(self, idx);
@@ -170,9 +186,9 @@ static void * frame_sync_get_object_at(
       /* in     */ const datap_desc_type *self,
       /* in     */ const uint32_t idx
       )
-{  
+{
    return &self->void_queue[idx * sizeof(frame_sync_output_type)];
-} 
+}
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -191,7 +207,7 @@ void * frame_sync_class_init(
    }
    sync->log = get_logger(self->td->obj_name);
    report_thread_id(self, sync->log);
-   // 
+   //
    free(module_setup); // allocated on heap and it's no longer needed
    //
    self->local = sync;
